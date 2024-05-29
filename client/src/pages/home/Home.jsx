@@ -13,9 +13,9 @@ export default function Home() {
 
     return (
         <>
-            <button onClick={logOutHandler}>
+            <Button onClick={logOutHandler}>
                 Logout
-            </button>
+            </Button>
         </>
     )
 }
