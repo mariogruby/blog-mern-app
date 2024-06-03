@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { type } from "os";
 
 const postSchema = new Schema({
     content: {
@@ -12,7 +13,9 @@ const postSchema = new Schema({
         type: String,
         required: true,
     },
-    tag: String,
+    tags: {
+        type: [String]
+    },
     comments: [{
         type: Schema.Types.ObjectId,
         ref: "Comment"
