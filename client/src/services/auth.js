@@ -7,6 +7,7 @@ class AuthService {
         });
         this.auth.interceptors.request.use((config) => {
             const storedToken = localStorage.getItem("authToken")
+            console.log('JWT token:', storedToken)
             if (storedToken) {
                 config.headers.Authorization = `Bearer ${storedToken}`;
             }

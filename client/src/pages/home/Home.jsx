@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import AllPosts from '../../components/post/AllPosts'
 import { AuthContext } from '../../context/auth'
 import { Button } from '@mui/material'
 
@@ -13,9 +14,10 @@ export default function Home() {
 
     return (
         <>
-            <Button onClick={logOutHandler}>
+            {/* <Button onClick={logOutHandler}>
                 Logout
-            </Button>
+            </Button> */}
+            <AllPosts />
         </>
     )
 }

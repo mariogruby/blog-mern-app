@@ -8,8 +8,9 @@ import {
     DialogTitle,
     Button
 } from '@mui/material'
+// import Home from '../../components/post/AllPosts'
 
-export default function AuthLayout({ children }) {
+export default function AuthLayout({ children}) {
     const [open, setOpen] = useState(true);
 
     const handleClickOpen = () => {
@@ -32,7 +33,7 @@ export default function AuthLayout({ children }) {
         }
     }
     return (
-        <React.Fragment>
+        <>
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -52,6 +53,6 @@ export default function AuthLayout({ children }) {
                     {children}
                 </DialogContent>
             </Dialog>
-        </React.Fragment>
+        </>
     )
 }
