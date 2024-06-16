@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from '@mui/material/CssBaseline';
+import Post from  './components/post/postById/Post'
 import AppLayout from './components/layouts/AppLyt'
 import AuthLayout from './components/auth/AuthLayout'
 import Signup from './components/auth/Signup'
@@ -30,6 +31,10 @@ function App() {
           <Route
           path='/login'
           element={<AuthLayout><Login /></AuthLayout>}
+          />
+          <Route
+          path='/post/:postId'
+          element={<Post />}
           />
         </Routes>
       </AppLayout>

@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { usePostContext } from '../../context/post';
-import postService from '../../services/post';
-import ModalAddPost from './ModalAddPost';
-import BtnOutlined from '../../components/buttons/BtnOutlined'
-import BtnPrimary from '../../components/buttons/BtnPrimary'
+import React from 'react';
+import { usePostContext } from '../../../context/post';
+import { useAddPostActions } from './Actions';
+import BtnOutlined from '../../../components/buttons/BtnOutlined';
 import {
     Container,
     Box,
@@ -12,88 +10,32 @@ import {
     Button,
     Typography,
     Autocomplete,
-    Chip, 
-    DemoPaper
+    Chip
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-export default function AddPost() {
+export default function AddPost({ handleModalClose }) {
     const { addPost } = usePostContext();
-    const [content, setContent] = useState("");
-    const [image, setImage] = useState(null);
-    const [preview, setPreview] = useState(null);
-    const [tags, setTags] = useState([]);
-    const [inputValue, setInputValue] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
+    const {
+        content,
+        image,
+        preview,
+        tags,
+        inputValue,
+        isLoading,
+        successMessage,
+        errorMessage,
+        handleChange,
+        handleTagsChange,
+        handleInputChange,
+        handleKeyDown,
+        handleSubmit
+    } = useAddPostActions(addPost, handleModalClose);
 
     const VisuallyHiddenInput = styled('input')({
         display: 'none',
     });
-
-    const handleChange = (e) => {
-        const { name, value, files } = e.target;
-        switch (name) {
-            case 'content':
-                setContent(value);
-                break;
-            case 'image':
-                const file = files[0];
-                setImage(file);
-                setPreview(URL.createObjectURL(file));
-                break;
-            default:
-                break;
-        }
-    };
-
-    const handleTagsChange = (event, newValue) => {
-        setTags(newValue);
-    };
-
-    const handleInputChange = (event, newValue) => {
-        setInputValue(newValue);
-    };
-
-    const handleKeyDown = (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            const newTag = inputValue.trim();
-            if (newTag && !tags.includes(newTag)) {
-                setTags((prevTags) => [...prevTags, newTag]);
-                setInputValue('');
-            }
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        const formData = new FormData();
-        formData.append('content', content);
-        formData.append('tags', JSON.stringify(tags));
-        formData.append('image', image);
-
-        try {
-            const response = await postService.addPost(formData);
-            setSuccessMessage('Add Post Successfully');
-            setErrorMessage(null);
-            setContent('');
-            setTags([]);
-            setImage(null);
-            setPreview(null);
-            addPost(formData);
-            console.log('response add post:', response);
-        } catch (error) {
-            const errorDescription = error.response.data.message;
-            setErrorMessage(errorDescription);
-            setIsLoading(false);
-            console.log(errorDescription);
-        }
-        setIsLoading(false);
-    };
 
     return (
         <Container component="main" maxWidth="xs">
@@ -150,7 +92,6 @@ export default function AddPost() {
                                 onChange={handleChange}
                             />
                             <BtnOutlined
-                                
                                 component="span"
                                 startIcon={<CloudUploadIcon />}
                                 fullWidth
@@ -161,9 +102,9 @@ export default function AddPost() {
                     </Grid>
                     <Grid item xs={12}>
                         {preview && (
-                            <Box mt={2}>
+                            <Box mt={2} align="center" sx={{ overflow: 'hidden', width: '100%', maxWidth: '300px', margin: '0 auto' }}>
                                 <Typography variant="subtitle1">Image Preview:</Typography>
-                                <img src={preview} alt="error" style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '5px', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.5)' }} />
+                                <img src={preview} alt="error" style={{ width: '100%', height: 'auto', objectFit: 'cover', borderRadius: '5px', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.5)' }} />
                             </Box>
                         )}
                     </Grid>

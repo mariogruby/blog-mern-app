@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AllPosts from '../../components/post/AllPosts'
+import AllPosts from '../../components/post/allPosts/AllPosts'
 import { AuthContext } from '../../context/auth'
 import { Button } from '@mui/material'
 

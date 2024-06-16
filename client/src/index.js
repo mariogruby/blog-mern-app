@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { CommentProvider } from './context/comment';
 import { PostProvider } from './context/post';
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from './context/auth';
@@ -13,7 +14,9 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <PostProvider>
-          <App />
+          <CommentProvider>
+            <App />
+          </CommentProvider>
         </PostProvider>
       </AuthProvider>
     </BrowserRouter>

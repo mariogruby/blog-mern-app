@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Box, CssBaseline, SpeedDial, SpeedDialIcon, SpeedDialAction } from '@mui/material';
 import Navbar from '../navbar/Navbar';
-import ModalAddPost from '../post/ModalAddPost';
-import AddPost from '../post/AddPost'
+import ModalAddPost from '../post/addPost/ModalAddPost';
+import AddPost from '../post/addPost/AddPost';
 import { Sidebar, MobileSidebar } from '../sidebar/Sidebar';
 import AddIcon from '@mui/icons-material/Add';
+import { useLocation } from 'react-router-dom';
 
 export default function Layout({ children }) {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const location = useLocation();
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -34,20 +36,22 @@ export default function Layout({ children }) {
             >
                 {children}
             </Box>
-            <SpeedDial
-                ariaLabel="SpeedDial basic example"
-                sx={{ position: 'fixed', bottom: 16, right: 16 }}
-                icon={<SpeedDialIcon />}
-            >
-                <SpeedDialAction
-                    icon={<AddIcon />}
-                    tooltipTitle="Add Post"
-                    onClick={handleModalOpen} 
-                />
-            </SpeedDial>
+            {location.pathname === "/"  && (
+                <SpeedDial
+                    ariaLabel="SpeedDial basic example"
+                    sx={{ position: 'fixed', bottom: 16, right: 16 }}
+                    icon={<SpeedDialIcon />}
+                >
+                    <SpeedDialAction
+                        icon={<AddIcon />}
+                        tooltipTitle="Add new post"
+                        onClick={handleModalOpen} 
+                    />
+                </SpeedDial>
+            )}
             <ModalAddPost open={isModalOpen} handleClose={handleModalClose}>
-                <AddPost />
+                <AddPost handleModalClose={handleModalClose} />
             </ModalAddPost>
         </Box>
     );
-};
+}

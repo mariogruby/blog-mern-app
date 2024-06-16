@@ -18,11 +18,23 @@ class PostService {
     };
 
     getAllPosts = () => {
-        return this.postNoAuth.get('/posts/all-posts')
+        return this.postNoAuth.get('/posts/all-posts');
     };  
     addPost = (formData) => {
         return this.post.post('/posts/new-post', formData);
-    }
+    };
+    likePost = (postId) => {
+        return this.post.post(`/posts/${postId}/like`);
+    };
+    getPostById = (postId) => {
+        return this.post.get(`/posts/${postId}`);
+    };
+    editPost = (postId, requestBody) => {
+        return this.post.put(`/posts/${postId}/edit`, requestBody);
+    };
+    savePost = (postId) => {
+        return this.post.post(`/posts/${postId}/save`);
+    };
 };
 
 const postService = new PostService();
