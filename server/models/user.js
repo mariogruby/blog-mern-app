@@ -22,7 +22,7 @@ const userSchema = new Schema({
     },
     userImage: {
         type: String,
-        default: "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png",
+        default: "https://res.cloudinary.com/dayo1mpv0/image/upload/v1683686792/default/profile.jpg",
     },
     userPost: [{
         type: Schema.Types.ObjectId,
@@ -31,6 +31,10 @@ const userSchema = new Schema({
     likedPost: [{
         Post: { type: Schema.Types.ObjectId, ref: 'Post' },
         liked: { type: Boolean, default: false },
+    }],
+    userSavedPost: [{
+        type: Schema.Types.ObjectId,
+        ref: "Post",
     }],
 },
     { timestamps: true }

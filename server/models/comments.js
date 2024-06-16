@@ -4,13 +4,13 @@ const commentSchema = new Schema({
     content: {
         type: String,
     },
-    date: {
-        type: Date,
-        default: Date.now,
-    },
     author: {
         type: Schema.Types.ObjectId,
         ref: "User",
+    },
+    likes: {
+        type: Number,
+        default: 0,
     },
 },
     { timestamps: true }
