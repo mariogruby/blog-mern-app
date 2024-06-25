@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import AddPost from '../../components/post/addPost/AddPost'
 import { Box, CssBaseline, SpeedDial, SpeedDialIcon, SpeedDialAction } from '@mui/material';
 import Navbar from '../navbar/Navbar';
 import ModalAddPost from '../post/addPost/ModalAddPost';
-import AddPost from '../post/addPost/AddPost';
 import { Sidebar, MobileSidebar } from '../sidebar/Sidebar';
 import AddIcon from '@mui/icons-material/Add';
 import { useLocation } from 'react-router-dom';
@@ -32,11 +32,11 @@ export default function Layout({ children }) {
             <MobileSidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
             <Box
                 component="main"
-                sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, ml: { sm: 30 }, mt: 8 }}
+                sx={{ flexGrow: 1, bgcolor: 'background.default', ml: { xs: 0, sm: 30 }, mt: 9 }}
             >
                 {children}
             </Box>
-            {location.pathname === "/"  && (
+            {location.pathname === "/" && (
                 <SpeedDial
                     ariaLabel="SpeedDial basic example"
                     sx={{ position: 'fixed', bottom: 16, right: 16 }}
@@ -45,7 +45,7 @@ export default function Layout({ children }) {
                     <SpeedDialAction
                         icon={<AddIcon />}
                         tooltipTitle="Add new post"
-                        onClick={handleModalOpen} 
+                        onClick={handleModalOpen}
                     />
                 </SpeedDial>
             )}

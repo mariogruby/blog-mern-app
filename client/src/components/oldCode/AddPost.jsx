@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePostContext } from '../../../context/post';
-import { useEditPostActions } from './Actions';
+import { useAddPostActions } from './Actions';
 import BtnOutlined from '../../../components/buttons/BtnOutlined';
 import {
     Container,
@@ -15,12 +15,12 @@ import {
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-//TODO: clean code and successMessage implementation
-//TODO: fix minimal bugs in chips textArea
-
-export default function EditPost({ postId, initialData, handleModalClose }) {
+export default function AddPost({ handleModalClose }) {
+    const { addPost } = usePostContext();
     const {
         content,
+        image,
+        preview,
         tags,
         inputValue,
         isLoading,
@@ -31,14 +31,14 @@ export default function EditPost({ postId, initialData, handleModalClose }) {
         handleInputChange,
         handleKeyDown,
         handleSubmit
-    } = useEditPostActions(postId, initialData, handleModalClose);
+    } = useAddPostActions(addPost, handleModalClose);
 
     const VisuallyHiddenInput = styled('input')({
         display: 'none',
     });
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" >
             <Box
                 component="form"
                 onSubmit={handleSubmit}
@@ -52,7 +52,7 @@ export default function EditPost({ postId, initialData, handleModalClose }) {
                             onChange={handleChange}
                             name="content"
                             multiline
-                            label="Edit text here..."
+                            label="Add text here..."
                             variant="filled"
                             fullWidth
                             value={content}
@@ -76,15 +76,37 @@ export default function EditPost({ postId, initialData, handleModalClose }) {
                                 <TextField
                                     {...params}
                                     variant="filled"
-                                    label="Edit tags and press Enter or Space"
+                                    label="Type tags and press Enter or Space"
                                     onKeyDown={handleKeyDown}
                                 />
                             )}
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        {/* {successMessage && <Typography color="success.main">{successMessage}</Typography>} */}
-                        {errorMessage && <Typography color="error.main">{errorMessage}</Typography>}
+                        <label htmlFor="image-upload">
+                            <VisuallyHiddenInput
+                                accept="image/*"
+                                id="image-upload"
+                                type="file"
+                                name="image"
+                                onChange={handleChange}
+                            />
+                            <BtnOutlined
+                                component="span"
+                                startIcon={<CloudUploadIcon />}
+                                fullWidth
+                            >
+                                Upload Image
+                            </BtnOutlined>
+                        </label>
+                    </Grid>
+                    <Grid item xs={12}>
+                        {preview && (
+                            <Box mt={2} align="center" sx={{ overflow: 'hidden', width: '100%', maxWidth: '300px', margin: '0 auto' }}>
+                                <Typography variant="subtitle1">Image Preview:</Typography>
+                                <img src={preview} alt="error" style={{ width: '100%', height: 'auto', objectFit: 'cover', borderRadius: '5px', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.5)' }} />
+                            </Box>
+                        )}
                     </Grid>
                     <Grid item xs={12}>
                         <Button
@@ -94,7 +116,7 @@ export default function EditPost({ postId, initialData, handleModalClose }) {
                             fullWidth
                             disabled={isLoading}
                         >
-                            {isLoading ? 'Saving...' : 'Save'}
+                            {isLoading ? 'Posting...' : 'Post'}
                         </Button>
                     </Grid>
                 </Grid>

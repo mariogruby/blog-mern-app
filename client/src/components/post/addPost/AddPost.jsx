@@ -1,96 +1,70 @@
 import React from 'react';
-import { usePostContext } from '../../../context/post';
-import { useAddPostActions } from './Actions';
-import BtnOutlined from '../../../components/buttons/BtnOutlined';
 import {
-    Container,
-    Box,
-    Grid,
-    TextField,
+    Stepper,
+    Step,
+    StepLabel,
     Button,
     Typography,
+    Box,
+    Grid,
+    Chip,
+    TextField,
     Autocomplete,
-    Chip
+    Container
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import EditorImage from './EditorImage';
+import BtnOutlined from '../../buttons/BtnOutlined';
+import { usePostContext } from '../../../context/post';
+import { useAddPostActions } from './Actions';
 
-export default function AddPost({ handleModalClose }) {
+const steps = ['Select an Image', 'Add text to your Post', 'Review'];
+
+//TODO: pending successMessage and errorMessage utilization
+
+function PostStepper({ handleModalClose }) {
     const { addPost } = usePostContext();
     const {
-        content,
-        image,
-        preview,
         tags,
         inputValue,
         isLoading,
-        successMessage,
-        errorMessage,
+        // successMessage,
+        // errorMessage,
         handleChange,
         handleTagsChange,
         handleInputChange,
         handleKeyDown,
-        handleSubmit
+        handleSubmit,
+        activeStep,
+        selectedImage,
+        setSelectedImage,
+        postText,
+        handleNext,
+        handleBack
     } = useAddPostActions(addPost, handleModalClose);
 
     const VisuallyHiddenInput = styled('input')({
         display: 'none',
     });
 
-    return (
-        <Container component="main" maxWidth="xs">
-            <Box
-                component="form"
-                onSubmit={handleSubmit}
-                noValidate
-                autoComplete="off"
-            >
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <TextField
-                            rows={4}
-                            onChange={handleChange}
-                            name="content"
-                            multiline
-                            label="Add text here..."
-                            variant="filled"
-                            fullWidth
-                            value={content}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Autocomplete
-                            multiple
-                            freeSolo
-                            options={[]}
-                            value={tags}
-                            inputValue={inputValue}
-                            onChange={handleTagsChange}
-                            onInputChange={handleInputChange}
-                            renderTags={(value, getTagProps) =>
-                                value.map((option, index) => (
-                                    <Chip label={option} {...getTagProps({ index })} />
-                                ))
-                            }
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    variant="filled"
-                                    label="Type tags and press Enter or Space"
-                                    onKeyDown={handleKeyDown}
-                                />
-                            )}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
+    const handleSaveEditedImage = (editedImage) => {
+        setSelectedImage(editedImage);
+        handleNext();
+    };
+
+    const renderStepContent = (step) => {
+        switch (step) {
+            case 0:
+                return (
+                    <Box>
                         <label htmlFor="image-upload">
                             <VisuallyHiddenInput
-                                accept="image/*"
                                 id="image-upload"
                                 type="file"
-                                name="image"
-                                onChange={handleChange}
-                            />
+                                name="image-upload"
+                                accept="image/*"
+                                onChange={handleChange} />
                             <BtnOutlined
                                 component="span"
                                 startIcon={<CloudUploadIcon />}
@@ -99,28 +73,130 @@ export default function AddPost({ handleModalClose }) {
                                 Upload Image
                             </BtnOutlined>
                         </label>
-                    </Grid>
-                    <Grid item xs={12}>
-                        {preview && (
-                            <Box mt={2} align="center" sx={{ overflow: 'hidden', width: '100%', maxWidth: '300px', margin: '0 auto' }}>
-                                <Typography variant="subtitle1">Image Preview:</Typography>
-                                <img src={preview} alt="error" style={{ width: '100%', height: 'auto', objectFit: 'cover', borderRadius: '5px', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.5)' }} />
+                        {selectedImage && (
+                            <Box mt={2}>
+                                <EditorImage
+                                    image={selectedImage}
+                                    onSave={handleSaveEditedImage}
+                                />
                             </Box>
                         )}
-                    </Grid>
-                    <Grid item xs={12}>
+                    </Box>
+                );
+            case 1:
+                return (
+                    <Container component="main" maxWidth="xs">
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    label="Add text here..."
+                                    name="postText"
+                                    multiline
+                                    rows={4}
+                                    variant="filled"
+                                    fullWidth
+                                    value={postText}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Autocomplete
+                                    multiple
+                                    freeSolo
+                                    options={[]}
+                                    value={tags}
+                                    inputValue={inputValue}
+                                    onChange={handleTagsChange}
+                                    onInputChange={handleInputChange}
+                                    renderTags={(value, getTagProps) =>
+                                        value.map((option, index) => (
+                                            <Chip label={option} {...getTagProps({ index })} />
+                                        ))
+                                    }
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            variant="filled"
+                                            label="Type tags and press Enter or Space"
+                                            onKeyDown={handleKeyDown}
+                                        />
+                                    )}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Container>
+                );
+            case 2:
+                return (
+                    <Box>
+                        <Typography variant="h6">Review</Typography>
+                        {selectedImage && (
+                            <Box mt={2}>
+                                <img src={URL.createObjectURL(selectedImage)} alt="Selected" style={{ maxWidth: '100%' }} />
+                            </Box>
+                        )}
+                        <Box mt={2}>
+                            <Typography variant="body1">{postText}</Typography>
+                        </Box>
+                        <Box mt={2}>
+                            {tags.map((tag, index) => (
+                                <Chip key={index} label={tag} />
+                            ))}
+                        </Box>
+                    </Box>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <Box sx={{ width: '100%' }}>
+            <Stepper activeStep={activeStep}>
+                {steps.map((label) => (
+                    <Step key={label}>
+                        <StepLabel>{label}</StepLabel>
+                    </Step>
+                ))}
+            </Stepper>
+            <Box>
+                <Typography sx={{ mt: 2, mb: 1 }}>{renderStepContent(activeStep)}</Typography>
+                {activeStep > 0 && activeStep < steps.length - 1 && (
+                    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                         <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
+                            color="inherit"
+                            onClick={handleBack}
+                            sx={{ mr: 1 }}
+                        >
+                            Back
+                        </Button>
+                        <Box sx={{ flex: '1 1 auto' }} />
+                        <Button onClick={handleNext}>
+                            Next
+                        </Button>
+                    </Box>
+                )}
+                {activeStep === steps.length - 1 && (
+                    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                        <Button
+                            color="inherit"
+                            onClick={handleBack}
+                            sx={{ mr: 1 }}
+                        >
+                            Back
+                        </Button>
+                        <Box sx={{ flex: '1 1 auto' }} />
+                        <Button
                             disabled={isLoading}
+                            onClick={handleSubmit}
                         >
                             {isLoading ? 'Posting...' : 'Post'}
                         </Button>
-                    </Grid>
-                </Grid>
+                    </Box>
+                )}
             </Box>
-        </Container>
+        </Box>
     );
 }
+
+export default PostStepper;

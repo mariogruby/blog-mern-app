@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useCommentContext } from '../../../context/comment';
-import { fetchData, fetchComments, fetchLikedPosts, handleToggleLike, loadMoreComments } from './Actions';
+import React from 'react';
+import { usePostByIdActions } from './Actions'
 import AddComment from '../../comment/AddComment';
 import ModalEditPost from '../../post/editPost/ModalEditPost';
 import EditPost from '../../post/editPost/EditPost';
@@ -12,7 +10,7 @@ import {
     FavoriteBorder as FavoriteBorderIcon,
     Share as ShareIcon,
     MoreVert as MoreVertIcon,
-    Chat as ChatIcon
+    ModeCommentOutlined as ModeCommentOutlinedIcon,
 } from '@mui/icons-material';
 import {
     Card,
@@ -35,68 +33,34 @@ import {
     MenuItem
 } from '@mui/material';
 
+//TODO: errorMessage implementation and clean code
+//TODO: re design add comment texArea,
+
 export default function Post() {
-    const [post, setPost] = useState(null);
-    const [comments, setComments] = useState([]);
-    const [errorMessage, setErrorMessage] = useState(null);
-    const [likedPost, setLikedPost] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [visibleComments, setVisibleComments] = useState(5);
-    const [showMessage, setShowMessage] = useState(false);
-    const [anchorEl, setAnchorEl] = useState(null); 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [expandedIds, setExpandedIds] = useState([]);
-    const { postId } = useParams();
-    const { updateComment } = useCommentContext();
+    const {
+        handleToggleLike,
+        loadMoreComments,
+        toggleExpand,
+        handleMenu,
+        handleMenuClose,
+        handleEdit,
+        handleModalClose,
+        isExpanded,
+        post,
+        comments,
+        // errorMessage,
+        likedPost,
+        isLoading,
+        showMessage,
+        anchorEl,
+        isModalOpen,
+        visibleComments,
+        postId
+    } = usePostByIdActions()
 
     const formatDate = (dateString) => {
         const l = "en";
         return format(new Date(dateString), "MMMM D, h:mm a", l);
-    };
-
-    useEffect(() => {
-        fetchData(postId, setPost, setErrorMessage, setIsLoading);
-    }, [postId]);
-
-    useEffect(() => {
-        fetchComments(postId, setComments, setErrorMessage, setShowMessage, visibleComments);
-    }, [postId, updateComment, visibleComments]);
-
-    useEffect(() => {
-        fetchLikedPosts(setLikedPost);
-    }, []);
-
-    const handleLikeClick = () => {
-        handleToggleLike(postId, setPost, setLikedPost);
-    };
-
-    const loadMoreCommentsClick = () => {
-        loadMoreComments(setVisibleComments, setShowMessage);
-    };
-
-    const handleMenuClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleEditClick = () => {
-        setIsModalOpen(true);
-        handleMenuClose();
-    };
-
-    const handleModalClose = () => {
-        setIsModalOpen(false);
-    };
-
-    const toggleExpandText = (postId) => {
-        setExpandedIds(postId)
-    };
-
-    const isExpanded = (postId) => {
-        return expandedIds.includes(postId);
     };
 
     return (
@@ -164,7 +128,7 @@ export default function Post() {
                                             avatar={<Avatar sx={{ width: 50, height: 50 }} alt={post.author.username} src={post.author.userImage} />}
                                             action={
                                                 <>
-                                                    <IconButton aria-label="settings" onClick={handleMenuClick}>
+                                                    <IconButton aria-label="settings" onClick={handleMenu}>
                                                         <MoreVertIcon />
                                                     </IconButton>
                                                     <Menu
@@ -172,7 +136,7 @@ export default function Post() {
                                                         open={Boolean(anchorEl)}
                                                         onClose={handleMenuClose}
                                                     >
-                                                        <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+                                                        <MenuItem onClick={handleEdit}>Edit</MenuItem>
                                                         {/* Add more MenuItem components for other options if needed */}
                                                     </Menu>
                                                 </>
@@ -200,7 +164,7 @@ export default function Post() {
                                                 </Typography>
                                                 {post.content.length > 200 && !isExpanded(post._id) && (
                                                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                                    <Button size="small" onClick={() => toggleExpandText(post._id)} sx={{ mt: 1 }}>
+                                                    <Button size="small" onClick={() => toggleExpand(post._id)} sx={{ mt: 1 }}>
                                                         Read more
                                                     </Button>
                                                 </Box>
@@ -249,7 +213,7 @@ export default function Post() {
                                                 )))}
                                             {showMessage && (
                                                 <Box textAlign="center" mb={1}>
-                                                    <Button onClick={loadMoreCommentsClick}>show more comments</Button>
+                                                    <Button onClick={loadMoreComments}>show more comments</Button>
                                                 </Box>
                                             )}
                                         </List>
@@ -257,7 +221,7 @@ export default function Post() {
                                     <CardActions disableSpacing>
                                         <IconButton
                                             aria-label="add to favorites"
-                                            onClick={() => handleLikeClick(post._id)}
+                                            onClick={() => handleToggleLike(post._id)}
                                         >
                                             {likedPost.includes(post._id) ? (
                                                 <FavoriteIcon sx={{ color: pink[500] }} />
@@ -270,7 +234,7 @@ export default function Post() {
                                         </Typography>
                                         <IconButton
                                             aria-label="add a comment">
-                                            <ChatIcon />
+                                            <ModeCommentOutlinedIcon />
                                         </IconButton>
                                         <IconButton aria-label="share">
                                             <ShareIcon />

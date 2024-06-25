@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
+import { usePostContext } from '../../../context/post'; 
 import postService from '../../../services/post';
-import { usePostContext } from '../../../context/post'; // Ajusta la ruta según tu estructura de archivos
 
 export const useEditPostActions = (postId, initialData, handleModalClose) => {
-    const { updatePostState } = usePostContext(); // Utiliza el contexto para actualizar el estado
+    const { updatePostState } = usePostContext(); 
     const [content, setContent] = useState(initialData.content || '');
     const [tags, setTags] = useState(initialData.tags || []);
     const [inputValue, setInputValue] = useState('');
@@ -40,7 +40,7 @@ export const useEditPostActions = (postId, initialData, handleModalClose) => {
         setIsLoading(true);
         try {
             const { data } = await postService.editPost(postId, { content, tags });
-            updatePostState(postId, data.post); // Actualiza el estado del contexto
+            updatePostState(postId, data.post);
             setSuccessMessage('Post edited successfully');
         } catch (error) {
             setErrorMessage('Error editing post');

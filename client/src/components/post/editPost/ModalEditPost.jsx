@@ -8,6 +8,8 @@ import {
     Button
 } from '@mui/material';
 
+//TODO: clean code
+
 export default function ModalEditPost({ children, open, handleClose }) {
     return (
         <>
