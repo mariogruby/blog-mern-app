@@ -19,7 +19,14 @@ export const getSavedPosts = async (req, res) => {
     try {
         const userId = req.payload._id;
 
-        const user = await User.findById(userId).populate('userSavedPost');
+        const user = await User.findById(userId).populate({
+            path: 'userSavedPost',
+            populate: {
+                path: 'author',
+                select: 'username'
+            },
+            select: '_id image likes'
+        })
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
