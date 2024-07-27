@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { removePostFromUsers } from "../middlewares/remove.js";
 
 const postSchema = new Schema({
     content: {
@@ -30,6 +31,8 @@ const postSchema = new Schema({
 },
     { timestamps: true }
 );
+
+postSchema.pre('deleteOne', { document: true, query: false }, removePostFromUsers);
 
 const Post = model("Post", postSchema);
 

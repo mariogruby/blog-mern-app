@@ -11,6 +11,14 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    name: {
+        type: String,
+        required: false
+    },
+    lastName: {
+        type: String,
+        required: false
+    },
     password: {
         type: String,
         required: true,
@@ -36,6 +44,31 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Post",
     }],
+    following: {
+        count: {
+            type: Number,
+            default: 0,
+        },
+        users: [{
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }]
+    },
+    followers: {
+        count: {
+            type: Number,
+            default: 0,
+        },
+        users: [{
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }]
+    },
+    contacts: [{
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    }],
+
 },
     { timestamps: true }
 );

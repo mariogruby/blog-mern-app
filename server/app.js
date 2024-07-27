@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.js"
 import postRoutes from "./routes/post.js"
 import userRoutes from "./routes/user.js"
 import commentRoutes from "./routes/comment.js"
+import messageRoutes from './routes/message.js';
 import configureApp from './config/index.js';
 import handleErrors from './error-handling/index.js';
 
@@ -18,6 +19,7 @@ app.use("/auth", authRoutes)
 app.use("/posts", postRoutes)
 app.use("/user", userRoutes)
 app.use("/comment", commentRoutes)
+app.use("/api/message", messageRoutes)
 
 handleErrors(app);
 

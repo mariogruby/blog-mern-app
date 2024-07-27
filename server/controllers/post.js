@@ -54,11 +54,26 @@ export const addPost = async (req, res) => {
 
 export const getPosts = async (req, res) => {
     try {
-        const allPosts = await Post.find().populate('author', '_id username userImage');
-        res.status(200).json({ success: true, allPosts });
+        const { page = 1, limit = 5 } = req.query;
+        const skip = (page - 1) * limit;
+        const allPosts = await Post.find()
+            .populate('author', '_id username userImage')
+            .skip(skip)
+            .sort({ createdAt: -1 }) 
+            .limit(Number(limit));
+        
+        const totalPosts = await Post.countDocuments();
+        const totalPages = Math.ceil(totalPosts / limit);
+
+        res.status(200).json({ 
+            success: true, 
+            allPosts,
+            totalPages,
+            currentPage: Number(page)
+        });
     } catch (error) {
         console.log(error)
-        res.status(500).json({ success: false, error: "Error get All Posts" })
+        res.status(500).json({ success: false, error: "Error getting all posts" })
     }
 };
 
@@ -185,7 +200,7 @@ export const deletePost = async (req, res) => {
             return res.status(403).json({ success: false, message: "Unauthorized action" });
         }
 
-        await post.remove();
+        await post.deleteOne();
 
         // Eliminar el post de la lista de posts del usuario
         user.userPost.pull(postId);
