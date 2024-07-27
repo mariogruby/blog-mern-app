@@ -7,20 +7,21 @@ import { CommentProvider } from './context/comment';
 import { PostProvider } from './context/post';
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from './context/auth';
+import { UserProvider } from './context/user';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <PostProvider>
-          <CommentProvider>
+  <BrowserRouter>
+    <AuthProvider>
+      <PostProvider>
+        <CommentProvider>
+          <UserProvider>
             <App />
-          </CommentProvider>
-        </PostProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+          </UserProvider>
+        </CommentProvider>
+      </PostProvider>
+    </AuthProvider>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function

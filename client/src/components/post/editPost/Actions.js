@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-import { usePostContext } from '../../../context/post'; 
+import { usePostContext } from '../../../context/post';
 import postService from '../../../services/post';
 
 export const useEditPostActions = (postId, initialData, handleModalClose) => {
-    const { updatePostState } = usePostContext(); 
     const [content, setContent] = useState(initialData.content || '');
     const [tags, setTags] = useState(initialData.tags || []);
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const { updatePostState } = usePostContext();
 
     useEffect(() => {
         setContent(initialData.content || '');
@@ -39,16 +39,18 @@ export const useEditPostActions = (postId, initialData, handleModalClose) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const { data } = await postService.editPost(postId, { content, tags });
-            updatePostState(postId, data.post);
-            setSuccessMessage('Post edited successfully');
+            const response = await postService.editPost(postId, { content, tags });
+            if ( response.data.success) {
+                setSuccessMessage('Post edited successfully'); //TODO: pendiente de editar funcionamiento 
+                setTimeout(() => {
+                    handleModalClose();
+                    updatePostState(postId, response.data.post);
+                    setIsLoading(false);
+                }, 1000);
+            }
         } catch (error) {
             setErrorMessage('Error editing post');
-        } finally {
-            setTimeout(() => {
-                setIsLoading(false);
-                handleModalClose();
-            }, 1000);
+            setIsLoading(false);
         }
     };
 

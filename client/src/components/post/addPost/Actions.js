@@ -28,7 +28,7 @@ export const useAddPostActions = (addPost, handleModalClose) => {
       case 'image-upload':
         const file = files[0];
         if (file) {
-          setSelectedImage(URL.createObjectURL(file)); 
+          setSelectedImage(URL.createObjectURL(file));
         }
         break;
       default:
@@ -62,7 +62,7 @@ export const useAddPostActions = (addPost, handleModalClose) => {
     formData.append('content', postText);
     formData.append('tags', JSON.stringify(tags));
     if (selectedImage) {
-      formData.append('image', selectedImage); 
+      formData.append('image', selectedImage);
     }
 
     try {
@@ -72,7 +72,7 @@ export const useAddPostActions = (addPost, handleModalClose) => {
       setPostText('');
       setTags([]);
       setSelectedImage(null);
-      addPost(response.data); 
+      addPost(response.data);
       console.log('response add post:', response);
     } catch (error) {
       const errorDescription = error.response?.data?.message || "Error occurred";

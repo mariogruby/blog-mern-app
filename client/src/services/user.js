@@ -20,7 +20,15 @@ class UserService {
     userSavedPost = () => {
         return this.user.get('/user/userSavedPosts');
     };
-    
+    getUser = (username) => {
+        return this.user.get(`/user/${username}/user-data`);
+    };
+    toggleFollowUser = (username) => {
+        return this.user.post(`/user/${username}/follow`);
+    };
+    editUser = (formData) =>  {
+        return this.user.put('/user/edit-user', formData);
+    };
 };
 
 const userService = new UserService();

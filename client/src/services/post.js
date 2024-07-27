@@ -17,9 +17,9 @@ class PostService {
         });
     };
 
-    getAllPosts = () => {
-        return this.postNoAuth.get('/posts/all-posts');
-    };  
+    getAllPosts = (page = 1, limit = 5) => {
+        return this.postNoAuth.get(`/posts/all-posts?page=${page}&limit=${limit}`);
+    };   
     addPost = (formData) => {
         return this.post.post('/posts/new-post', formData);
     };
@@ -31,6 +31,9 @@ class PostService {
     };
     editPost = (postId, requestBody) => {
         return this.post.put(`/posts/${postId}/edit`, requestBody);
+    };
+    deletePost = (postId) => {
+        return this.post.delete(`/posts/${postId}/delete`);
     };
     savePost = (postId) => {
         return this.post.post(`/posts/${postId}/save`);

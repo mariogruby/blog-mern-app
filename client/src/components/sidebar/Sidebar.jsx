@@ -15,7 +15,9 @@ import {
     Home as HomeIcon,
     HomeOutlined as HomeOutlinedIcon,
     TurnedInNot as TurnedInNotIcon,
-    TurnedIn as TurnedInIcon
+    TurnedIn as TurnedInIcon,
+    SendOutlined as SendOutlinedIcon,
+    Send as SendIcon
 } from '@mui/icons-material';
 
 const drawerWidth = 240;
@@ -53,11 +55,15 @@ const Sidebar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Saved" />
                 </ListItemButton>
-                <ListItemButton key="Inbox">
+                <ListItemButton key="dm" component={Link} to='/dm'>
                     <ListItemIcon>
-                        <InboxIcon />
+                        {location.pathname === '/dm' ? (
+                            <SendIcon fontSize="large" />
+                        ) : (
+                            <SendOutlinedIcon fontSize="large" />
+                        )}
                     </ListItemIcon>
-                    <ListItemText primary="Send email" />
+                    <ListItemText primary="Messages" />
                 </ListItemButton>
                 <ListItemButton key="Drafts">
                     <ListItemIcon>

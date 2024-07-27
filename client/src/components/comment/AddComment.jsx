@@ -17,37 +17,31 @@ export default function AddComment() {
     } = useAddCommentAction();
 
     return (
-        <Box
-            component="form"
+        <form
             onSubmit={handleSubmit}
-            noValidate
             autoComplete="off"
-        >
+            style={{ display: 'flex', alignItems: 'center' }}>
             <Grid item xs={12}>
                 <TextField
-                    rows={2}
                     onChange={handleContent}
                     name="content"
-                    multiline
-                    label="Add comment here..."
-                    variant="filled"
+                    placeholder="Add comment here..."
+                    variant="outlined"
                     fullWidth
                     value={content}
+                    InputProps={{ style: { color: 'white', borderColor: 'white' } }}
+                    sx={{ input: { bgcolor: 'black', border: 'none' } }}
                 />
             </Grid>
-            {content.trim() && (
-                <Box display="flex" justifyContent="flex-end" mt={2}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? 'Sending...' : 'Send'}
-                    </Button>
-                </Box>
-            )}
-        </Box>
+            <Button
+                variant="text"
+                color="primary"
+                type="submit"
+                disabled={isLoading || !content.trim()}
+                sx={{ marginLeft: 2 }}>
+                {isLoading ? 'Sending...' : 'Send'}
+            </Button>
+        </form>
     );
 }
 

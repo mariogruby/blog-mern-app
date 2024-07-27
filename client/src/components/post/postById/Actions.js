@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { usePostContext } from '../../../context/post';
 import { useParams } from 'react-router-dom';
 import { useCommentContext } from '../../../context/comment';
 import postService from '../../../services/post';
@@ -6,7 +7,7 @@ import commentService from '../../../services/comment';
 import userService from '../../../services/user';
 
 export const usePostByIdActions = () => {
-    const [post, setPost] = useState(null);
+    const [post, setPost] = useState(null); 
     const [comments, setComments] = useState([]);
     const [errorMessage, setErrorMessage] = useState(null);
     const [likedPost, setLikedPost] = useState([]);
@@ -16,8 +17,10 @@ export const usePostByIdActions = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [expandedIds, setExpandedIds] = useState([]);
+    const [savedPost, setSavedPost] = useState([]);
     const { postId } = useParams();
     const { updateComment } = useCommentContext();
+    const { updatePost } = usePostContext();
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -51,13 +54,16 @@ export const usePostByIdActions = () => {
         try {
             const response = await userService.userLikedPost();
             if (response.data.success) {
-                const likedPostIds = response.data.likedPost.map(post => post.Post._id);
+                const likedPostIds = response.data.likedPost
+                    .filter(post => post && post.Post && post.Post._id)
+                    .map(post => post.Post._id);
                 setLikedPost(likedPostIds);
             }
         } catch (error) {
             console.error('Error getting liked posts', error);
         }
-    };
+    }
+    
 
     const handleToggleLike = async () => {
         try {
@@ -78,6 +84,55 @@ export const usePostByIdActions = () => {
             console.error('Error toggling like', error);
         }
     };
+
+    const fetchSavedPosts = async () => {
+        try {
+            const response = await userService.userSavedPost();
+            if (response.data.success) {
+                if (Array.isArray(response.data.savedPosts)) {
+                    const savedPostIds = response.data.savedPosts
+                        .filter(post => post && post._id) 
+                        .map(post => post._id);
+                    setSavedPost(savedPostIds);
+                } else {
+                    console.error("savedPosts is not an array:", response.data.savedPosts);
+                }
+            } else {
+                console.error("Server returned an error:", response.data);
+            }
+        } catch (error) {
+            console.error("Error fetching saved posts", error);
+        }
+    }
+    
+
+    const handleToggleSave = async () => {
+        try {
+            const response = await postService.savePost(postId);
+            if (response.data.success) {
+                setSavedPost(prevSavedPost =>
+                    prevSavedPost.includes(postId)
+                        ? prevSavedPost.filter(id => id !== postId)
+                        : [...prevSavedPost, postId]
+                );
+            }
+        } catch (error) {
+            console.error('Error toggling save', error);
+        }
+    };
+
+    const handleDeletePost = async () => {
+        try {
+            const response = await postService.deletePost(postId);
+            if (response.data.success) {
+                console.log('Successfully deleted', response.data)
+            }
+        } catch (error) {
+            console.error('Error delete post ', error)
+        }
+    }
+
+
 
     const loadMoreComments = () => {
         setVisibleComments(prevVisibleComments => prevVisibleComments + 5);
@@ -115,7 +170,7 @@ export const usePostByIdActions = () => {
 
     useEffect(() => {
         fetchData();
-    }, [postId]);
+    }, [postId, updatePost]);
 
     useEffect(() => {
         fetchComments();
@@ -124,6 +179,11 @@ export const usePostByIdActions = () => {
     useEffect(() => {
         fetchLikedPosts();
     }, []);
+
+    useEffect(() => {
+        fetchSavedPosts();
+    }, []);
+
 
     return {
         handleToggleLike,
@@ -134,6 +194,8 @@ export const usePostByIdActions = () => {
         handleEdit,
         handleModalClose,
         isExpanded,
+        handleToggleSave,
+        handleDeletePost,
         post,
         comments,
         errorMessage,
@@ -143,6 +205,7 @@ export const usePostByIdActions = () => {
         anchorEl,
         isModalOpen,
         visibleComments,
+        savedPost,
         postId
     };
 };
