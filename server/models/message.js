@@ -13,7 +13,12 @@ const messageSchema = new Schema({
         },
         message: {
             type: String,
-            required: true,
+            required: false,
+        },
+        post: {
+            type: Schema.Types.ObjectId,
+            ref: "Post",
+            required: false,
         },
     }, { timestamps: true });
 

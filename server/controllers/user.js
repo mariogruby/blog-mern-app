@@ -156,11 +156,20 @@ export const editUser = async (req, res) => {
 export const getUsersForSidebar = async (req, res) => {
     try {
         const loggedInUserId = req.payload._id;
-        const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
 
-        res.status(200).json({ success: true, filteredUsers});
+        // Obtén el usuario logueado incluyendo la lista de usuarios seguidos
+        const loggedInUser = await User.findById(loggedInUserId).populate('following.users', '-password');
+
+        if (!loggedInUser) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Los usuarios que sigue el usuario logueado
+        const followedUsers = loggedInUser.following.users;
+
+        res.status(200).json({ success: true, followedUsers });
     } catch (error) {
-        console.log("Error in getUserForSidebar", error.message);
+        console.log("Error in getUsersForSidebar", error.message);
         res.status(500).json({ success: false, error: "Internal server error." });
     }
 };

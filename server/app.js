@@ -1,6 +1,7 @@
 import express from 'express';
+import { app } from './socket/socket.js';
 import dotenv from 'dotenv';
-import './db/index.js'; 
+import './db/index.js';
 import authRoutes from "./routes/auth.js"
 import postRoutes from "./routes/post.js"
 import userRoutes from "./routes/user.js"
@@ -11,7 +12,7 @@ import handleErrors from './error-handling/index.js';
 
 dotenv.config();
 
-const app = express();
+// const app = express();
 
 configureApp(app);
 

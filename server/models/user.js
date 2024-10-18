@@ -64,10 +64,6 @@ const userSchema = new Schema({
             ref: "User"
         }]
     },
-    contacts: [{
-        type: Schema.Types.ObjectId,
-        ref: "User"
-    }],
 
 },
     { timestamps: true }
