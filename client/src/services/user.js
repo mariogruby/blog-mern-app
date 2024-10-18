@@ -29,6 +29,9 @@ class UserService {
     editUser = (formData) =>  {
         return this.user.put('/user/edit-user', formData);
     };
+    getUsers = () => {
+        return this.user.get('/user/users');
+    };
 };
 
 const userService = new UserService();

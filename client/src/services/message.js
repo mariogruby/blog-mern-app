@@ -14,12 +14,12 @@ class MessageService {
             return config;
         });
     };
-    // sendMessage = (body) => {
-    //     return this.msg.post('/api/message', body)
-    // };
-    // fetchMessages = (id) => {
-    //     return this.msg.get(`/api/message/${id}`)
-    // };
+    sendMessage = (chatId, message, postId = null) => { // parámetro opcional postId
+        return this.msg.post(`/api/message/send/${chatId}`, { message, postId });
+    };
+    getMessages = (chatId) => {
+        return this.msg.get(`/api/message/${chatId}`);
+    }
 };
 
 const messageService = new MessageService();

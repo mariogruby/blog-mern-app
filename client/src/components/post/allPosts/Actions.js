@@ -16,6 +16,8 @@ export const useAllPostActions = () => {
     const [savedPosts, setSavedPosts] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [openModalList, setOpenModalList] = useState(false);
+    const [selectedPostId, setSelectedPostId] = useState(null);
 
     const fetchData = async (newPage = 1) => {
         if (newPage === 1) {
@@ -141,8 +143,18 @@ export const useAllPostActions = () => {
     };
     const handleLoadMore = () => {
         fetchData(page + 1);
-    }
+    };
 
+    const handleOpenChatList = (postId) => {
+        setSelectedPostId(postId);
+        setOpenModalList(true);
+    };
+    
+    const handleCloseChatList = () => {
+        setSelectedPostId(null);
+        setOpenModalList(false);
+    };
+    
     useEffect(() => {
         fetchData();
     }, [updatePost]);
@@ -173,6 +185,10 @@ export const useAllPostActions = () => {
         page,
         totalPages,
         setPage,
-        handleLoadMore
+        handleLoadMore,
+        handleOpenChatList,
+        handleCloseChatList,
+        openModalList,
+        selectedPostId
     };
 };

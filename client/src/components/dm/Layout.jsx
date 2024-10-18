@@ -1,3 +1,52 @@
+import React from 'react';
+import SidebarChat from './sidebar/SidebarChat';
+import MessageContainer from '../dm/messages/MessageContainer';
+import { Grid, Card, Box } from '@mui/material';
+
+export default function ChatLayout() {
+    return (
+        <Box sx={{ mt: { xs: '1px', sm: '1px', md: '15%', lg: '10%', xl: '2%', xxl: '20%' } }}>
+            <Card sx={{ maxHeight: 600, maxWidth: 1200, margin: 'auto', bgcolor: 'black', color: 'white' }}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} md={4} lg={3}>
+                        <SidebarChat />
+                    </Grid>
+                    <Grid item xs={12} md={8} lg={9}>
+                        <MessageContainer /> 
+                    </Grid>
+                </Grid>
+            </Card>
+        </Box>
+    );
+}
+
+
+//! INITIAL CODE SNIPPET
+// import React from 'react';
+// import SidebarChat from './sidebar/SidebarChat';
+// import Conversations from './conversation/Chats';
+// import { Grid, Card, CardContent, Box } from '@mui/material';
+
+// export default function ChatLayout() {
+//     return (
+//         <Box sx={{ mt: { xs: '1px', sm: '1px', md: '15%', lg: '10%', xl: '2%', xxl: '20%' } }}>
+//             <Card sx={{ maxWidth: 1200, margin: 'auto', bgcolor: 'black', color: 'white' }}>
+//                     <Grid container>
+//                     <CardContent>
+//                         <Grid item xs={14} md={12} lg={9}>
+//                             <SidebarChat />
+//                         </Grid>
+//                         <Grid item xs={12} md={8} lg={9}>
+//                             {/* <Conversations /> */}
+//                         </Grid>
+//                         </CardContent>
+//                     </Grid>
+//             </Card>
+//         </Box>
+//     );
+// }
+
+
 
 // import React, { useState, useEffect } from 'react';
 // import { InputBase, Avatar, Box, IconButton, List, ListItem, ListItemAvatar, ListItemText, AppBar, Toolbar } from '@mui/material';

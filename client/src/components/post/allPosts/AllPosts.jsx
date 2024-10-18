@@ -26,12 +26,19 @@ import {
     MoreVert as MoreVertIcon,
     ModeCommentOutlined as ModeCommentOutlinedIcon,
     TurnedInNot as TurnedInNotIcon,
-    TurnedIn as TurnedInIcon
+    TurnedIn as TurnedInIcon,
+    SendOutlined as SendOutlinedIcon,
+    Send as SendIcon
 } from '@mui/icons-material';
 import AlertModal from '../../alerts/NoAuth';
+import ListChat from './ListDm'
 
+//* oldest todo:
 //TODO: pending successMessage implementation and clean code
 //TODO: scroll bottom detector for load more posts 
+
+//* recents todo:
+//TODO: termianr de implementar el funcionamiento del post-chat 
 
 export default function AllPosts() {
     const {
@@ -50,11 +57,16 @@ export default function AllPosts() {
         page,
         totalPages,
         setPage,
-        handleLoadMore
+        handleLoadMore,
+        handleCloseChatList,
+        handleOpenChatList,
+        openModalList,
+        selectedPostId
     } = useAllPostActions();
 
     const { isLoggedIn } = useContext(AuthContext)
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const formatDate = (dateString) => {
         const l = "en";
@@ -75,7 +87,6 @@ export default function AllPosts() {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
-
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -141,8 +152,11 @@ export default function AllPosts() {
                                                     <ModeCommentOutlinedIcon />
                                                 </IconButton>
                                             </Link>
-                                            <IconButton aria-label="share">
-                                                <ShareIcon />
+                                            <IconButton
+                                                aria-label="share"
+                                                onClick={() => handleOpenChatList(post._id)} // Pasa el postId al abrir el modal
+                                            >
+                                                <SendOutlinedIcon />
                                             </IconButton>
                                             <IconButton
                                                 aria-label="save"
@@ -220,6 +234,7 @@ export default function AllPosts() {
                 )}
             </Grid>
             <AlertModal open={isModalOpen} handleClose={handleCloseModal} />
+            <ListChat open={openModalList} handleClose={handleCloseChatList} postId={selectedPostId} />
         </Box>
     );
 }

@@ -8,6 +8,7 @@ import { PostProvider } from './context/post';
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from './context/auth';
 import { UserProvider } from './context/user';
+import { SocketContextProvider } from './context/SocketContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -16,7 +17,9 @@ root.render(
       <PostProvider>
         <CommentProvider>
           <UserProvider>
+            <SocketContextProvider>
             <App />
+            </SocketContextProvider>
           </UserProvider>
         </CommentProvider>
       </PostProvider>
