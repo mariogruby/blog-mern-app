@@ -18,6 +18,6 @@ router.get("/:username/user-data", getUser);
 router.get("/userLikedPosts", isAuthenticated, userLikedPost);
 router.get("/userSavedPosts", isAuthenticated, getSavedPosts);
 router.put("/edit-user", isAuthenticated, editUser);
-router.get("/users", isAuthenticated, getUsersForSidebar)
+router.get("/conversations", isAuthenticated, getUsersForSidebar)
 
 export default router;

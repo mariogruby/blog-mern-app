@@ -1,4 +1,5 @@
 import User from '../models/user.js'
+import Conversation from '../models/conversation.js';
 import cloudinaryConfig from '../config/cloudinary.js'
 
 export const getUser = async (req, res) => {
@@ -153,21 +154,55 @@ export const editUser = async (req, res) => {
     }
 };
 
+// export const getUsersForSidebar = async (req, res) => {
+//     try {
+//         const loggedInUserId = req.payload._id;
+
+//         // Obtén el usuario logueado incluyendo la lista de usuarios seguidos
+//         const loggedInUser = await User.findById(loggedInUserId).populate('following.users', '-password');
+
+//         if (!loggedInUser) {
+//             return res.status(404).json({ success: false, message: "User not found" });
+//         }
+
+//         // Los usuarios que sigue el usuario logueado
+//         const followedUsers = loggedInUser.following.users;
+
+//         res.status(200).json({ success: true, followedUsers });
+//     } catch (error) {
+//         console.log("Error in getUsersForSidebar", error.message);
+//         res.status(500).json({ success: false, error: "Internal server error." });
+//     }
+// };
+
+
 export const getUsersForSidebar = async (req, res) => {
     try {
         const loggedInUserId = req.payload._id;
 
-        // Obtén el usuario logueado incluyendo la lista de usuarios seguidos
-        const loggedInUser = await User.findById(loggedInUserId).populate('following.users', '-password');
+        // Obtén las conversaciones en las que participa el usuario logueado
+        const conversations = await Conversation.find({
+            participants: { $in: [loggedInUserId] }
+        })
+        .populate('participants', '-password')
+        .populate({
+            path: 'messages',
+            populate: { path: 'senderId', select: 'username' }
+        });
 
-        if (!loggedInUser) {
-            return res.status(404).json({ success: false, message: "User not found" });
+        if (!conversations) {
+            return res.status(404).json({ success: false, message: "No conversations found" });
         }
 
-        // Los usuarios que sigue el usuario logueado
-        const followedUsers = loggedInUser.following.users;
+        // Filtra los participantes que no son el usuario logueado
+        const participants = conversations
+            .map(conversation => conversation.participants.filter(participant => participant._id.toString() !== loggedInUserId))
+            .flat()
+            .filter((participant, index, self) => 
+                self.findIndex(p => p._id.toString() === participant._id.toString()) === index
+            );
 
-        res.status(200).json({ success: true, followedUsers });
+        res.status(200).json({ success: true, participants });
     } catch (error) {
         console.log("Error in getUsersForSidebar", error.message);
         res.status(500).json({ success: false, error: "Internal server error." });

@@ -74,12 +74,22 @@ export const getMessages = async (req, res) => {
         const senderId = req.payload._id;
         const user = await User.findById(senderId);
         if (!user) {
-            return res.status(400).json({ success: false, message: "User not found" })
+            return res.status(400).json({ success: false, message: "User not found" });
         }
 
         const conversation = await Conversation.findOne({
             participants: { $all: [senderId, userToChatId] },
-        }).populate("messages"); // not reference but actual messages
+        }).populate({
+            path: 'messages',
+            populate: {
+                path: 'post', // Popula el campo post en cada mensaje
+                select: 'content image author', // Solo selecciona los campos necesarios
+                populate: {
+                    path: 'author', // Popula el autor del post con los detalles
+                    select: 'name', // Solo selecciona el nombre del autor
+                },
+            },
+        });
 
         if (!conversation) {
             return res.status(200).json({ success: true, messages: [] });
@@ -87,9 +97,9 @@ export const getMessages = async (req, res) => {
 
         const messages = conversation.messages;
 
-        res.status(200).json({success: true, messages});
+        res.status(200).json({ success: true, messages });
     } catch (error) {
         console.log("Error in getMessages controller", error.message);
-        res.status(500).json({ success: false, error: "Internal server error" })
+        res.status(500).json({ success: false, error: "Internal server error" });
     }
-}
+};
