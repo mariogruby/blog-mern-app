@@ -30,7 +30,7 @@ class UserService {
         return this.user.put('/user/edit-user', formData);
     };
     getUsers = () => {
-        return this.user.get('/user/users');
+        return this.user.get('/user/conversations');
     };
 };
 

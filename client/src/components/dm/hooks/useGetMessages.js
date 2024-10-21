@@ -15,6 +15,7 @@ export default function useGetMessages() {
                 const { success, messages, error } = response.data;
                 // if(data.error)throw new Error(data.error);
                 if (!success) throw new Error(error || 'Failed to fetch messages');
+                console.log('message:', messages)
                 setMessages(messages);
             } catch (error) {
                 toast.error(error.message);

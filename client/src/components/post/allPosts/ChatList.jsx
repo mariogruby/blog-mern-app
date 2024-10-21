@@ -12,7 +12,7 @@ export default function ChatList({ chat, lastIdx, isSelected, handleCheckboxChan
         <>
             <ListItemButton
                 sx={{
-                    borderBottom: lastIdx ? 'none' : '1px solid #6e6e6e',
+                    borderBottom: lastIdx ? 'none' : '1px solid #525252',
                 }}
                 // onClick={() => setSelectedChat(chat)}
                 >
