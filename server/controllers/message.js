@@ -1,6 +1,6 @@
 import Message from '../models/message.js'
 import User from '../models/user.js'
-import Post from '../models/post.js'  // Asegúrate de importar el modelo Post
+import Post from '../models/post.js'
 import Conversation from '../models/conversation.js'
 import { getReceiverSocketId, io } from '../socket/socket.js';
 
@@ -25,12 +25,13 @@ export const sendMessage = async (req, res) => {
             }
         }
 
-        // Verificar si el mensaje está vacío o solo contiene espacios
-        const trimmedMessage = message?.trim(); // Elimina espacios en blanco
+        // Verificar que el mensaje no esté vacío
+        const trimmedMessage = message?.trim();
         if (!trimmedMessage && !postId) {
             return res.status(400).json({ success: false, message: 'Message cannot be empty' });
         }
 
+        // Verificar la conversación
         let conversation = await Conversation.findOne({
             participants: { $all: [senderId, receiverId] },
         });
@@ -44,21 +45,31 @@ export const sendMessage = async (req, res) => {
         const newMessage = new Message({
             senderId,
             receiverId,
-            message: trimmedMessage || null, // Si el mensaje está vacío, guarda null
-            post: post ? post._id : null,    // Asocia el post si existe
+            message: trimmedMessage || null,
+            post: post ? post._id : null,
         });
 
-        if (newMessage) {
-            conversation.messages.push(newMessage._id);
-        }
+        conversation.messages.push(newMessage._id);
+
+        // Actualizar el contador de mensajes no leídos para el receptor
+        conversation.unreadMessages.set(receiverId, (conversation.unreadMessages.get(receiverId) || 0) + 1);
 
         await Promise.all([conversation.save(), newMessage.save()]);
 
-        // Funcionalidad de SOCKET.IO
+        // Emitir el evento de nuevo mensaje por Socket.io
         const receiverSocketId = getReceiverSocketId(receiverId);
         if (receiverSocketId) {
             io.to(receiverSocketId).emit("newMessage", newMessage);
+
+            // Emitir notificación de mensajes no leídos al receptor
+            io.to(receiverSocketId).emit("unreadMessagesUpdate", {
+                senderId,
+                unreadMessagesCount: conversation.unreadMessages.get(receiverId),
+            });
         }
+
+        // También emitir el nuevo mensaje al remitente (si es necesario)
+        io.to(req.socket.id).emit("newMessage", newMessage);
 
         res.status(201).json({ success: true, message: "Message sent successfully", newMessage });
     } catch (error) {
@@ -68,38 +79,36 @@ export const sendMessage = async (req, res) => {
 };
 
 
+
 export const getMessages = async (req, res) => {
     try {
         const { id: userToChatId } = req.params;
         const senderId = req.payload._id;
+
         const user = await User.findById(senderId);
-        if (!user) {
-            return res.status(400).json({ success: false, message: "User not found" });
-        }
+        if (!user) return res.status(400).json({ success: false, message: "User not found" });
 
         const conversation = await Conversation.findOne({
             participants: { $all: [senderId, userToChatId] },
         }).populate({
             path: 'messages',
             populate: {
-                path: 'post', // Popula el campo post en cada mensaje
-                select: 'content image author', // Solo selecciona los campos necesarios
-                populate: {
-                    path: 'author', // Popula el autor del post con los detalles
-                    select: 'name', // Solo selecciona el nombre del autor
-                },
+                path: 'post',
+                select: 'content image author',
+                populate: { path: 'author', select: 'name' },
             },
         });
 
-        if (!conversation) {
-            return res.status(200).json({ success: true, messages: [] });
+        if (conversation) {
+            // Restablece el contador de mensajes no leídos para el usuario actual
+            conversation.unreadMessages.set(senderId, 0);
+            await conversation.save();
         }
 
-        const messages = conversation.messages;
-
-        res.status(200).json({ success: true, messages });
+        res.status(200).json({ success: true, messages: conversation?.messages || [] });
     } catch (error) {
         console.log("Error in getMessages controller", error.message);
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 };
+

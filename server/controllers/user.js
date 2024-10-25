@@ -184,7 +184,7 @@ export const getUsersForSidebar = async (req, res) => {
         const conversations = await Conversation.find({
             participants: { $in: [loggedInUserId] }
         })
-        .populate('participants', '-password')
+        .populate('participants', '-password')  // Popula los participantes pero excluye la contraseña
         .populate({
             path: 'messages',
             populate: { path: 'senderId', select: 'username' }
@@ -194,13 +194,18 @@ export const getUsersForSidebar = async (req, res) => {
             return res.status(404).json({ success: false, message: "No conversations found" });
         }
 
-        // Filtra los participantes que no son el usuario logueado
-        const participants = conversations
-            .map(conversation => conversation.participants.filter(participant => participant._id.toString() !== loggedInUserId))
-            .flat()
-            .filter((participant, index, self) => 
-                self.findIndex(p => p._id.toString() === participant._id.toString()) === index
-            );
+        // Filtra los participantes que no son el usuario logueado y añade el conteo de mensajes no leídos
+        const participants = conversations.map(conversation => {
+            const otherParticipant = conversation.participants.find(participant => participant._id.toString() !== loggedInUserId);
+
+            // Verificar cuántos mensajes no leídos hay para el usuario logueado
+            const unreadMessagesCount = conversation.unreadMessages.get(loggedInUserId) || 0;
+
+            return {
+                ...otherParticipant.toObject(),  // Convertir el participante a un objeto para modificarlo
+                unreadMessagesCount  // Añadimos el conteo de mensajes no leídos
+            };
+        });
 
         res.status(200).json({ success: true, participants });
     } catch (error) {

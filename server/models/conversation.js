@@ -15,6 +15,11 @@ const conversationSchema = new Schema(
                 default: [],
             }
         ],
+        unreadMessages: {
+            type: Map,
+            of: Number, // Clave: userId, Valor: cantidad de mensajes no leídos
+            default: {}
+        }
     },
     { timestamps: true });
 
