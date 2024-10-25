@@ -57,5 +57,5 @@ export default function useGetChats() {
         getChats();
     }, []);
 
-    return { loading, chats };
+    return { loading, chats, setChats };
 }

@@ -1,5 +1,4 @@
 import axios from 'axios';
-// import { toast } from 'react-toastify';
 
 class MessageService {
     constructor() {
@@ -14,7 +13,7 @@ class MessageService {
             return config;
         });
     };
-    sendMessage = (chatId, message, postId = null) => { // parámetro opcional postId
+    sendMessage = (chatId, message, postId = null) => {
         return this.msg.post(`/api/message/send/${chatId}`, { message, postId });
     };
     getMessages = (chatId) => {

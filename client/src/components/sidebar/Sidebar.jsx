@@ -5,25 +5,35 @@ import {
     List,
     ListItemIcon,
     ListItemText,
-    IconButton,
-    ListItemButton
+    ListItemButton,
+    Badge 
 } from '@mui/material';
 import {
     Inbox as InboxIcon,
-    Mail as MailIcon,
-    ChevronLeft as ChevronLeftIcon,
     Home as HomeIcon,
     HomeOutlined as HomeOutlinedIcon,
     TurnedInNot as TurnedInNotIcon,
     TurnedIn as TurnedInIcon,
     SendOutlined as SendOutlinedIcon,
-    Send as SendIcon
+    Send as SendIcon,
+    Mail as MailIcon
 } from '@mui/icons-material';
+import useGetChats from '../dm/hooks/useGetChats'; 
+import { useSocketContext } from '../../context/SocketContext'; 
+import { useSocketUpdates, calculateUnreadMessagesCount } from './Actions';
 
 const drawerWidth = 240;
 
 const Sidebar = () => {
     const location = useLocation();
+    const { chats, setChats } = useGetChats();
+    const { socket } = useSocketContext(); 
+
+    // Usamos la función para escuchar actualizaciones del socket
+    useSocketUpdates(socket, setChats);
+
+    // Usamos la función para calcular los mensajes no leídos
+    const unreadMessagesCount = calculateUnreadMessagesCount(chats);
 
     return (
         <Drawer
@@ -57,11 +67,13 @@ const Sidebar = () => {
                 </ListItemButton>
                 <ListItemButton key="dm" component={Link} to='/dm'>
                     <ListItemIcon>
-                        {location.pathname === '/dm' ? (
-                            <SendIcon fontSize="large" />
-                        ) : (
-                            <SendOutlinedIcon fontSize="large" />
-                        )}
+                        <Badge badgeContent={unreadMessagesCount} color="error">
+                            {location.pathname === '/dm' ? (
+                                <SendIcon fontSize="large" />
+                            ) : (
+                                <SendOutlinedIcon fontSize="large" />
+                            )}
+                        </Badge>
                     </ListItemIcon>
                     <ListItemText primary="Messages" />
                 </ListItemButton>
@@ -75,6 +87,9 @@ const Sidebar = () => {
         </Drawer>
     );
 };
+
+export default Sidebar;
+
 
 const MobileSidebar = ({ mobileOpen, handleDrawerToggle }) => (
     <Drawer

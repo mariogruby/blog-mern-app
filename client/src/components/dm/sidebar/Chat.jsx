@@ -6,9 +6,9 @@ import { useSocketContext } from '../../../context/SocketContext';
 
 export default function Chat({ chat, lastIdx }) {
   const { selectedChat, setSelectedChat } = useChat();
+  const { onlineUsers } = useSocketContext();
 
   const isSelected = selectedChat?._id === chat._id;
-  const { onlineUsers } = useSocketContext();
   const isOnline = onlineUsers.includes(chat._id);
 
   return (
@@ -31,38 +31,48 @@ export default function Chat({ chat, lastIdx }) {
               variant={isOnline ? 'dot' : undefined}
               sx={{
                 '& .MuiBadge-dot': {
-                  width: 13,  // Ancho del dot
-                  height: 13, // Altura del dot
-                  minWidth: 13,
-                  borderColor: 'black',  // Color del borde
-                  borderWidth: 2,        // Ancho del borde
+                  width: 13,
+                  height: 13,
+                  borderColor: 'black',
+                  borderWidth: 2,
                   borderStyle: 'solid',
                 }
               }}
             >
-              <Avatar src={chat.userImage}></Avatar>
+              <Avatar src={chat.userImage} />
             </Badge>
           </ListItemAvatar>
 
           <ListItemText
             primary={chat.username}
-            secondary={
-              <React.Fragment>
-                <Box component="span" display="block" fontSize="small" color="textSecondary">
-                  {/* {!isOnline ?'' : 'Online'} */}
-                </Box>
-                {/* <Box component="span" display="block" color="textSecondary" noWrap>
-                  Hey everyone, we just had a fantastic quarter! 🎉
-                </Box> */}
-              </React.Fragment>
-            }
+            secondary={chat.unreadMessagesCount > 0 ? (
+              <Box component="span" display="block" fontSize="small" color="textSecondary">
+                {/* Tienes {chat.unreadMessagesCount} mensaje(s) nuevo(s) */}
+                {/* {chat.unreadMessagesCount > 0 && (
+                  <Box>
+                    Tienes {chat.unreadMessagesCount} mensaje(s) nuevo(s)
+                  </Box>
+                )} */}
+              </Box>
+            ) : null}
           />
+
+          {/* Badge para mensajes no leídos en la posición end */}
+          {chat.unreadMessagesCount > 0 && (
+            <Badge
+              color="error"
+              badgeContent={chat.unreadMessagesCount}
+              max={999}
+              sx={{ marginLeft: 'auto' }} // Asegura que el Badge esté a la derecha
+            />
+          )}
         </ListItemButton>
       </Link>
       {!lastIdx && <Divider sx={{ my: 0, py: 0, height: 1 }} />}
     </>
   );
 }
+
 
 //! INITIAL CODE SNIPPET
 // import React from 'react';
