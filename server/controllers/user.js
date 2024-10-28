@@ -176,6 +176,8 @@ export const editUser = async (req, res) => {
 // };
 
 
+
+
 export const getUsersForSidebar = async (req, res) => {
     try {
         const loggedInUserId = req.payload._id;
@@ -207,7 +209,14 @@ export const getUsersForSidebar = async (req, res) => {
             };
         });
 
-        res.status(200).json({ success: true, participants });
+        // Obtener todos los usuarios (excepto el usuario logueado) de la base de datos
+        const allUsers = await User.find({ _id: { $ne: loggedInUserId } }).select('-password');
+
+        res.status(200).json({ 
+            success: true, 
+            participants, 
+            allUsers  // Devolvemos también todos los usuarios 
+        });
     } catch (error) {
         console.log("Error in getUsersForSidebar", error.message);
         res.status(500).json({ success: false, error: "Internal server error." });
