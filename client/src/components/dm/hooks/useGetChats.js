@@ -35,19 +35,22 @@ import { toast } from 'react-toastify';
 
 export default function useGetChats() {
     const [loading, setLoading] = useState(false);
-    const [chats, setChats] = useState([]);
+    const [chats, setChats] = useState([]); 
+    const [allUsers, setAllUsers] = useState([]); 
 
     useEffect(() => {
         const getChats = async () => {
             setLoading(true);
             try {
                 const response = await userService.getUsers();
-                const data = response.data.participants; 
+                const { participants, allUsers } = response.data; 
                 
-                if (data.error) {
-                    throw new Error(data.error);
+                if (response.data.error) {
+                    throw new Error(response.data.error);
                 }
-                setChats(data);
+                setChats(participants); 
+                setAllUsers(allUsers);  
+                console.log("all users:", allUsers)
             } catch (error) {
                 toast.error(error.message);
             } finally {
@@ -57,5 +60,5 @@ export default function useGetChats() {
         getChats();
     }, []);
 
-    return { loading, chats, setChats };
+    return { loading, chats, setChats, allUsers, setAllUsers }; 
 }

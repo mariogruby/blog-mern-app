@@ -18,7 +18,7 @@ class MessageService {
     };
     getMessages = (chatId) => {
         return this.msg.get(`/api/message/${chatId}`);
-    }
+    };
 };
 
 const messageService = new MessageService();
