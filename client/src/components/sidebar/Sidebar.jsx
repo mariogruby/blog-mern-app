@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
     Drawer,
@@ -6,7 +6,7 @@ import {
     ListItemIcon,
     ListItemText,
     ListItemButton,
-    Badge 
+    Badge
 } from '@mui/material';
 import {
     Inbox as InboxIcon,
@@ -16,10 +16,17 @@ import {
     TurnedIn as TurnedInIcon,
     SendOutlined as SendOutlinedIcon,
     Send as SendIcon,
-    Mail as MailIcon
+    Mail as MailIcon,
+    Search as SearchIcon,
+    SearchOutlined as SearchOutlinedIcon,
+    Settings as SettingsIcon,
+    SettingsOutlined as SettingsOutlinedIcon,
+    NotificationsNoneOutlined as NotificationsNoneOutlinedIcon,
+    Notifications as NotificationsIcon
 } from '@mui/icons-material';
-import useGetChats from '../dm/hooks/useGetChats'; 
-import { useSocketContext } from '../../context/SocketContext'; 
+import SearchModal from './SearchModal'
+import useGetChats from '../dm/hooks/useGetChats';
+import { useSocketContext } from '../../context/SocketContext';
 import { useSocketUpdates, calculateUnreadMessagesCount } from './Actions';
 
 const drawerWidth = 240;
@@ -27,7 +34,16 @@ const drawerWidth = 240;
 const Sidebar = () => {
     const location = useLocation();
     const { chats, setChats } = useGetChats();
-    const { socket } = useSocketContext(); 
+    const { socket } = useSocketContext();
+    const [openModal, setOpenModal] = useState(false);
+
+    const handleOpenModal = () => {
+        setOpenModal(true); // Abre el modal
+    };
+
+    const handleCloseModal = () => {
+        setOpenModal(false); // Cierra el modal
+    };
 
     // Usamos la función para escuchar actualizaciones del socket
     useSocketUpdates(socket, setChats);
@@ -76,6 +92,16 @@ const Sidebar = () => {
                         </Badge>
                     </ListItemIcon>
                     <ListItemText primary="Messages" />
+                    </ListItemButton>
+                    <ListItemButton key="Notifications" component={Link} to={'/notifications'}>
+                    <ListItemIcon>
+                        {location.pathname === '/notifications' ? (
+                            <NotificationsIcon fontSize='large' />
+                        ) : (
+                            <NotificationsNoneOutlinedIcon fontSize='large' />
+                        )}
+                    </ListItemIcon>
+                    <ListItemText primary="Notifications" />
                 </ListItemButton>
                 <ListItemButton key="Drafts">
                     <ListItemIcon>
@@ -83,7 +109,24 @@ const Sidebar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Drafts" />
                 </ListItemButton>
+                <ListItemButton key="Search" component="div" onClick={handleOpenModal}>
+                    <ListItemIcon>
+                            <SearchIcon fontSize='large' />
+                    </ListItemIcon>
+                    <ListItemText primary="Search" />
+                </ListItemButton>
+                <ListItemButton key="Settings" component={Link} to={'/settings'}>
+                    <ListItemIcon>
+                        {location.pathname === '/settings' ? (
+                            <SettingsIcon fontSize='large' />
+                        ) : (
+                            <SettingsOutlinedIcon fontSize='large' />
+                        )}
+                    </ListItemIcon>
+                    <ListItemText primary="Settings" />
+                </ListItemButton>
             </List>
+            <SearchModal open={openModal} onClose={handleCloseModal} />
         </Drawer>
     );
 };

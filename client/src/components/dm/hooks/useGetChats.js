@@ -50,7 +50,7 @@ export default function useGetChats() {
                 }
                 setChats(participants); 
                 setAllUsers(allUsers);  
-                console.log("all users:", allUsers)
+                // console.log("all users:", allUsers)
             } catch (error) {
                 toast.error(error.message);
             } finally {
