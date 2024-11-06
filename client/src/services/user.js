@@ -32,6 +32,9 @@ class UserService {
     getUsers = () => {
         return this.user.get('/user/conversations');
     };
+    getNotifications = () => {
+        return this.user.get('/user/notifications');
+    };
 };
 
 const userService = new UserService();

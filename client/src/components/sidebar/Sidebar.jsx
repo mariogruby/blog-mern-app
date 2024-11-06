@@ -24,7 +24,8 @@ import {
     NotificationsNoneOutlined as NotificationsNoneOutlinedIcon,
     Notifications as NotificationsIcon
 } from '@mui/icons-material';
-import SearchModal from './SearchModal'
+import SearchModal from './search/SearchModal'
+import NotificationsModal from './notifications/Modal';
 import useGetChats from '../dm/hooks/useGetChats';
 import { useSocketContext } from '../../context/SocketContext';
 import { useSocketUpdates, calculateUnreadMessagesCount } from './Actions';
@@ -36,13 +37,22 @@ const Sidebar = () => {
     const { chats, setChats } = useGetChats();
     const { socket } = useSocketContext();
     const [openModal, setOpenModal] = useState(false);
+    const [openNotifications, setOpenNotifications] = useState(false);
 
-    const handleOpenModal = () => {
-        setOpenModal(true); // Abre el modal
+    //* search Modal
+    const handleOpenModal = () => { 
+        setOpenModal(true);
+    };
+    const handleCloseModal = () => {
+        setOpenModal(false); 
     };
 
-    const handleCloseModal = () => {
-        setOpenModal(false); // Cierra el modal
+    //* notifications Modal
+    const handleOpenNotifications = () => {
+        setOpenNotifications(true);
+    };
+    const handleCloseNotifications = () => {
+        setOpenNotifications(false); 
     };
 
     // Usamos la función para escuchar actualizaciones del socket
@@ -93,7 +103,7 @@ const Sidebar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Messages" />
                     </ListItemButton>
-                    <ListItemButton key="Notifications" component={Link} to={'/notifications'}>
+                    <ListItemButton key="Notifications" component={Link} onClick={handleOpenNotifications}>
                     <ListItemIcon>
                         {location.pathname === '/notifications' ? (
                             <NotificationsIcon fontSize='large' />
@@ -127,13 +137,14 @@ const Sidebar = () => {
                 </ListItemButton>
             </List>
             <SearchModal open={openModal} onClose={handleCloseModal} />
+            <NotificationsModal open={openNotifications} onClose={handleCloseNotifications} />
         </Drawer>
     );
 };
 
 export default Sidebar;
 
-
+// TODO: Modificar el navbar para dispositivos moviles al finalizar las funciones del sidebar
 const MobileSidebar = ({ mobileOpen, handleDrawerToggle }) => (
     <Drawer
         variant="temporary"

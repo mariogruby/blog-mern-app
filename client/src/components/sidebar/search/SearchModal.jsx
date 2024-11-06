@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import useGetChats from '../dm/hooks/useGetChats';
+import useGetChats from '../../dm/hooks/useGetChats';
 import CloseIcon from '@mui/icons-material/Close';
 import { InputBase, Avatar, Box, Slide, Toolbar, IconButton, AppBar, Divider, List, ListItemButton, ListItemText, Dialog } from '@mui/material';
+import { filterUsers, handleSearchUser } from './Actions';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
@@ -14,20 +14,8 @@ export default function SearchModal({ open, onClose }) {
     const { allUsers } = useGetChats();
     const navigate = useNavigate();
 
-    const filteredUsers = allUsers.filter(user =>
-        user.username.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredUsers = filterUsers(allUsers, search);
 
-    const handleSearchUser = (user) => {
-        if (user) {
-            setSearch("");
-            navigate(`/${user.username}`);
-            onClose();
-        } else {
-            toast.error("Error");
-        }
-    };
-    
     return (
         <Dialog
             fullScreen
@@ -59,7 +47,7 @@ export default function SearchModal({ open, onClose }) {
                 {search && filteredUsers.length > 0 ? (
                     filteredUsers.map((user) => (
                         <div key={user.id}>
-                            <ListItemButton onClick={() => handleSearchUser(user)}>
+                            <ListItemButton onClick={() => handleSearchUser(user, setSearch, navigate, onClose)}>
                                 <Avatar src={user.userImage} alt={user.username} sx={{ mr: 2 }} />
                                 <ListItemText primary={user.username} />
                             </ListItemButton>
@@ -72,4 +60,4 @@ export default function SearchModal({ open, onClose }) {
             </List>
         </Dialog>
     );
-}    
+}
