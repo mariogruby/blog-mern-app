@@ -24,12 +24,16 @@ const postSchema = new Schema({
         type: Number,
         default: 0,
     },
+    likedBy: [{
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    }],
     createAt: {
         type: Date,
         default: Date.now,
     },
 },
-    { timestamps: true }
+{ timestamps: true }
 );
 
 postSchema.pre('deleteOne', { document: true, query: false }, removePostFromUsers);

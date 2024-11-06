@@ -1,6 +1,8 @@
 import Comment from '../models/comments.js';
 import Post from '../models/post.js';
 import User from '../models/user.js';
+import Notification from '../models/notification.js';
+import { io } from '../socket/socket.js'
 
 export const addComment = async (req, res) => {
     try {
@@ -19,6 +21,23 @@ export const addComment = async (req, res) => {
         if (!content) {
             return res.status(400).json({ success: false, message: 'Content is required.' });
         };
+
+        const notification = new Notification({
+            type: 'comment',
+            post: postId,
+            user: userId,
+        })
+        await notification.save();
+
+        const postOwner = await User.findById(post.author);
+        postOwner.notifications.push(notification._id);
+        await postOwner.save();
+
+        io.emit("newNotification", {
+            type: 'comment',
+            postId,
+            userId,
+        })
 
         const createComment = new Comment({
             content,

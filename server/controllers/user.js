@@ -1,6 +1,8 @@
 import User from '../models/user.js'
+import Notification from '../models/notification.js'
 import Conversation from '../models/conversation.js';
 import cloudinaryConfig from '../config/cloudinary.js'
+import { io } from '../socket/socket.js'
 
 export const getUser = async (req, res) => {
     try {
@@ -56,6 +58,20 @@ export const followUser = async (req, res) => {
 
             followUser.followers.users.push(userId);
             followUser.followers.count += 1;
+            const notification = new Notification({
+                type: 'follower', // tipo de notificacion
+                user: userId, // usuario de quien proviene el follow
+            });
+            await notification.save();
+
+            const userOwner = await User.findById(followUserId); // usuario al que se le va cargar la notificacion
+            userOwner.notifications.push(notification._id);
+            await userOwner.save();
+
+            io.emit("newNotification", {
+                type: 'follower',
+                user: userId,
+            });
         }
 
         // Guardar los cambios
@@ -154,29 +170,54 @@ export const editUser = async (req, res) => {
     }
 };
 
-// export const getUsersForSidebar = async (req, res) => {
+export const updatePassword = async (req,res) => {
+    try {
+        const userId = req.payload._id;
+        const { newPassword } = req.body;
+
+        if(!newPassword) {
+            return res.status(401).json({ success: false, message: "New password is required." });
+        }
+
+        const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+        if (!passwordRegex.test(newPassword)) {
+            return res.status(400).json({
+                message: "Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter."
+            });
+        }
+
+        const foundUser = await User.findById(userId);
+        if(!foundUser) {
+            return res.status(404).json({ success: false, message: "User not found." });
+        }
+
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+        foundUser.password = hashedNewPassword;
+
+        const updatedUser = await foundUser.save();
+        res.status(200).json({ message: "User information updated successfully", user: updatedUser });
+    } catch (error) {
+        console.error("error in updateUser", error);
+        res.status(500).json({ message: "Error updating user", error});
+    }
+};
+
+// export const searchUsers = async (req, res) => {
 //     try {
-//         const loggedInUserId = req.payload._id;
-
-//         // Obtén el usuario logueado incluyendo la lista de usuarios seguidos
-//         const loggedInUser = await User.findById(loggedInUserId).populate('following.users', '-password');
-
-//         if (!loggedInUser) {
-//             return res.status(404).json({ success: false, message: "User not found" });
+//         const userId = req.payload._id;
+//         const user = await User.findById(userId);
+//         if (!user) {
+//             return res.status(404).json({ success: false, message: "User not found." });
 //         }
+//         const allUsers = await User.find({_id: {$ne: user}}).select('-password')
 
-//         // Los usuarios que sigue el usuario logueado
-//         const followedUsers = loggedInUser.following.users;
-
-//         res.status(200).json({ success: true, followedUsers });
+//         res.status(200).json({ success: true, allUsers})
 //     } catch (error) {
-//         console.log("Error in getUsersForSidebar", error.message);
-//         res.status(500).json({ success: false, error: "Internal server error." });
+//         console.error(error);
+//         res.status(500).json({success: false, message:"error in searchUsers controller"})
 //     }
 // };
-
-
-
 
 export const getUsersForSidebar = async (req, res) => {
     try {
@@ -220,5 +261,36 @@ export const getUsersForSidebar = async (req, res) => {
     } catch (error) {
         console.log("Error in getUsersForSidebar", error.message);
         res.status(500).json({ success: false, error: "Internal server error." });
+    }
+};
+
+export const getNotifications = async (req, res) => {
+    try {
+        const userId = req.payload._id
+
+        const user = await User.findById(userId).populate({
+            path: 'notifications',
+            populate: [
+                {
+                    path: 'user',
+                    select: 'username userImage',
+                },
+                {
+                    path: 'post',
+                    select: '_id image',
+                }
+            ],
+            select: '_id createdAt read type',
+        });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        if(!user.notifications || user.notifications.length === 0) {
+            return res.status(404).json({ success: false, message: "you has no notifications"});
+        }
+        return res.status(200).json({success: true, notifications: user.notifications})
+    } catch (error) {
+        console.error(error);
+        response.status(500).json({success: false, message: 'Error in getNotifications controller'});
     }
 };

@@ -1,6 +1,8 @@
 import Post from '../models/post.js'
 import User from '../models/user.js'
+import Notification from '../models/notification.js'
 import cloudinaryConfig from '../config/cloudinary.js'
+import { io } from '../socket/socket.js'; // Asegúrate de que la ruta sea correcta
 
 export const addPost = async (req, res) => {
     try {
@@ -59,14 +61,14 @@ export const getPosts = async (req, res) => {
         const allPosts = await Post.find()
             .populate('author', '_id username userImage')
             .skip(skip)
-            .sort({ createdAt: -1 }) 
+            .sort({ createdAt: -1 })
             .limit(Number(limit));
-        
+
         const totalPosts = await Post.countDocuments();
         const totalPages = Math.ceil(totalPosts / limit);
 
-        res.status(200).json({ 
-            success: true, 
+        res.status(200).json({
+            success: true,
             allPosts,
             totalPages,
             currentPage: Number(page)
@@ -79,8 +81,8 @@ export const getPosts = async (req, res) => {
 
 export const likePost = async (req, res) => {
     try {
-        const userId = req.payload._id;
-        const postId = req.params.postId;
+        const userId = req.payload._id; // ID del usuario que da like
+        const postId = req.params.postId; // ID del post que recibe el like
 
         // Busca el usuario por su ID
         const user = await User.findById(userId);
@@ -98,19 +100,43 @@ export const likePost = async (req, res) => {
         const likedPostIndex = user.likedPost.findIndex(like => like.Post.toString() === postId);
 
         if (likedPostIndex !== -1) {
+            // Si ya le había dado like, entonces removemos el like
             if (user.likedPost[likedPostIndex].liked) {
-                // Si ya le había dado like, entonces removemos el like y eliminamos el registro
                 user.likedPost.splice(likedPostIndex, 1);
                 post.likes -= 1;
+                post.likedBy.pull(userId); // Remover usuario del campo likedBy
             } else {
-                // Este caso no debería ocurrir ya que si liked es false no debería estar en la lista, pero lo manejamos por si acaso
+                // Este caso no debería ocurrir, pero lo manejamos por si acaso
                 user.likedPost[likedPostIndex].liked = true;
                 post.likes += 1;
+                post.likedBy.push(userId); // Agregar usuario al campo likedBy
             }
         } else {
             // Si el usuario no ha interactuado con el post antes, agregamos un nuevo registro de like
             user.likedPost.push({ Post: postId, liked: true });
             post.likes += 1;
+            post.likedBy.push(userId); // Agregar usuario al campo likedBy
+
+            // Crear una nueva notificación
+            const notification = new Notification({
+                type: 'like',
+                post: postId,
+                user: userId,
+            });
+            await notification.save(); // Guardar la notificación
+
+            // Agregar la notificación al usuario que posee el post
+            const postOwner = await User.findById(post.author); // Obtener el dueño del post
+            postOwner.notifications.push(notification._id); // Agregar la notificación al usuario
+            await postOwner.save(); // Guardar los cambios en el usuario
+
+            // Emitir notificación a través de sockets
+            io.emit("newNotification", {
+                type: 'like',
+                postId,
+                userId,
+                // message: `${user.username} liked your post!`, // Mensaje opcional
+            });
         }
 
         // Guardamos los cambios
@@ -123,6 +149,7 @@ export const likePost = async (req, res) => {
         res.status(500).json({ success: false, message: "An error occurred while liking/unliking the post" });
     }
 };
+
 
 export const getPostById = async (req, res) => {
     try {

@@ -44,6 +44,10 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Post",
     }],
+    notifications: [{
+        type: Schema.Types.ObjectId,
+        ref: "Notification"
+    }],
     following: {
         count: {
             type: Number,
@@ -64,7 +68,6 @@ const userSchema = new Schema({
             ref: "User"
         }]
     },
-
 },
     { timestamps: true }
 );

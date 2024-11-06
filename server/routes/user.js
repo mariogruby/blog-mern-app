@@ -6,7 +6,10 @@ import {
     getUser,
     followUser,
     editUser,
-    getUsersForSidebar
+    getUsersForSidebar,
+    updatePassword, 
+    // searchUsers
+    getNotifications,
 } from '../controllers/user.js'
 import { isAuthenticated } from '../middlewares/jwt.js';
 
@@ -18,6 +21,9 @@ router.get("/:username/user-data", getUser);
 router.get("/userLikedPosts", isAuthenticated, userLikedPost);
 router.get("/userSavedPosts", isAuthenticated, getSavedPosts);
 router.put("/edit-user", isAuthenticated, editUser);
-router.get("/conversations", isAuthenticated, getUsersForSidebar)
+router.get("/conversations", isAuthenticated, getUsersForSidebar);
+// router.get("/users", isAuthenticated, searchUsers);
+router.get("/notifications", isAuthenticated, getNotifications);
+router.put("/update-password", isAuthenticated, updatePassword);
 
 export default router;
