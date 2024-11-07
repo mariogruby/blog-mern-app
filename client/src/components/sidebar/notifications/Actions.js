@@ -22,6 +22,28 @@ export const useNotificationsActions = () => {
         }
     }
 
+    const markNotificationsAsRead = async () => {
+        const unreadNotifications = notifications.filter(notification => !notification.read);
+        if (unreadNotifications.length === 0) {
+            console.log("No hay notificaciones no leídas.");
+            return;  // Si no hay notificaciones no leídas, no actualices el estado
+        }
+    
+        try {
+            const response = await userService.markNotificationsAsRead();
+            const updatedNotifications = notifications.map(notification => ({
+                ...notification,
+                read: true, // Marca todas como leídas
+            }));
+            setNotifications(updatedNotifications); // Actualiza el estado con las notificaciones leídas
+            console.log('Notificaciones marcadas como leídas:', updatedNotifications);
+        } catch (e) {
+            console.log('Error al actualizar las notificaciones:', e);
+        }
+    };
+
+    
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -29,6 +51,8 @@ export const useNotificationsActions = () => {
     return {
         notifications,
         errorMessage,
-        isLoading
+        isLoading,
+        setNotifications,
+        markNotificationsAsRead
     };
 };

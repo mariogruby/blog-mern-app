@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
     Drawer,
@@ -28,7 +28,8 @@ import SearchModal from './search/SearchModal'
 import NotificationsModal from './notifications/Modal';
 import useGetChats from '../dm/hooks/useGetChats';
 import { useSocketContext } from '../../context/SocketContext';
-import { useSocketUpdates, calculateUnreadMessagesCount } from './Actions';
+import { useSocketUpdatesMessages, calculateUnreadMessagesCount, useSocketUpdatesNotifications, calculateUnreadNotificationsCount } from './Actions';
+import { useNotificationsActions } from './notifications/Actions';
 
 const drawerWidth = 240;
 
@@ -38,28 +39,38 @@ const Sidebar = () => {
     const { socket } = useSocketContext();
     const [openModal, setOpenModal] = useState(false);
     const [openNotifications, setOpenNotifications] = useState(false);
+    const { notifications, setNotifications, markNotificationsAsRead } = useNotificationsActions();
 
     //* search Modal
-    const handleOpenModal = () => { 
+    const handleOpenModal = () => {
         setOpenModal(true);
     };
     const handleCloseModal = () => {
-        setOpenModal(false); 
+        setOpenModal(false);
     };
 
     //* notifications Modal
     const handleOpenNotifications = () => {
+        markNotificationsAsRead(notifications, setNotifications);
         setOpenNotifications(true);
     };
     const handleCloseNotifications = () => {
-        setOpenNotifications(false); 
+        setOpenNotifications(false);
     };
 
-    // Usamos la función para escuchar actualizaciones del socket
-    useSocketUpdates(socket, setChats);
+    //* Usar los hooks para escuchar actualizaciones del socket
+    useSocketUpdatesMessages(socket, setChats);
+    useSocketUpdatesNotifications(socket, setNotifications);
 
-    // Usamos la función para calcular los mensajes no leídos
+    //* Calcular mensajes no leídos
     const unreadMessagesCount = calculateUnreadMessagesCount(chats);
+    const unreadNotificationsCount = calculateUnreadNotificationsCount(notifications);
+
+    useEffect(() => {
+        // Verifica si las notificaciones están actualizadas correctamente
+        console.log("Notificaciones actualizadas:", notifications);
+    }, [notifications]);
+    
 
     return (
         <Drawer
@@ -102,17 +113,19 @@ const Sidebar = () => {
                         </Badge>
                     </ListItemIcon>
                     <ListItemText primary="Messages" />
-                    </ListItemButton>
-                    <ListItemButton key="Notifications" component={Link} onClick={handleOpenNotifications}>
-                    <ListItemIcon>
-                        {location.pathname === '/notifications' ? (
-                            <NotificationsIcon fontSize='large' />
-                        ) : (
-                            <NotificationsNoneOutlinedIcon fontSize='large' />
-                        )}
-                    </ListItemIcon>
-                    <ListItemText primary="Notifications" />
                 </ListItemButton>
+                <ListItemButton key="Notifications" component="div" onClick={handleOpenNotifications}>
+                <ListItemIcon>
+                    <Badge badgeContent={unreadNotificationsCount} color="error">
+                        {location.pathname === '/notifications' ? (
+                            <NotificationsIcon fontSize="large" />
+                        ) : (
+                            <NotificationsNoneOutlinedIcon fontSize="large" />
+                        )}
+                    </Badge>
+                </ListItemIcon>
+                <ListItemText primary="Notifications" />
+            </ListItemButton>
                 <ListItemButton key="Drafts">
                     <ListItemIcon>
                         <MailIcon />
@@ -121,7 +134,7 @@ const Sidebar = () => {
                 </ListItemButton>
                 <ListItemButton key="Search" component="div" onClick={handleOpenModal}>
                     <ListItemIcon>
-                            <SearchIcon fontSize='large' />
+                        <SearchIcon fontSize='large' />
                     </ListItemIcon>
                     <ListItemText primary="Search" />
                 </ListItemButton>
@@ -141,6 +154,7 @@ const Sidebar = () => {
         </Drawer>
     );
 };
+
 
 export default Sidebar;
 

@@ -35,6 +35,9 @@ class UserService {
     getNotifications = () => {
         return this.user.get('/user/notifications');
     };
+    markNotificationsAsRead = () => {
+        return this.user.put('/user/notifications/mark-as-read');
+    };
 };
 
 const userService = new UserService();
