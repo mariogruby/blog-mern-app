@@ -2,7 +2,7 @@ import Comment from '../models/comments.js';
 import Post from '../models/post.js';
 import User from '../models/user.js';
 import Notification from '../models/notification.js';
-import { io } from '../socket/socket.js'
+import { io, userSocketMap } from '../socket/socket.js'
 
 export const addComment = async (req, res) => {
     try {
@@ -33,12 +33,19 @@ export const addComment = async (req, res) => {
         postOwner.notifications.push(notification._id);
         await postOwner.save();
 
-        io.emit("newNotification", {
-            type: 'comment',
-            postId,
-            userId,
-        })
-
+        const postOwnerId = postOwner._id.toString();
+        const socketId = userSocketMap[postOwnerId];
+        if(socketId) {
+            io.to(socketId).emit("newNotification", {
+                type: 'comment',
+                postId,
+                userId,
+            });
+            console.log(`Notification emitted to: ${socketId}`);
+        } else {
+            console.log(`The socket associated with the user: ${postOwnerId} was not found`);
+        }
+        
         const createComment = new Comment({
             content,
             author: user._id

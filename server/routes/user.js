@@ -10,6 +10,7 @@ import {
     updatePassword, 
     // searchUsers
     getNotifications,
+    markNotificationsAsRead
 } from '../controllers/user.js'
 import { isAuthenticated } from '../middlewares/jwt.js';
 
@@ -24,6 +25,7 @@ router.put("/edit-user", isAuthenticated, editUser);
 router.get("/conversations", isAuthenticated, getUsersForSidebar);
 // router.get("/users", isAuthenticated, searchUsers);
 router.get("/notifications", isAuthenticated, getNotifications);
+router.put("/notifications/mark-as-read", isAuthenticated, markNotificationsAsRead);
 router.put("/update-password", isAuthenticated, updatePassword);
 
 export default router;

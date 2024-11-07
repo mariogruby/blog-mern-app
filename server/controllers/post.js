@@ -2,7 +2,7 @@ import Post from '../models/post.js'
 import User from '../models/user.js'
 import Notification from '../models/notification.js'
 import cloudinaryConfig from '../config/cloudinary.js'
-import { io } from '../socket/socket.js'; // Asegúrate de que la ruta sea correcta
+import { io, userSocketMap } from '../socket/socket.js'; // Asegúrate de que la ruta sea correcta
 
 export const addPost = async (req, res) => {
     try {
@@ -131,12 +131,18 @@ export const likePost = async (req, res) => {
             await postOwner.save(); // Guardar los cambios en el usuario
 
             // Emitir notificación a través de sockets
-            io.emit("newNotification", {
-                type: 'like',
-                postId,
-                userId,
-                // message: `${user.username} liked your post!`, // Mensaje opcional
-            });
+            const postOwnerId = postOwner._id.toString();
+            const socketId = userSocketMap[postOwnerId];
+            if (socketId) {
+                io.to(socketId).emit("newNotification", {
+                    type: 'like',
+                    postId,
+                    userId,
+                });
+                console.log(`Notification emitted to: ${socketId}`);
+            } else {
+                console.log(`The socket associated with the user: ${postOwnerId} was not found`);
+            }
         }
 
         // Guardamos los cambios

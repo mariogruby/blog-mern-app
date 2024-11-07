@@ -2,7 +2,7 @@ import User from '../models/user.js'
 import Notification from '../models/notification.js'
 import Conversation from '../models/conversation.js';
 import cloudinaryConfig from '../config/cloudinary.js'
-import { io } from '../socket/socket.js'
+import { io, userSocketMap } from '../socket/socket.js'
 
 export const getUser = async (req, res) => {
     try {
@@ -68,7 +68,19 @@ export const followUser = async (req, res) => {
             userOwner.notifications.push(notification._id);
             await userOwner.save();
 
-            io.emit("newNotification", {
+            const userOwnerId = userOwner._id.toString();
+            const socketId = userSocketMap[userOwnerId];
+            if(socketId){
+                io.to(socketId).emit("NewNotification", {
+                    type: 'follower',
+                    user: userId,
+                });
+                console.log(`Notification emitted to: ${socketId}`);
+            } else {
+                console.log(`The socket associated with the user: ${userOwnerId} was not found `)
+            }
+
+            io.to(userOwner._id).emit("newNotification", {
                 type: 'follower',
                 user: userId,
             });
@@ -170,12 +182,12 @@ export const editUser = async (req, res) => {
     }
 };
 
-export const updatePassword = async (req,res) => {
+export const updatePassword = async (req, res) => {
     try {
         const userId = req.payload._id;
         const { newPassword } = req.body;
 
-        if(!newPassword) {
+        if (!newPassword) {
             return res.status(401).json({ success: false, message: "New password is required." });
         }
 
@@ -187,7 +199,7 @@ export const updatePassword = async (req,res) => {
         }
 
         const foundUser = await User.findById(userId);
-        if(!foundUser) {
+        if (!foundUser) {
             return res.status(404).json({ success: false, message: "User not found." });
         }
 
@@ -199,7 +211,7 @@ export const updatePassword = async (req,res) => {
         res.status(200).json({ message: "User information updated successfully", user: updatedUser });
     } catch (error) {
         console.error("error in updateUser", error);
-        res.status(500).json({ message: "Error updating user", error});
+        res.status(500).json({ message: "Error updating user", error });
     }
 };
 
@@ -227,11 +239,11 @@ export const getUsersForSidebar = async (req, res) => {
         const conversations = await Conversation.find({
             participants: { $in: [loggedInUserId] }
         })
-        .populate('participants', '-password')  // Popula los participantes pero excluye la contraseña
-        .populate({
-            path: 'messages',
-            populate: { path: 'senderId', select: 'username' }
-        });
+            .populate('participants', '-password')  // Popula los participantes pero excluye la contraseña
+            .populate({
+                path: 'messages',
+                populate: { path: 'senderId', select: 'username' }
+            });
 
         if (!conversations) {
             return res.status(404).json({ success: false, message: "No conversations found" });
@@ -253,9 +265,9 @@ export const getUsersForSidebar = async (req, res) => {
         // Obtener todos los usuarios (excepto el usuario logueado) de la base de datos
         const allUsers = await User.find({ _id: { $ne: loggedInUserId } }).select('-password');
 
-        res.status(200).json({ 
-            success: true, 
-            participants, 
+        res.status(200).json({
+            success: true,
+            participants,
             allUsers  // Devolvemos también todos los usuarios 
         });
     } catch (error) {
@@ -285,12 +297,39 @@ export const getNotifications = async (req, res) => {
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
-        if(!user.notifications || user.notifications.length === 0) {
-            return res.status(404).json({ success: false, message: "you has no notifications"});
+        if (!user.notifications || user.notifications.length === 0) {
+            return res.status(404).json({ success: false, message: "you has no notifications" });
         }
-        return res.status(200).json({success: true, notifications: user.notifications})
+        return res.status(200).json({ success: true, notifications: user.notifications })
     } catch (error) {
         console.error(error);
-        response.status(500).json({success: false, message: 'Error in getNotifications controller'});
+        response.status(500).json({ success: false, message: 'Error in getNotifications controller' });
+    }
+};
+
+export const markNotificationsAsRead = async (req, res) => {
+    try {
+        const userId = req.payload._id;
+
+        const user = await User.findById(userId).populate("notifications");
+        if (!user || !user.notifications.length) {
+            return res.status(200).json({ success: true, message: "No notifications to mark as read" });
+        }
+
+        const unreadNotifications = user.notifications.filter(notification => !notification.read);
+        if (unreadNotifications.length === 0) {
+            return res.status(200).json({ success: true, message: "All notifications are already read" });
+        }
+
+        // Marcar como leídas
+        await Notification.updateMany(
+            { _id: { $in: unreadNotifications.map(n => n._id) } },
+            { read: true }
+        );
+
+        return res.status(200).json({ success: true, message: "Notifications marked as read" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Error marking notifications as read" });
     }
 };
