@@ -293,7 +293,7 @@ export const getNotifications = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found" });
         }
         if (!user.notifications || user.notifications.length === 0) {
-            return res.status(404).json({ success: false, message: "you has no notifications" });
+            return res.status(200).json({ success: true, message: "you don't have notifications", notifications: [] });
         }
         return res.status(200).json({ success: true, notifications: user.notifications })
     } catch (error) {
