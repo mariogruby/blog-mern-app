@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../../context/auth';
 import { toast } from 'react-toastify'
 import { usePostContext } from '../../../context/post';
 import postService from '../../../services/post';
 import userService from '../../../services/user';
 
 export const useAllPostActions = () => {
+    const { isLoggedIn } = useContext(AuthContext);
     const { updatePost } = usePostContext();
     const [posts, setPosts] = useState([]);
     const [expandedIds, setExpandedIds] = useState([]);
@@ -54,6 +56,7 @@ export const useAllPostActions = () => {
     }
 
     const fetchLikedPosts = async () => {
+        if(!isLoggedIn) return;
         try {
             const response = await userService.userLikedPost();
             if (response.data.success) {
@@ -87,6 +90,7 @@ export const useAllPostActions = () => {
     }
 
     const fetchSavedPosts = async () => {
+        if(!isLoggedIn) return;
         try {
             const response = await userService.userSavedPost();
             if (response.data.success) {
@@ -161,11 +165,11 @@ export const useAllPostActions = () => {
 
     useEffect(() => {
         fetchLikedPosts();
-    }, []);
+    }, [isLoggedIn]);
 
     useEffect(() => {
         fetchSavedPosts();
-    }, []);
+    }, [isLoggedIn]);
 
     return {
         fetchData,

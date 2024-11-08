@@ -66,10 +66,14 @@ const Sidebar = () => {
     const unreadMessagesCount = calculateUnreadMessagesCount(chats);
     const unreadNotificationsCount = calculateUnreadNotificationsCount(notifications);
 
-    useEffect(() => {
-        // Verifica si las notificaciones están actualizadas correctamente
-        console.log("Notificaciones actualizadas:", notifications);
-    }, [notifications]);
+    // useEffect(() => {
+    //     // Verifica si las notificaciones están actualizadas correctamente
+    //     console.log("Notificaciones actualizadas:", notifications);
+    // }, [notifications]);
+
+    // useEffect(() => {
+    //     console.log("chats actualizados:", chats);
+    // }, [chats])
     
 
     return (
@@ -126,12 +130,6 @@ const Sidebar = () => {
                 </ListItemIcon>
                 <ListItemText primary="Notifications" />
             </ListItemButton>
-                <ListItemButton key="Drafts">
-                    <ListItemIcon>
-                        <MailIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Drafts" />
-                </ListItemButton>
                 <ListItemButton key="Search" component="div" onClick={handleOpenModal}>
                     <ListItemIcon>
                         <SearchIcon fontSize='large' />
