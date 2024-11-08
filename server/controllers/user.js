@@ -71,7 +71,7 @@ export const followUser = async (req, res) => {
             const userOwnerId = userOwner._id.toString();
             const socketId = userSocketMap[userOwnerId];
             if(socketId){
-                io.to(socketId).emit("NewNotification", {
+                io.to(socketId).emit("newNotification", {
                     type: 'follower',
                     user: userId,
                 });
@@ -79,11 +79,6 @@ export const followUser = async (req, res) => {
             } else {
                 console.log(`The socket associated with the user: ${userOwnerId} was not found `)
             }
-
-            io.to(userOwner._id).emit("newNotification", {
-                type: 'follower',
-                user: userId,
-            });
         }
 
         // Guardar los cambios
