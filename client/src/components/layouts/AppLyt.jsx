@@ -3,18 +3,16 @@ import AddPost from '../../components/post/addPost/AddPost'
 import { Box, CssBaseline, SpeedDial, SpeedDialIcon, SpeedDialAction } from '@mui/material';
 import Navbar from '../navbar/Navbar';
 import ModalAddPost from '../post/addPost/ModalAddPost';
-import { Sidebar, MobileSidebar } from '../sidebar/Sidebar';
+import Sidebar from '../sidebar/Sidebar';
 import AddIcon from '@mui/icons-material/Add';
 import { useLocation } from 'react-router-dom';
+import { useMediaQuery, useTheme } from '@mui/material';
 
 export default function Layout({ children }) {
-    const [mobileOpen, setMobileOpen] = useState(false);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const location = useLocation();
-
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
 
     const handleModalOpen = () => {
         setIsModalOpen(true);
@@ -26,10 +24,9 @@ export default function Layout({ children }) {
 
     return (
         <Box sx={{ display: 'flex' }}>
+            {/* <Navbar /> */}
             <CssBaseline />
-            <Navbar handleDrawerToggle={handleDrawerToggle} />
             <Sidebar />
-            <MobileSidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
             <Box
                 component="main"
                 sx={{ flexGrow: 1, bgcolor: 'background.default', ml: { xs: 0, sm: 30 }, mt: 9 }}
@@ -39,7 +36,11 @@ export default function Layout({ children }) {
             {location.pathname === "/" && (
                 <SpeedDial
                     ariaLabel="SpeedDial basic example"
-                    sx={{ position: 'fixed', bottom: 16, right: 16 }}
+                    sx={{
+                        position: 'fixed',
+                        bottom: isMobile ? 90 : 16, // Ajusta hacia arriba en modo móvil
+                        right: 16,
+                    }}
                     icon={<SpeedDialIcon />}
                 >
                     <SpeedDialAction

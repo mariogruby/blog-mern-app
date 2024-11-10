@@ -1,26 +1,50 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import userService from '../services/user.js'
+import { AuthContext } from './auth.js';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+    const { user } = useContext(AuthContext);
     const [userInfo, setUserInfo] = useState({});
     const [updateUserInfo, setUpdateUserInfo] = useState(0);
-    
-        const updateInfo = (newInfo) => {
-            setUserInfo((prevInfo) => ({
-                ...prevInfo,
-                ...newInfo,
-            }));
-            setUpdateUserInfo((prev) => prev + 1);
-        };
 
-        return (
-            <UserContext.Provider value={{ userInfo, updateUserInfo, updateInfo }}>
-                {children}
-            </UserContext.Provider>
-        );
+    const username = user ? user.username : null;
+    console.log('username: ',  username)
+
+    const fetchData = async () => {
+        if(!username) return;
+        try {
+        const response = await userService.getUser(username);
+        console.log('response:', response.data.userData)
+        setUserInfo(response.data.userData)
+        } catch (error) {
+            console.error(error)
+            setUserInfo(null);
+        }
+    }
+
+    const updateInfo = (newInfo) => {
+        setUserInfo((prevInfo) => ({
+            ...prevInfo,
+            ...newInfo,
+        }));
+        setUpdateUserInfo((prev) => prev + 1);
+
+        fetchData();
     };
 
-    export const useUserContext = () => {
-        return useContext(UserContext);
-    };
+    useEffect(()=> {
+        fetchData()
+    }, [user, updateUserInfo])
+
+    return (
+        <UserContext.Provider value={{ userInfo, updateUserInfo, updateInfo }}>
+            {children}
+        </UserContext.Provider>
+    );
+};
+
+export const useUserContext = () => {
+    return useContext(UserContext);
+};

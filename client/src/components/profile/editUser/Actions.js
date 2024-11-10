@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../../context/auth';
 import userService from '../../../services/user';
 import { useUserContext } from '../../../context/user'
+
+//TODO: falta arreglar el reenderizado cuando se actualiza la informacion de user, está un poco disparejo 
 
 export const useEditUserActions = (initialData, handleModalClose) => {
     const [name, setName] = useState(initialData.name || '');
@@ -48,6 +51,8 @@ export const useEditUserActions = (initialData, handleModalClose) => {
 
         try {
             const response = await userService.editUser(formData);
+            const updatedData = response.data;
+            updateInfo(updatedData);
             setErrorMessage(null);
             setSelectedImage(null);
             setTimeout(() => {
@@ -56,7 +61,7 @@ export const useEditUserActions = (initialData, handleModalClose) => {
             setTimeout(() => {
                 setIsLoading(false);
                 handleModalClose();
-                updateInfo();
+                // updateInfo();
             }, 1500);
             console.log('response edit user:', response);
         } catch (error) {

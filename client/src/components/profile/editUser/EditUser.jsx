@@ -31,7 +31,6 @@ export default function EditUser({ initialData, handleModalClose }) {
     } = useEditUserActions(initialData, handleModalClose);
 
     const { userData } = useUserProfileActions();
-
     const [isEditorOpen, setEditorOpen] = useState(false);
     const [imageToEdit, setImageToEdit] = useState(null);
 

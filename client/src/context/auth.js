@@ -22,6 +22,7 @@ function AuthProvider(props) {
                 setIsLoggedIn(true);
                 setIsLoading(false);
                 setUser(user);
+                console.log(user)
             })
             .catch((error) => {
                 setIsLoggedIn(false);
