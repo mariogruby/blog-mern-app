@@ -16,7 +16,6 @@ export const getUser = async (req, res) => {
         if (!userData) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
-
         return res.status(200).json({ success: true, userData: userData });
     } catch (error) {
         console.error(error);

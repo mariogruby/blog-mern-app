@@ -60,8 +60,8 @@ export const login = (req, res, next) => {
 
             const passwordCorrect = bcrypt.compareSync(password, foundUser.password);
             if (passwordCorrect) {
-                const { _id, email, username } = foundUser;
-                const payload = { _id, email, username };
+                const { _id, email, username, userImage } = foundUser;
+                const payload = { _id, email, username, userImage };
                 const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
                     algorithm: "HS256",
                     expiresIn: "6h",
