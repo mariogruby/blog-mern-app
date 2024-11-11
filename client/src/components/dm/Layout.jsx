@@ -1,25 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SidebarChat from './sidebar/SidebarChat';
 import MessageContainer from '../dm/messages/MessageContainer';
-import { Grid, Card, Box } from '@mui/material';
+import { Grid, Card, Box, IconButton, useMediaQuery } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function ChatLayout() {
+    const [showSidebar, setShowSidebar] = useState(true);
+    const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md')); // Detecta si es móvil
+
     return (
         <Box sx={{ mt: { xs: '1px', sm: '1px', md: '15%', lg: '10%', xl: '2%', xxl: '20%' } }}>
-            <Card sx={{ maxHeight: 600, maxWidth: 1200, margin: 'auto', bgcolor: 'black', color: 'white' }}>
+            <Card
+                sx={{
+                    maxHeight: 600,
+                    maxWidth: 1200,
+                    margin: 'auto',
+                    bgcolor: 'black',
+                    color: 'white',
+                }}
+            >
                 <Grid container spacing={2}>
-                    <Grid item xs={12} md={4} lg={3}>
-                        <SidebarChat />
-                    </Grid>
-                    <Grid item xs={12} md={8} lg={9}>
-                        <MessageContainer /> 
-                    </Grid>
+                    {/* Mostrar lista de chats */}
+                    {(!isMobile || showSidebar) && (
+                        <Grid
+                            item
+                            xs={12}
+                            md={4}
+                            lg={3}
+                            sx={{ display: { xs: showSidebar ? 'block' : 'none', md: 'block' } }}
+                        >
+                            <SidebarChat onChatSelect={() => isMobile && setShowSidebar(false)} />
+                        </Grid>
+                    )}
+
+                    {/* Botón de volver en móvil */}
+                    {isMobile && !showSidebar && (
+                        <IconButton
+                            onClick={() => setShowSidebar(true)}
+                            sx={{ display: { xs: 'block', md: 'none' }, position: 'absolute', top: 10, left: 10 }}
+                        >
+                            <ArrowBackIcon sx={{ color: 'white' }} />
+                        </IconButton>
+                    )}
+
+                    {/* Mostrar mensajes */}
+                    {(!isMobile || !showSidebar) && (
+                        <Grid
+                            item
+                            xs={12}
+                            md={8}
+                            lg={9}
+                            sx={{ display: { xs: !showSidebar ? 'block' : 'none', md: 'block' } }}
+                        >
+                            <MessageContainer />
+                        </Grid>
+                    )}
                 </Grid>
             </Card>
         </Box>
     );
 }
-
 
 //! INITIAL CODE SNIPPET
 // import React from 'react';

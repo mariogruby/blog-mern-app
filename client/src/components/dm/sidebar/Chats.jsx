@@ -6,7 +6,7 @@ import { useSocketContext } from '../../../context/SocketContext';
 import useChat from '../../zustand/useChat';
 import { useSocketUpdates } from './Actions';
 
-export default function ChatList() {
+export default function Chats({ onChatSelect }) {
     const { loading, chats, setChats } = useGetChats();
     const { socket } = useSocketContext();
     useSocketUpdates(socket, setChats);
@@ -19,6 +19,7 @@ export default function ChatList() {
                         key={chat._id}
                         chat={chat}
                         lastIdx={idx === chats.length - 1}
+                        onChatSelect={onChatSelect}
                     />
                 ))}
                 {loading ? <p>LOADING..</p> : null}
@@ -26,6 +27,7 @@ export default function ChatList() {
         </Box>
     );
 }
+
 
 //! INITIAL CODE SNIPPET
 // import React, { useState, useEffect } from 'react';

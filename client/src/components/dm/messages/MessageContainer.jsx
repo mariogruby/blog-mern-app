@@ -8,6 +8,7 @@ import SendIcon from '@mui/icons-material/Send';
 import MessageInput from './MessageInput'
 import { styled } from '@mui/material/styles';
 import { AuthContext } from '../../../context/auth';
+import { useUserContext } from '../../../context/user';
 import { useSocketContext } from '../../../context/SocketContext';
 
 export default function MessageContainer({chat}) {
@@ -68,7 +69,7 @@ export default function MessageContainer({chat}) {
 }
 
 const NoChatSelected = () => {
-    const { user } = useContext(AuthContext);
+    const { userInfo } = useUserContext();
     return (
         <Container>
             <Box
@@ -79,7 +80,7 @@ const NoChatSelected = () => {
                 height={600}
             >
                 <Typography variant="h4" gutterBottom>
-                    Hi, {user.username}
+                    Hi, {userInfo.username}
                 </Typography>
                 <Typography variant="subtitle1">
                     Select a chat to start messaging

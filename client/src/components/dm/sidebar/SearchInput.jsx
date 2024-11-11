@@ -34,15 +34,31 @@ export default function SearchInput() {
     return (
         <AppBar position="sticky">
             <Toolbar>
-                <Box display="flex" alignItems="center" width="100%">
-                    <form onSubmit={handleSubmit}>
+                <Box
+                    display="flex"
+                    alignItems="center"
+                    width="100%"
+                    sx={{ flexDirection: { xs: 'column', sm: 'row' } }} 
+                >
+                    <form
+                        onSubmit={handleSubmit}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                        }}
+                    >
                         <InputBase
                             placeholder="Search conversations..."
                             sx={{ ml: 1, flex: 1 }}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
-                        <IconButton type="submit" edge="end">
+                        <IconButton
+                            type="submit"
+                            edge="end"
+                            sx={{ ml: 1 }} 
+                        >
                             <SearchIcon />
                         </IconButton>
                     </form>

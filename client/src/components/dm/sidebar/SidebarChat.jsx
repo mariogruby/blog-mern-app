@@ -3,16 +3,17 @@ import { Box } from '@mui/material';
 import SearchInput from './SearchInput';
 import Chats from './Chats';
 
-export default function SidebarChat() {
+export default function SidebarChat({ onChatSelect }) {
     return (
         <Box display="flex" flexDirection="column" height={600}>
             <SearchInput />
             <Box flex={1} overflow="auto">
-                <Chats />
+                <Chats onChatSelect={onChatSelect} />
             </Box>
         </Box>
     );
 }
+
 
 
 //! INITIAL CODE SNIPPET
