@@ -79,7 +79,7 @@ export const getCommentPost = async (req, res) => {
         }
 
         if (!post.comments.length) {
-            return res.status(404).json({ success: false, message: "No comments in post" });
+            return res.status(200).json({ success: true, comments: [] });
         }
 
         return res.status(200).json({ success: true, comments: post.comments });
