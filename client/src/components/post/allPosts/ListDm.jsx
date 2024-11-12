@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Box, List, ListItem, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
+import {
+    Box,
+    List,
+    ListItem,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+    TextField
+} from '@mui/material';
 import ChatList from './ChatList';
 import { toast } from 'react-toastify';
 import useGetChats from '../../dm/hooks/useGetChats';
@@ -11,7 +21,6 @@ export default function ChatsListModal({ open, handleClose, postId }) {
     const [message, setMessage] = useState('');
     const [checkedChats, setCheckedChats] = useState({});
 
-    // Función para manejar el cambio de checkbox
     const handleCheckboxChange = (chatId) => {
         setCheckedChats((prev) => ({
             ...prev,
@@ -19,30 +28,25 @@ export default function ChatsListModal({ open, handleClose, postId }) {
         }));
     };
 
-    // Verificar si hay algún chat seleccionado
     const isAnyChatSelected = Object.values(checkedChats).some((isChecked) => isChecked);
 
     const handleSendMessage = async () => {
         if (!message && !postId) return;
         const selectedChats = Object.keys(checkedChats).filter(id => checkedChats[id]);
-    
-        // Iterar sobre cada chat seleccionado
+
         for (const chatId of selectedChats) {
-            // Llamar a sendMessage para cada chat seleccionado
             await sendMessage(message, postId, chatId);
         }
-        
         handleClose();
         toast.success('Post sent successfully');
     };
-    
-    // Efecto para resetear el estado cuando se cierra el modal
+
     useEffect(() => {
         if (!open) {
-            setMessage(''); // Limpiar el mensaje
-            setCheckedChats({}); // Desmarcar todos los checkboxes
+            setMessage('');
+            setCheckedChats({});
         }
-    }, [open]); // Se dispara cuando el estado de 'open' cambia
+    }, [open]);
 
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
@@ -66,7 +70,7 @@ export default function ChatsListModal({ open, handleClose, postId }) {
                     </Box>
                     <Box mt={2}>
                         <TextField
-                            label="Mensaje"
+                            label="Message"
                             fullWidth
                             multiline
                             rows={4}

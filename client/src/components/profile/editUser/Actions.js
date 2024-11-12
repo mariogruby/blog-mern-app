@@ -1,17 +1,13 @@
-import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../../context/auth';
+import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify'
 import userService from '../../../services/user';
 import { useUserContext } from '../../../context/user'
-
-//TODO: falta arreglar el reenderizado cuando se actualiza la informacion de user, está un poco disparejo 
 
 export const useEditUserActions = (initialData, handleModalClose) => {
     const [name, setName] = useState(initialData.name || '');
     const [lastName, setLastName] = useState(initialData.lastName || '');
     const [selectedImage, setSelectedImage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
     const { updateInfo } = useUserContext();
 
     useEffect(() => {
@@ -52,23 +48,20 @@ export const useEditUserActions = (initialData, handleModalClose) => {
         try {
             const response = await userService.editUser(formData);
             const updatedData = response.data;
-            updateInfo(updatedData);
-            setErrorMessage(null);
-            setSelectedImage(null);
-            setTimeout(() => {
-                setSuccessMessage('User information saved successfully');
-            }, 1000)
-            setTimeout(() => {
+            if (response.data.success) {
+                updateInfo(updatedData);
+                setSelectedImage(null);
+                toast.success('User information saved successfully')
                 setIsLoading(false);
                 handleModalClose();
-                // updateInfo();
-            }, 1500);
-            console.log('response edit user:', response);
+            } else {
+                toast.error('Error ocurred while saving user information')
+                setIsLoading(false);
+            }
         } catch (error) {
             const errorDescription = error.response?.data?.message || "Error occurred";
-            setErrorMessage(errorDescription);
+            toast.error(errorDescription)
             setIsLoading(false);
-            console.log(errorDescription);
         }
     };
 
@@ -76,8 +69,6 @@ export const useEditUserActions = (initialData, handleModalClose) => {
         name,
         lastName,
         isLoading,
-        successMessage,
-        errorMessage,
         selectedImage,
         setSelectedImage,
         handleChange,

@@ -1,12 +1,10 @@
 import React, { useContext } from 'react'
 import { Box, Paper, Typography, Card, CardMedia, CardContent, Avatar } from '@mui/material'
 import { AuthContext } from '../../../context/auth'
-import useChat from '../../zustand/useChat'
 import { extractTime } from '../utils/extractTime'
 
 export default function Message({ message }) {
     const { user } = useContext(AuthContext)
-    const { selectedChat } = useChat();
     const fromMe = message.senderId === user._id;
     const formattedTime = extractTime(message.createdAt);
     const chatJustifyContent = fromMe ? "flex-end" : "flex-start";

@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import SidebarChat from './sidebar/SidebarChat';
 import MessageContainer from '../dm/messages/MessageContainer';
-import { Grid, Card, Box, IconButton, useMediaQuery } from '@mui/material';
+import {
+    Grid,
+    Card,
+    Box,
+    IconButton,
+    useMediaQuery
+} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function ChatLayout() {
     const [showSidebar, setShowSidebar] = useState(true);
-    const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md')); // Detecta si es móvil
+    const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md')); // detect if  isMobile
 
     return (
         <Box sx={{ mt: { xs: '1px', sm: '1px', md: '15%', lg: '10%', xl: '2%', xxl: '20%' } }}>
@@ -20,7 +26,7 @@ export default function ChatLayout() {
                 }}
             >
                 <Grid container spacing={2}>
-                    {/* Mostrar lista de chats */}
+                    {/* show chats list */}
                     {(!isMobile || showSidebar) && (
                         <Grid
                             item
@@ -33,7 +39,7 @@ export default function ChatLayout() {
                         </Grid>
                     )}
 
-                    {/* Botón de volver en móvil */}
+                    {/* back button for isMobile */}
                     {isMobile && !showSidebar && (
                         <IconButton
                             onClick={() => setShowSidebar(true)}
@@ -43,7 +49,7 @@ export default function ChatLayout() {
                         </IconButton>
                     )}
 
-                    {/* Mostrar mensajes */}
+                    {/* show messages */}
                     {(!isMobile || !showSidebar) && (
                         <Grid
                             item

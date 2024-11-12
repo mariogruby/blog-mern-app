@@ -7,7 +7,6 @@ import {
     Grid,
     TextField,
     Button,
-    Typography,
     Avatar,
     Dialog,
     DialogTitle,
@@ -22,8 +21,6 @@ export default function EditUser({ initialData, handleModalClose }) {
         name,
         lastName,
         isLoading,
-        successMessage,
-        errorMessage,
         selectedImage,
         setSelectedImage,
         handleChange,
@@ -109,12 +106,6 @@ export default function EditUser({ initialData, handleModalClose }) {
                             value={lastName}
                             disabled={isLoading}
                         />
-                    </Grid>
-                    <Grid item xs={12}>
-                        {errorMessage && <Typography color="error.main">{errorMessage}</Typography>}
-                    </Grid>
-                    <Grid item xs={12}>
-                        {successMessage && <Typography color="success.main">{successMessage}</Typography>}
                     </Grid>
                     <Grid item xs={12}>
                         <Button

@@ -1,14 +1,9 @@
 import React from 'react';
 import {
     Dialog,
-    DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
-    Button
 } from '@mui/material';
-
-//TODO: clean code
 
 export default function ModalEditPost({ children, open, handleClose }) {
     return (

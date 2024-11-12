@@ -35,13 +35,14 @@ export const useUserProfileActions = () => {
             setFollowersCount(userInfo.followers.count);
             setUserPosts(userInfo.userPost);
             setPostComments(userInfo.userPost.comments)
-            setIsFollowing(userInfo.followers.users.includes(currentUserId)); 
-            setTimeout(()=> {
+            setIsFollowing(userInfo.followers.users.includes(currentUserId));
+            setTimeout(() => {
                 setIsLoading(false);
             }, 1000)
-            
+
         } catch (error) {
             setError(error.response?.data?.message || error.message);
+            toast.error(error.response?.data?.message || error.message)
             setIsLoading(false);
         }
     };
@@ -52,15 +53,16 @@ export const useUserProfileActions = () => {
             if (response.data.success) {
                 setIsFollowing(prevIsFollowing => !prevIsFollowing);
                 setFollowersCount(prevCount => isFollowing ? prevCount - 1 : prevCount + 1);
-                
+
                 if (isFollowing) {
-                    toast.error('Unfollowed');
+                    toast.info('UNFOLLOWED');
                 } else {
-                    toast.success('Followed');
+                    toast.success('FOLLOWED');
                 }
             }
         } catch (error) {
             setError(error.response?.data?.message || error.message);
+            toast.error(error.response?.data?.message || error.message);
         }
     };
 
@@ -68,13 +70,11 @@ export const useUserProfileActions = () => {
         try {
             if (username === currentUserProfile) {
                 setIsUserProfile(true)
-                console.log('this is your profile:');
             } else {
                 setIsUserProfile(false)
-                console.log('this is not your profile');
             }
         } catch (error) {
-            console.error('error catch')
+            console.error('error catch');
         }
     }
 
@@ -84,7 +84,7 @@ export const useUserProfileActions = () => {
             isCurrentUserProfile();
         }
     }, [username, user, updateInfo]);
-    
+
 
     return {
         userData,

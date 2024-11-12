@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 export const useSocketUpdates = ( socket, setChats ) => {
     useEffect(() => {
         if (socket) {
-            // Escuchar el evento de actualización de mensajes no leídos
+            // Listen the update event og unread messages
             socket.on("unreadMessagesUpdate", ({ senderId, unreadMessagesCount }) => {
                 setChats(prevChats =>
                     prevChats.map(chat =>
@@ -14,8 +14,7 @@ export const useSocketUpdates = ( socket, setChats ) => {
                 );
             });
         }
-
-        // Limpiar el listener cuando se desmonta el componente
+        // Clean listener when disassemble the component
         return () => {
             if (socket) {
                 socket.off("unreadMessagesUpdate");

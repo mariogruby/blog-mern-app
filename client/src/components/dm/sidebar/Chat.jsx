@@ -2,7 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import useChat from '../../zustand/useChat';
-import { Avatar, ListItemButton, ListItemAvatar, ListItemText, Divider, Box, Badge } from '@mui/material';
+import {
+  Avatar,
+  ListItemButton,
+  ListItemAvatar,
+  ListItemText,
+  Divider,
+  Box,
+  Badge
+} from '@mui/material';
 import { useSocketContext } from '../../../context/SocketContext';
 
 export default function Chat({ chat, lastIdx, onChatSelect }) {
@@ -52,7 +60,6 @@ export default function Chat({ chat, lastIdx, onChatSelect }) {
               backgroundColor: isSelected ? 'rgba(0, 0, 0, 0.08)' : 'rgba(0, 0, 0, 0.04)',
             }
           }}
-          // onClick={() => setSelectedChat(chat)}
         >
           <ListItemAvatar>
             <StyledBadge
@@ -64,28 +71,14 @@ export default function Chat({ chat, lastIdx, onChatSelect }) {
               <Avatar src={chat.userImage} />
             </StyledBadge>
           </ListItemAvatar>
-
-          <ListItemText
-            primary={chat.username}
-            secondary={chat.unreadMessagesCount > 0 ? (
-              <Box component="span" display="block" fontSize="small" color="textSecondary">
-                {/* Tienes {chat.unreadMessagesCount} mensaje(s) nuevo(s) */}
-                {/* {chat.unreadMessagesCount > 0 && (
-                  <Box>
-                    Tienes {chat.unreadMessagesCount} mensaje(s) nuevo(s)
-                  </Box>
-                )} */}
-              </Box>
-            ) : null}
-          />
-
-          {/* Badge para mensajes no leídos en la posición end */}
+          <ListItemText primary={chat.username} />
+          {/* Badge for unread messages */}
           {chat.unreadMessagesCount > 0 && (
             <Badge
               color="error"
               badgeContent={chat.unreadMessagesCount}
               max={999}
-              sx={{ marginLeft: 'auto' }} // Asegura que el Badge esté a la derecha
+              sx={{ marginLeft: 'auto' }}
             />
           )}
         </ListItemButton>

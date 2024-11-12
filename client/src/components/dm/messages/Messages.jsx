@@ -1,5 +1,9 @@
 import React, { useEffect, useRef } from 'react'
-import { Box, Paper, Typography, Container } from '@mui/material'
+import {
+    Box,
+    Typography,
+    Container
+} from '@mui/material'
 import Message from './Message'
 import useGetMessages from '../hooks/useGetMessages'
 import MessageSkeleton from '../skeletons/MessageSkeleton';
@@ -9,11 +13,12 @@ export default function Messages() {
     const { messages, loading } = useGetMessages();
     useListenMessages();
     const lastMessageRef = useRef();
-    useEffect(()=> {
-        setTimeout(()=> {
-            lastMessageRef.current?.scrollIntoView({ behavior: "smooth"});
-        },100)
-    },[messages])
+    useEffect(() => {
+        setTimeout(() => {
+            lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100)
+    }, [messages])
+
     return (
         <Box flex={1} padding="16px" height={"90%"} overflow="auto">
             {!loading &&

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import messageService from '../../../services/message';
 import useChat from '../../zustand/useChat';

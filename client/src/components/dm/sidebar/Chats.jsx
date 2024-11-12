@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
-import { Box, List } from '@mui/material';
+import React from 'react';
+import {
+    Box,
+    List
+} from '@mui/material';
 import Chat from './Chat';
 import useGetChats from '../hooks/useGetChats';
 import { useSocketContext } from '../../../context/SocketContext';
-import useChat from '../../zustand/useChat';
 import { useSocketUpdates } from './Actions';
 
 export default function Chats({ onChatSelect }) {

@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import AddPost from '../../components/post/addPost/AddPost'
-import { Box, CssBaseline, SpeedDial, SpeedDialIcon, SpeedDialAction } from '@mui/material';
+import {
+    Box,
+    CssBaseline,
+    SpeedDial,
+    SpeedDialIcon,
+    SpeedDialAction
+} from '@mui/material';
 import Navbar from '../navbar/Navbar';
 import ModalAddPost from '../post/addPost/ModalAddPost';
 import Sidebar from '../sidebar/Sidebar';
@@ -10,7 +16,7 @@ import { useMediaQuery, useTheme } from '@mui/material';
 
 export default function Layout({ children }) {
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [isModalOpen, setIsModalOpen] = useState(false);
     const location = useLocation();
 
@@ -38,7 +44,7 @@ export default function Layout({ children }) {
                     ariaLabel="SpeedDial basic example"
                     sx={{
                         position: 'fixed',
-                        bottom: isMobile ? 90 : 16, // Ajusta hacia arriba en modo móvil
+                        bottom: isMobile ? 90 : 16,
                         right: 16,
                     }}
                     icon={<SpeedDialIcon />}

@@ -2,13 +2,19 @@ import React, { useState } from 'react';
 import useChat from '../../zustand/useChat';
 import useGetChats from '../../dm/hooks/useGetChats';
 import { toast } from 'react-toastify';
-import { InputBase, Avatar, Box, IconButton, List, ListItem, ListItemAvatar, ListItemText, AppBar, Toolbar } from '@mui/material';
+import {
+    InputBase,
+    Box,
+    IconButton,
+    AppBar,
+    Toolbar
+} from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 
 export default function SearchInput() {
     const [search, setSearch] = useState("");
     const { setSelectedChat } = useChat();
-    const { chats, allUsers } = useGetChats(); 
+    const { chats, allUsers } = useGetChats();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -38,7 +44,7 @@ export default function SearchInput() {
                     display="flex"
                     alignItems="center"
                     width="100%"
-                    sx={{ flexDirection: { xs: 'column', sm: 'row' } }} 
+                    sx={{ flexDirection: { xs: 'column', sm: 'row' } }}
                 >
                     <form
                         onSubmit={handleSubmit}
@@ -57,7 +63,7 @@ export default function SearchInput() {
                         <IconButton
                             type="submit"
                             edge="end"
-                            sx={{ ml: 1 }} 
+                            sx={{ ml: 1 }}
                         >
                             <SearchIcon />
                         </IconButton>

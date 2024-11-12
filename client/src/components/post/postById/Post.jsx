@@ -11,7 +11,6 @@ import {
     Card,
     CardContent,
     CardMedia,
-    // TextField,
     Button,
     IconButton,
     Box,
@@ -26,7 +25,6 @@ import {
 import {
     Favorite as FavoriteIcon,
     FavoriteBorder as FavoriteBorderIcon,
-    // Reply as ReplyIcon,
     Share as ShareIcon,
     MoreVert as MoreVertIcon,
     ModeCommentOutlined as ModeCommentOutlinedIcon,
@@ -87,7 +85,6 @@ export default function Post() {
                                     <Skeleton variant="text" width="100%" animation="wave" />
                                     <Skeleton variant="text" width="100%" animation="wave" />
                                     <Skeleton variant="text" width="100%" animation="wave" />
-                                    {/* <Skeleton variant="rectangular" width="100%" height={100} animation="wave" /> */}
                                 </Box>
                             </CardContent>
                             <CardContent sx={{ mt: 'auto', pt: '1px' }}>
@@ -128,7 +125,6 @@ export default function Post() {
                                             handleDeletePost={handleDeletePost} />
                                     </Box>
                                 </Box>
-                                {/* <Typography variant="body2" color="textSecondary">{formatDate(post.createdAt)}</Typography> */}
                                 <Box flexGrow={1} >
                                     <List sx={{ flexGrow: 1, overflow: 'auto', maxHeight: 230 }}>
                                         <ListItem alignItems="flex-start" key={post._id}>

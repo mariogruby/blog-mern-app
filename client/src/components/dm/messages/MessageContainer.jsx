@@ -1,21 +1,22 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import useChat from '../../zustand/useChat'
-import { Container, Avatar, IconButton, TextField, Paper, Typography, Box } from '@mui/material';
+import {
+    Container,
+    Avatar,
+    IconButton,
+    Paper,
+    Typography,
+    Box
+} from '@mui/material';
 import Messages from './Messages'
-import SearchIcon from '@mui/icons-material/Search';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import SendIcon from '@mui/icons-material/Send';
+import { MoreHoriz as MoreHorizIcon } from '@mui/icons-material';
 import MessageInput from './MessageInput'
-import { styled } from '@mui/material/styles';
-import { AuthContext } from '../../../context/auth';
 import { useUserContext } from '../../../context/user';
-import { useSocketContext } from '../../../context/SocketContext';
 
-export default function MessageContainer({chat}) {
-    const {selectedChat, setSelectedChat} = useChat();
-    const { onlineUsers } = useSocketContext();
+export default function MessageContainer({ chat }) {
+    const { selectedChat, setSelectedChat } = useChat();
 
-    useEffect(()=> {
+    useEffect(() => {
         // cleanup function (unmounts)
         return () => setSelectedChat(null);
     }, [setSelectedChat])
@@ -38,28 +39,18 @@ export default function MessageContainer({chat}) {
                             }}
                         >
                             <Box display="flex" alignItems="center" gap="8px">
-                                <Avatar src={selectedChat.userImage} alt="User" sx={{mr:1}} />
+                                <Avatar src={selectedChat.userImage} alt="User" sx={{ mr: 1 }} />
                                 <Box>
                                     <Typography variant="subtitle1">{selectedChat.username}</Typography>
-                                    <Typography variant="body2">
-                                        {/* {!isOnline ? 'Offline': 'Online'} */}
-                                    </Typography>
                                 </Box>
                             </Box>
                             <Box display="flex" gap="8px">
-                                {/* <IconButton color="inherit">
-                                    <SearchIcon />
-                                </IconButton> */}
                                 <IconButton color="inherit">
                                     <MoreHorizIcon />
                                 </IconButton>
                             </Box>
                         </Paper>
-                        {/* chat */}
-                        {/* <Box flex={1} padding="16px" height={450}  overflow="auto"> */}
-                            <Messages />
-                        {/* </Box> */}
-                        {/* textArea */}
+                        <Messages />
                         <MessageInput />
                     </Box>
                 </React.Fragment>

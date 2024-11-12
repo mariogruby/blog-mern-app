@@ -40,9 +40,11 @@ export const useAllPostActions = () => {
                 setPage(response.data.currentPage);
                 setSuccessMessage("Posts fetched successfully");
             } else {
+                toast.error("Failed to fecth posts");
                 setErrorMessage("Failed to fetch posts");
             }
         } catch (error) {
+            toast.error("Error getting post", error)
             setErrorMessage("Error getting posts");
             console.error('Error getting Posts', error);
         }
@@ -50,26 +52,27 @@ export const useAllPostActions = () => {
             if (newPage === 1) {
                 setIsLoading(false);
             } else {
-                    setIsLoadingMorePosts(false);
+                setIsLoadingMorePosts(false);
             }
         }, 1000);
     }
 
     const fetchLikedPosts = async () => {
-        if(!isLoggedIn) return;
+        if (!isLoggedIn) return;
         try {
             const response = await userService.userLikedPost();
             if (response.data.success) {
                 const likedPostIds = response.data.likedPost
-                    .filter(post => post && post.Post && post.Post._id) 
+                    .filter(post => post && post.Post && post.Post._id)
                     .map(post => post.Post._id);
                 setLikedPosts(likedPostIds);
             }
         } catch (error) {
+            toast.error('Error getting liked post', error);
             console.error('Error getting liked posts', error);
         }
     }
-    
+
     const handleToggleLike = async (postId) => {
         try {
             const response = await postService.likePost(postId);
@@ -85,27 +88,29 @@ export const useAllPostActions = () => {
             }
         } catch (error) {
             console.error('Error toggling like', error)
-            toast.error(error.message.toUpperCase())
+            toast.error('Error to toggling like', error.message)
         }
     }
 
     const fetchSavedPosts = async () => {
-        if(!isLoggedIn) return;
+        if (!isLoggedIn) return;
         try {
             const response = await userService.userSavedPost();
             if (response.data.success) {
                 if (Array.isArray(response.data.savedPosts)) {
                     const savedPostIds = response.data.savedPosts
-                        .filter(post => post && post._id) 
+                        .filter(post => post && post._id)
                         .map(post => post._id);
                     setSavedPosts(savedPostIds);
                 } else {
                     console.error("savedPosts is not an array:", response.data.savedPosts);
                 }
             } else {
+                toast.error("Server returned an error in response data in fetch saved post")
                 console.error("Server returned an error:", response.data);
             }
         } catch (error) {
+            toast.error("Error fetching saved posts", error);
             console.error("Error fetching saved posts", error);
         }
     }
@@ -120,7 +125,7 @@ export const useAllPostActions = () => {
                         ? prevSavedPosts.filter(id => id !== postId)
                         : [...prevSavedPosts, postId];
                     if (isSaved) {
-                        toast.error('UNSAVED POST');
+                        toast.info('UNSAVED POST');
                     } else {
                         toast.success('SAVED POST');
                     }
@@ -129,10 +134,10 @@ export const useAllPostActions = () => {
             }
         } catch (error) {
             console.error('Error toggling save', error);
-            toast.error(error.message.toUpperCase())
+            toast.error(error.message);
         }
     };
-    
+
 
     const toggleExpand = (postId) => {
         if (expandedIds.includes(postId)) {
@@ -153,12 +158,12 @@ export const useAllPostActions = () => {
         setSelectedPostId(postId);
         setOpenModalList(true);
     };
-    
+
     const handleCloseChatList = () => {
         setSelectedPostId(null);
         setOpenModalList(false);
     };
-    
+
     useEffect(() => {
         fetchData();
     }, [updatePost]);

@@ -12,7 +12,6 @@ import {
     Typography
 } from '@mui/material';
 import {
-    Info as InfoIcon,
     Favorite as FavoriteIcon,
     ChatBubble as ChatBubbleIcon
 } from '@mui/icons-material';

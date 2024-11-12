@@ -1,20 +1,16 @@
 import React from 'react';
 import { useEditPostActions } from './Actions';
-import BtnOutlined from '../../../components/buttons/BtnOutlined';
 import {
     Container,
     Box,
     Grid,
     TextField,
     Button,
-    Typography,
     Autocomplete,
     Chip
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+// import { styled } from '@mui/material/styles';
 
-//TODO: clean code and successMessage implementation
 //TODO: fix minimal bugs in chips textArea
 
 export default function EditPost({ postId, initialData, handleModalClose }) {
@@ -23,8 +19,6 @@ export default function EditPost({ postId, initialData, handleModalClose }) {
         tags,
         inputValue,
         isLoading,
-        successMessage,
-        errorMessage,
         handleChange,
         handleTagsChange,
         handleInputChange,
@@ -32,9 +26,9 @@ export default function EditPost({ postId, initialData, handleModalClose }) {
         handleSubmit
     } = useEditPostActions(postId, initialData, handleModalClose);
 
-    const VisuallyHiddenInput = styled('input')({
-        display: 'none',
-    });
+    // const VisuallyHiddenInput = styled('input')({
+    //     display: 'none',
+    // });
 
     return (
         <Container component="main" maxWidth="xs">
@@ -80,10 +74,6 @@ export default function EditPost({ postId, initialData, handleModalClose }) {
                                 />
                             )}
                         />
-                    </Grid>
-                    <Grid item xs={12}>
-                        {/* {successMessage && <Typography color="success.main">{successMessage}</Typography>} */}
-                        {errorMessage && <Typography color="error.main">{errorMessage}</Typography>}
                     </Grid>
                     <Grid item xs={12}>
                         <Button

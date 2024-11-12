@@ -1,5 +1,9 @@
 import React from 'react'
-import { Box, Paper, Typography, Skeleton } from '@mui/material';
+import {
+    Box,
+    Paper,
+    Skeleton
+} from '@mui/material';
 
 export default function MessageSkeleton() {
     return (
