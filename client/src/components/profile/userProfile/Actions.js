@@ -10,6 +10,7 @@ export const useUserProfileActions = () => {
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
     const [followingCount, setFollowingCount] = useState(null);
     const [followersCount, setFollowersCount] = useState(null);
     const [userPosts, setUserPosts] = useState([]);
@@ -34,6 +35,9 @@ export const useUserProfileActions = () => {
             setFollowingCount(userInfo.following.count);
             setFollowersCount(userInfo.followers.count);
             setUserPosts(userInfo.userPost);
+            if (!userInfo.userPost || userInfo.userPost.length === 0) {
+                setSuccessMessage("There are no posts yet")
+            } 
             setPostComments(userInfo.userPost.comments)
             setIsFollowing(userInfo.followers.users.includes(currentUserId));
             setTimeout(() => {
@@ -96,6 +100,7 @@ export const useUserProfileActions = () => {
         postComments,
         isFollowing,
         toggleFollowUser,
-        isUserProfile
+        isUserProfile,
+        successMessage
     };
 };

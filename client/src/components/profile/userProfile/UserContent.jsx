@@ -13,27 +13,44 @@ import {
 } from '@mui/material';
 import {
     Favorite as FavoriteIcon,
-    ChatBubble as ChatBubbleIcon
+    ChatBubble as ChatBubbleIcon,
+    CameraAlt as CameraAltIcon
 } from '@mui/icons-material';
 
 export default function UserCard() {
-    const { userData, isLoading } = useUserProfileActions();
+    const { userData, isLoading, successMessage } = useUserProfileActions();
 
     return (
         <>
-            <ImageList sx={{ width: '80%', margin: 'auto', marginBottom: 4 }}>
+            <ImageList sx={{
+                margin: { xs: 1, xl: 5 },
+                marginLeft: { xs: 0, xl: 15 },
+                width: { xs: '100%', xl: '80%' },
+                position: 'relative',
+                overflowX: 'hidden',
+            }}>
                 <ImageListItem key="Subheader" cols={2}>
                     <ListSubheader component="div">All Posts</ListSubheader>
                 </ImageListItem>
                 {isLoading ? (
                     Array.from(new Array(8)).map((_, index) => (
-                        <ImageListItem key={index}>
-                            <Skeleton variant="rectangular" width={248} height={248} animation="wave" />
-                            <Box sx={{ pt: 0.5 }}>
-                                <Skeleton width="80%" animation="wave" />
-                                <Skeleton width="60%" animation="wave" />
-                            </Box>
-                        </ImageListItem>
+                        <Box
+                            key={index}
+                            sx={{
+                                width: '100%',
+                                margin: { xs: 0, sm: 3 },
+                                position: 'relative',
+                                overflow: 'hidden',
+                            }}
+                        >
+                            <ImageListItem key={index}>
+                                <Skeleton variant="rectangular" width={'100%'} height={248} animation="wave" />
+                                <Box sx={{ pt: 0.5 }}>
+                                    <Skeleton width="100%" animation="wave" />
+                                    <Skeleton width="80%" animation="wave" />
+                                </Box>
+                            </ImageListItem>
+                        </Box>
                     ))
                 ) : (
                     userData && userData.userPost.map((post) => (
@@ -99,6 +116,18 @@ export default function UserCard() {
                     ))
                 )}
             </ImageList>
+            {successMessage && (
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '40vh',
+                    textAlign: 'center',
+                    fontSize: '18px'
+                }}>
+                    <Typography><CameraAltIcon /> {successMessage}</Typography>
+                </Box>
+            )}
         </>
     );
 }

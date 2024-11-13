@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'
 import { useSavedActions } from './Actions';
 import {
     ImageList,
@@ -15,35 +16,84 @@ import {
     Error as ErrorIcon
 } from '@mui/icons-material';
 
-//TODO: arreglar responsive 
-
 export default function SavedPosts() {
     const { savedPosts, isLoading, successMessage, errorMessage } = useSavedActions();
 
     return (
         <>
-            <ImageList sx={{ width: '80%' }}>
+            <ImageList
+                sx={{
+                    margin: { xs: 1, xl: 5 },
+                    marginLeft: { xs: 0, xl: 15 },
+                    width: { xs: '100%', xl: '80%' },
+                    position: 'relative',
+                    overflowX: 'hidden',
+                }}
+            >
                 <ImageListItem key="Subheader" cols={2}>
                     <ListSubheader component="div">All Posts</ListSubheader>
                 </ImageListItem>
                 {isLoading ? (
                     Array.from(new Array(8)).map((_, index) => (
-                        <ImageListItem key={index}>
-                            <Skeleton variant="rectangular" width={248} height={248} animation="wave" />
-                            <Box sx={{ pt: 0.5 }}>
-                                <Skeleton width="80%" animation="wave" />
-                                <Skeleton width="60%" animation="wave" />
-                            </Box>
-                        </ImageListItem>
+                        <Box
+                            key={index}
+                            sx={{
+                                width: '100%',
+                                margin: { xs: 0, sm: 3 },
+                                position: 'relative',
+                                overflow: 'hidden',
+                            }}
+                        >
+                            <ImageListItem>
+                                <Skeleton
+                                    variant="rectangular"
+                                    animation="wave"
+                                    sx={{
+                                        width: { xs: '100%', sm: '90%', md: '70%', lg: '60%' },
+                                        height: 200,
+                                        margin: '0 auto',
+                                    }}
+                                />
+                                <Box sx={{ pt: 0.5 }}>
+                                    <Skeleton
+                                        sx={{
+                                            width: { xs: '100%', sm: '90%', md: '70%', lg: '60%' },
+                                            margin: '0 auto',
+                                        }}
+                                        animation="wave" />
+                                    <Skeleton
+                                        sx={{
+                                            width: { xs: '100%', sm: '90%', md: '70%', lg: '60%' },
+                                            margin: '0 auto',
+                                        }} animation="wave" />
+                                </Box>
+                            </ImageListItem>
+                        </Box>
                     ))
                 ) : (
                     savedPosts.map((post) => (
-                        <ImageListItem key={post._id}>
+                        <ImageListItem
+                            component={Link}
+                            to={`/post/${post._id}`}
+                            key={post._id}
+                            sx={{
+                                width: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                            }}
+                        >
                             <img
                                 srcSet={`${post.image}?w=248&fit=crop&auto=format&dpr=2 2x`}
                                 src={`${post.image}?w=248&fit=crop&auto=format`}
                                 alt="post saved"
                                 loading="lazy"
+                                style={{
+                                    width: '100%',
+                                    maxWidth: '600px',
+                                    height: 'auto',
+                                    objectFit: 'cover',
+                                }}
                             />
                             <ImageListItemBar
                                 title={post.author.username}
@@ -56,6 +106,11 @@ export default function SavedPosts() {
                                         <InfoIcon />
                                     </IconButton>
                                 }
+                                sx={{
+                                    width: '100%',
+                                    maxWidth: '600px',
+                                    margin: '0 auto',
+                                }}
                             />
                         </ImageListItem>
                     ))
