@@ -2,7 +2,20 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useGetChats from '../../dm/hooks/useGetChats';
 import CloseIcon from '@mui/icons-material/Close';
-import { InputBase, Avatar, Box, Slide, Toolbar, IconButton, AppBar, Divider, List, ListItemButton, ListItemText, Dialog } from '@mui/material';
+import {
+    InputBase,
+    Avatar,
+    Box,
+    Slide,
+    Toolbar,
+    IconButton,
+    AppBar,
+    Divider,
+    List,
+    ListItemButton,
+    ListItemText,
+    Dialog
+} from '@mui/material';
 import { filterUsers, handleSearchUser } from './Actions';
 
 const Transition = React.forwardRef(function Transition(props, ref) {

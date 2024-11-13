@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { ToastContainer, Bounce } from 'react-toastify';
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { AuthContext } from './context/auth';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,7 +16,7 @@ import ProfileLayout from './components/profile/Layout';
 import DmPage from './pages/dm/Dm';
 import './App.css';
 import ProtectedRoute from './components/protectedRoutes/index';
-import 'react-toastify/dist/ReactToastify.css';  // Asegúrate de importar el CSS de react-toastify
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const darkTheme = createTheme({

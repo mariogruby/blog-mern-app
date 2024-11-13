@@ -97,23 +97,23 @@ export const useAllPostActions = () => {
         try {
             const response = await userService.userSavedPost();
             if (response.data.success) {
-                if (Array.isArray(response.data.savedPosts)) {
-                    const savedPostIds = response.data.savedPosts
-                        .filter(post => post && post._id)
+                const savedPosts = response.data.savedPosts || []; 
+                if (savedPosts.length > 0) {
+                    const savedPostIds = savedPosts
+                        .filter(post => post && post._id) 
                         .map(post => post._id);
                     setSavedPosts(savedPostIds);
-                } else {
-                    console.error("savedPosts is not an array:", response.data.savedPosts);
                 }
             } else {
-                toast.error("Server returned an error in response data in fetch saved post")
+                toast.error("Server returned an error in response data in fetch saved post");
                 console.error("Server returned an error:", response.data);
             }
         } catch (error) {
-            toast.error("Error fetching saved posts", error);
+            toast.error("Error fetching saved posts");
             console.error("Error fetching saved posts", error);
         }
-    }
+    };
+
 
     const handleToggleSave = async (postId) => {
         try {

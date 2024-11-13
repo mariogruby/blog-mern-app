@@ -7,14 +7,18 @@ import {
     ListSubheader,
     IconButton,
     Skeleton,
-    Box
+    Box,
+    Typography,
 } from '@mui/material';
-import { Info as InfoIcon } from '@mui/icons-material';
+import {
+    Info as InfoIcon,
+    Error as ErrorIcon
+} from '@mui/icons-material';
 
-//TODO: errorMessage implementation 
+//TODO: arreglar responsive 
 
 export default function SavedPosts() {
-    const { savedPosts, isLoading, errorMessage } = useSavedActions();
+    const { savedPosts, isLoading, successMessage, errorMessage } = useSavedActions();
 
     return (
         <>
@@ -57,6 +61,30 @@ export default function SavedPosts() {
                     ))
                 )}
             </ImageList>
+            {successMessage && (
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '60vh',
+                    textAlign: 'center',
+                    fontSize: '18px'
+                }}>
+                    <Typography><ErrorIcon /> {successMessage}</Typography>
+                </Box>
+            )}
+            {errorMessage && (
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '60vh',
+                    textAlign: 'center',
+                    fontSize: '18px'
+                }}>
+                    <Typography><ErrorIcon /> {errorMessage}</Typography>
+                </Box>
+            )}
         </>
     );
 }

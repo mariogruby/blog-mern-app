@@ -8,6 +8,7 @@ export const useNotificationsActions = () => {
     const [notifications, setNotifications] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
 
     const fetchData = async () => {
         if (!isLoggedIn) return;
@@ -15,7 +16,7 @@ export const useNotificationsActions = () => {
         try {
             const response = await userService.getNotifications();
             if (response.data.notifications.length === 0) {
-                setErrorMessage(response.data.message)
+                setSuccessMessage("You still don't have notifications")
             }
             setNotifications(response.data.notifications || []);
             setTimeout(() => {
@@ -24,32 +25,25 @@ export const useNotificationsActions = () => {
         } catch (e) {
             setIsLoading(false);
             console.error(e.message);
-            toast.error(e.message)
-            setErrorMessage("error getting notifications");
-        }
-    }
-
-    const markNotificationsAsRead = async () => {
-        const unreadNotifications = notifications.filter(notification => !notification.read);
-        if (unreadNotifications.length === 0) {
-            console.log("No hay notificaciones no leídas.");
-            return;  // Si no hay notificaciones no leídas, no actualices el estado
-        }
-
-        try {
-            const response = await userService.markNotificationsAsRead();
-            const updatedNotifications = notifications.map(notification => ({
-                ...notification,
-                read: true, // Marca todas como leídas
-            }));
-            setNotifications(updatedNotifications); // Actualiza el estado con las notificaciones leídas
-            console.log('Notificaciones marcadas como leídas:', updatedNotifications);
-        } catch (e) {
-            console.log('Error al actualizar las notificaciones:', e);
+            toast.error('Error getting notifications')
+            setErrorMessage("Error getting notifications");
         }
     };
 
-
+    const markNotificationsAsRead = async () => {
+        const unreadNotifications = notifications.filter(notification => !notification.read);
+        if (unreadNotifications.length === 0) return;
+        try {
+            await userService.markNotificationsAsRead();
+            const updatedNotifications = notifications.map(notification => ({
+                ...notification,
+                read: true,
+            }));
+            setNotifications(updatedNotifications);
+        } catch (e) {
+            toast.error('Error update notifications')
+        }
+    };
 
     useEffect(() => {
         fetchData();
@@ -60,6 +54,7 @@ export const useNotificationsActions = () => {
         errorMessage,
         isLoading,
         setNotifications,
-        markNotificationsAsRead
+        markNotificationsAsRead,
+        successMessage
     };
 };

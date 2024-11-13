@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../context/auth';
 import { useUserContext } from '../../context/user';
 import { Link, useLocation } from 'react-router-dom';
@@ -14,7 +14,6 @@ import {
     Avatar
 } from '@mui/material';
 import {
-    Inbox as InboxIcon,
     Home as HomeIcon,
     HomeOutlined as HomeOutlinedIcon,
     TurnedInNot as TurnedInNotIcon,
@@ -23,9 +22,6 @@ import {
     Send as SendIcon,
     Menu as MenuIcon,
     Search as SearchIcon,
-    SearchOutlined as SearchOutlinedIcon,
-    Settings as SettingsIcon,
-    SettingsOutlined as SettingsOutlinedIcon,
     NotificationsNoneOutlined as NotificationsNoneOutlinedIcon,
     Notifications as NotificationsIcon,
     Login as LoginIcon
@@ -34,7 +30,12 @@ import SearchModal from './search/SearchModal'
 import NotificationsModal from './notifications/Modal';
 import useGetChats from '../dm/hooks/useGetChats';
 import { useSocketContext } from '../../context/SocketContext';
-import { useSocketUpdatesMessages, calculateUnreadMessagesCount, useSocketUpdatesNotifications, calculateUnreadNotificationsCount } from './Actions';
+import {
+    useSocketUpdatesMessages,
+    calculateUnreadMessagesCount,
+    useSocketUpdatesNotifications,
+    calculateUnreadNotificationsCount
+} from './Actions';
 import { useNotificationsActions } from './notifications/Actions';
 
 const drawerWidth = 240;
@@ -68,12 +69,13 @@ const Sidebar = () => {
         setOpenNotifications(false);
     };
 
-    //* Usar los hooks para escuchar actualizaciones del socket
+    //* Hooks listener socket update
     useSocketUpdatesMessages(socket, setChats);
     useSocketUpdatesNotifications(socket, setNotifications);
 
-    //* Calcular mensajes no leídos
+    //* calculate unread messages
     const unreadMessagesCount = calculateUnreadMessagesCount(chats);
+    //* calculate unread notifications
     const unreadNotificationsCount = calculateUnreadNotificationsCount(notifications);
 
     return (
@@ -145,7 +147,7 @@ const Sidebar = () => {
                 </ListItemButton>
                 <ListItemButton key="More">
                     <ListItemIcon>
-                            <MenuIcon fontSize='large' />
+                        <MenuIcon fontSize='large' />
                     </ListItemIcon>
                     <ListItemText primary={isMobile ? "" : "More"} />
                 </ListItemButton>
@@ -174,48 +176,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
-// // TODO: Modificar el navbar para dispositivos moviles al finalizar las funciones del sidebar
-// const MobileSidebar = ({ mobileOpen, handleDrawerToggle }) => (
-//     <Drawer
-//         variant="temporary"
-//         open={mobileOpen}
-//         onClose={handleDrawerToggle}
-//         ModalProps={{
-//             keepMounted: true, // Better open performance on mobile.
-//         }}
-//         sx={{
-//             display: { xs: 'block', sm: 'none' },
-//             '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' },
-//         }}
-//     >
-//         <List>
-//             <ListItemButton key="Home">
-//                 <ListItemIcon>
-//                     <HomeIcon />
-//                 </ListItemIcon>
-//                 <ListItemText primary="Inbox" />
-//             </ListItemButton>
-//             <ListItemButton key="Starred">
-//                 <ListItemIcon>
-//                     <MailIcon />
-//                 </ListItemIcon>
-//                 <ListItemText primary="Starred" />
-//             </ListItemButton>
-//             <ListItemButton key="Send email">
-//                 <ListItemIcon>
-//                     <InboxIcon />
-//                 </ListItemIcon>
-//                 <ListItemText primary="Send email" />
-//             </ListItemButton>
-//             <ListItemButton key="Drafts">
-//                 <ListItemIcon>
-//                     <MailIcon />
-//                 </ListItemIcon>
-//                 <ListItemText primary="Drafts" />
-//             </ListItemButton>
-//         </List>
-//     </Drawer>
-// );
-
-// export { Sidebar, MobileSidebar };

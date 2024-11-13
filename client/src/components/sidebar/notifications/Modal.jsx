@@ -1,6 +1,13 @@
 import React from 'react';
 import Notifications from './Notifications'
-import { IconButton, AppBar, Toolbar, Dialog, Slide, Typography } from '@mui/material';
+import {
+    IconButton,
+    AppBar,
+    Toolbar,
+    Dialog,
+    Slide,
+    Typography
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -31,7 +38,7 @@ export default function NotificationsModal({ open, onClose }) {
                     </Typography>
                 </Toolbar>
             </AppBar>
-            <Notifications onClose={onClose} /> 
+            <Notifications onClose={onClose} />
         </Dialog>
     );
 };

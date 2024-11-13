@@ -19,9 +19,9 @@ export const SocketContextProvider = ({ children }) => {
                 query: {
                     userId: user._id,
                 },
-                reconnection: true, // Habilita la reconexión automática
-                reconnectionAttempts: 5, // Número de intentos antes de fallar
-                reconnectionDelay: 1000, // Tiempo entre cada intento
+                reconnection: true, 
+                reconnectionAttempts: 5, 
+                reconnectionDelay: 1000,
             });
 
             setSocket(socket);
@@ -35,11 +35,11 @@ export const SocketContextProvider = ({ children }) => {
             });
 
             return () => {
-                socket.disconnect(); // Asegura que el socket se desconecte al desmontar
+                socket.disconnect(); 
             };
         } else {
             if (socket) {
-                socket.disconnect(); // Desconecta el socket cuando no hay usuario
+                socket.disconnect(); 
                 setSocket(null);
             }
         }
