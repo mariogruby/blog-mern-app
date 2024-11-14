@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ModalFollowers from './userProfile/followers/Modal'
+import ModalFollowings from './userProfile/followings/Modal';
 import ModalEditUser from '../profile/editUser/ModalEditUser';
 import EditUser from './editUser/EditUser';
 import useGetChats from '../dm/hooks/useGetChats';
@@ -14,9 +16,12 @@ import {
     Avatar,
     Skeleton
 } from '@mui/material';
+import SearchModal from '../sidebar/search/SearchModal';
 
 export default function UserCard({ children }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [openModalFollowers, setOpenModalFollowers] = useState(false);
+    const [openModalFollowings, setOpenModalFollowings] = useState(false);
     const navigate = useNavigate();
     const { setSelectedChat } = useChat();
     const { chats, allUsers } = useGetChats();
@@ -32,6 +37,23 @@ export default function UserCard({ children }) {
         toggleFollowUser,
         isUserProfile,
     } = useUserProfileActions();
+
+    //* followers Modal
+    const handleOpenModalFollowers = () => {
+        setOpenModalFollowers(true);
+    };
+    const handleCloseModalFollowers = () => {
+        setOpenModalFollowers(false);
+    };
+
+    //* followings Modal
+    const handleOpenModalFollowings = () => {
+        setOpenModalFollowings(true);
+    };
+    const handleCloseModalFollowings = () => {
+        setOpenModalFollowings(false);
+    };
+
 
     const handleChatClick = () => {
         const { username } = userData;
@@ -104,11 +126,11 @@ export default function UserCard({ children }) {
                                 <Typography variant="body2" fontWeight="bold">Posts</Typography>
                                 <Typography variant="h6">{userPosts.length}</Typography>
                             </div>
-                            <div>
+                            <div onClick={handleOpenModalFollowers}>
                                 <Typography variant="body2" fontWeight="bold">Followers</Typography>
                                 <Typography variant="h6">{followersCount}</Typography>
                             </div>
-                            <div>
+                            <div onClick={handleOpenModalFollowings}>
                                 <Typography variant="body2" fontWeight="bold">Following</Typography>
                                 <Typography variant="h6">{followingCount}</Typography>
                             </div>
@@ -128,6 +150,8 @@ export default function UserCard({ children }) {
                     </CardContent>
                 </Card>
             </Box>
+            <ModalFollowings open={openModalFollowings} onClose={handleCloseModalFollowings} />
+            <ModalFollowers open={openModalFollowers} onClose={handleCloseModalFollowers} />
             <ModalEditUser open={isModalOpen} handleClose={handleModalClose}>
                 <EditUser initialData={userData} handleModalClose={handleModalClose} />
             </ModalEditUser>

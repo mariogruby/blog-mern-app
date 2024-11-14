@@ -30,26 +30,37 @@ export const useUserProfileActions = () => {
         try {
             const response = await userService.getUser(username);
             const userInfo = response.data.userData;
-            console.log('userInfo:', userInfo)
+    
             setUserData(userInfo);
             setFollowingCount(userInfo.following.count);
             setFollowersCount(userInfo.followers.count);
             setUserPosts(userInfo.userPost);
+    
             if (!userInfo.userPost || userInfo.userPost.length === 0) {
-                setSuccessMessage("There are no posts yet")
-            } 
-            setPostComments(userInfo.userPost.comments)
+                setSuccessMessage("There are no posts yet");
+            }
+    
+            if (!userInfo.followers.users || userInfo.followers.users.length === 0) {
+                setSuccessMessage("No followers found");
+            }
+
+            if (!userInfo.following.users || userInfo.following.users.length === 0) {
+                setSuccessMessage("No following found");
+            }
+    
+            setPostComments(userInfo.userPost.comments);
             setIsFollowing(userInfo.followers.users.includes(currentUserId));
+    
             setTimeout(() => {
                 setIsLoading(false);
-            }, 1000)
-
+            }, 1000);
         } catch (error) {
             setError(error.response?.data?.message || error.message);
-            toast.error(error.response?.data?.message || error.message)
+            toast.error(error.response?.data?.message || error.message);
             setIsLoading(false);
         }
     };
+    
 
     const toggleFollowUser = async () => {
         try {
