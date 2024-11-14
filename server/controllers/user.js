@@ -8,15 +8,25 @@ export const getUser = async (req, res) => {
     try {
         const username = req.params.username;
 
-        const userData = await User.findOne({ username }).populate({
-            path: 'userPost',
-            select: '_id image likes comments'
-        });
+        const userData = await User.findOne({ username })
+            .populate({
+                path: 'userPost',
+                select: '_id image likes comments',
+            })
+            .populate({
+                path: 'followers.users',
+                select: '_id username userImage',
+            })
+            .populate({
+                path: 'following.users',
+                select: '_id username userImage',
+            });
 
         if (!userData) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
-        return res.status(200).json({ success: true, userData: userData });
+
+        return res.status(200).json({ success: true, userData });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ success: false, message: "Server error" });
