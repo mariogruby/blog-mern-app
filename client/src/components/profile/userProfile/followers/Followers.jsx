@@ -19,7 +19,7 @@ import {
 
 export default function Followers({ onClose }) {
     const navigate = useNavigate();
-    const { userData, isLoading, successMessage, error } = useUserProfileActions();
+    const { userData, isLoading, followersSuccessMessage, error } = useUserProfileActions();
 
     if (isLoading) {
         return (
@@ -41,10 +41,10 @@ export default function Followers({ onClose }) {
         )
     }
 
-    if (successMessage) {
+    if (followersSuccessMessage) {
         return (
             <>
-                {successMessage && (
+                {followersSuccessMessage && (
                     <Box sx={{
                         display: 'flex',
                         justifyContent: 'center',
@@ -53,7 +53,7 @@ export default function Followers({ onClose }) {
                         textAlign: 'center',
                         fontSize: '18px'
                     }}>
-                        <Typography> <PersonSearchIcon fontSize='large' /> {successMessage}</Typography>
+                        <Typography> <PersonSearchIcon fontSize='large' /> {followersSuccessMessage}</Typography>
                     </Box>
                 )}
             </>

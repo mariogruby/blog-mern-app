@@ -10,7 +10,9 @@ export const useUserProfileActions = () => {
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [successMessage, setSuccessMessage] = useState(null);
+    const [followersSuccessMessage, setFollowersSuccessMessage] = useState(null);
+    const [followingSuccessMessage, setFollowingSuccessMessage] = useState(null);
+    const [postSuccessMessage, setPostSuccessMessage] = useState(null);
     const [followingCount, setFollowingCount] = useState(null);
     const [followersCount, setFollowersCount] = useState(null);
     const [userPosts, setUserPosts] = useState([]);
@@ -37,15 +39,15 @@ export const useUserProfileActions = () => {
             setUserPosts(userInfo.userPost);
     
             if (!userInfo.userPost || userInfo.userPost.length === 0) {
-                setSuccessMessage("There are no posts yet");
+                setPostSuccessMessage("There are no posts yet");
             }
     
             if (!userInfo.followers.users || userInfo.followers.users.length === 0) {
-                setSuccessMessage("No followers found");
+                setFollowersSuccessMessage("No followers found");
             }
 
             if (!userInfo.following.users || userInfo.following.users.length === 0) {
-                setSuccessMessage("No following found");
+                setFollowingSuccessMessage("No following found");
             }
     
             setPostComments(userInfo.userPost.comments);
@@ -112,6 +114,8 @@ export const useUserProfileActions = () => {
         isFollowing,
         toggleFollowUser,
         isUserProfile,
-        successMessage
+        postSuccessMessage,
+        followingSuccessMessage,
+        followersSuccessMessage
     };
 };

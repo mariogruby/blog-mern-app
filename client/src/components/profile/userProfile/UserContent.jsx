@@ -18,7 +18,7 @@ import {
 } from '@mui/icons-material';
 
 export default function UserCard() {
-    const { userData, isLoading, successMessage } = useUserProfileActions();
+    const { userData, isLoading, postSuccessMessage } = useUserProfileActions();
 
     return (
         <>
@@ -116,7 +116,7 @@ export default function UserCard() {
                     ))
                 )}
             </ImageList>
-            {successMessage && (
+            {postSuccessMessage && (
                 <Box sx={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -125,7 +125,7 @@ export default function UserCard() {
                     textAlign: 'center',
                     fontSize: '18px'
                 }}>
-                    <Typography><CameraAltIcon /> {successMessage}</Typography>
+                    <Typography><CameraAltIcon /> {postSuccessMessage}</Typography>
                 </Box>
             )}
         </>
