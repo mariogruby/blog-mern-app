@@ -50,5 +50,3 @@ export const useSocketUpdatesNotifications = (socket, setNotifications) => {
 export const calculateUnreadNotificationsCount = (notifications) => {
     return notifications.filter(notification => !notification.read).length;
 };
-
-

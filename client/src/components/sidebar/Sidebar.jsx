@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../context/auth';
 import { useUserContext } from '../../context/user';
 import { Link, useLocation } from 'react-router-dom';
+import MoreOptions from './utils/Menu';
 import {
     Drawer,
     List,
@@ -11,7 +12,7 @@ import {
     Badge,
     useMediaQuery,
     useTheme,
-    Avatar
+    Avatar,
 } from '@mui/material';
 import {
     Home as HomeIcon,
@@ -34,7 +35,7 @@ import {
     useSocketUpdatesMessages,
     calculateUnreadMessagesCount,
     useSocketUpdatesNotifications,
-    calculateUnreadNotificationsCount
+    calculateUnreadNotificationsCount,
 } from './Actions';
 import { useNotificationsActions } from './notifications/Actions';
 
@@ -42,15 +43,33 @@ const drawerWidth = 240;
 
 const Sidebar = () => {
     const location = useLocation();
-    const { isLoggedIn } = useContext(AuthContext);
+    const { isLoggedIn, logOutUser } = useContext(AuthContext);
     const { userInfo } = useUserContext();
     const { chats, setChats } = useGetChats();
     const { socket } = useSocketContext();
-    const [openModal, setOpenModal] = useState(false);
-    const [openNotifications, setOpenNotifications] = useState(false);
     const { notifications, setNotifications, markNotificationsAsRead } = useNotificationsActions();
+    const [openModal, setOpenModal] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [openNotifications, setOpenNotifications] = useState(false);
+
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+    //* logout function
+    function logOutHandler() {
+        if (socket) {
+            socket.disconnect();
+        }
+        logOutUser();
+    }
+
+    //* more Menu
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
 
     //* search Modal
     const handleOpenModal = () => {
@@ -78,12 +97,12 @@ const Sidebar = () => {
     //* calculate unread notifications
     const unreadNotificationsCount = calculateUnreadNotificationsCount(notifications);
 
+
     return (
         <Drawer
             variant="permanent"
             anchor={isMobile ? 'bottom' : 'left'}
             sx={{
-
                 '& .MuiDrawer-paper': {
                     width: isMobile ? '100%' : drawerWidth,
                     height: isMobile ? 72 : '100%',
@@ -145,12 +164,17 @@ const Sidebar = () => {
                     </ListItemIcon>
                     <ListItemText primary={isMobile ? "" : "Saved"} />
                 </ListItemButton>
-                <ListItemButton key="More">
+                <ListItemButton key="More" onClick={handleMenu}>
                     <ListItemIcon>
                         <MenuIcon fontSize='large' />
                     </ListItemIcon>
                     <ListItemText primary={isMobile ? "" : "More"} />
                 </ListItemButton>
+                <MoreOptions
+                    anchorEl={anchorEl}
+                    handleMenuClose={handleMenuClose}
+                    logOutHandler={logOutHandler}
+                />
                 {isLoggedIn ? (
                     <ListItemButton key="Profile" component={Link} to={userInfo ? `/${userInfo.username}` : '#'}>
                         <Avatar
@@ -161,7 +185,7 @@ const Sidebar = () => {
                         <ListItemText primary={isMobile ? "" : "Profile"} />
                     </ListItemButton>
                 ) : (
-                    <ListItemButton hey="Login" component={Link} to={'/login'}>
+                    <ListItemButton key="Login" component={Link} to={'/login'}>
                         <ListItemIcon>
                             <LoginIcon fontSize='large' />
                         </ListItemIcon>
