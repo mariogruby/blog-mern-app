@@ -25,12 +25,14 @@ import {
 import {
     Favorite as FavoriteIcon,
     FavoriteBorder as FavoriteBorderIcon,
-    Share as ShareIcon,
     MoreVert as MoreVertIcon,
     ModeCommentOutlined as ModeCommentOutlinedIcon,
     TurnedInNot as TurnedInNotIcon,
-    TurnedIn as TurnedInIcon
+    TurnedIn as TurnedInIcon,
+    SendOutlined as SendOutlinedIcon,
 } from '@mui/icons-material';
+import { useAllPostActions } from '../allPosts/Actions';
+import ListChat from '../allPosts/ListDm'
 
 export default function Post() {
     const {
@@ -55,6 +57,13 @@ export default function Post() {
         savedPost,
         postId
     } = usePostByIdActions();
+
+    const {
+        handleCloseChatList,
+        handleOpenChatList,
+        openModalList,
+        selectedPostId,
+    } = useAllPostActions();
 
     const formatDate = (dateString) => {
         const l = "en";
@@ -242,8 +251,11 @@ export default function Post() {
                                         aria-label="add a comment">
                                         <ModeCommentOutlinedIcon />
                                     </IconButton>
-                                    <IconButton color="inherit">
-                                        <ShareIcon />
+                                    <IconButton
+                                        aria-label="share"
+                                        onClick={() => handleOpenChatList(post._id)}
+                                    >
+                                        <SendOutlinedIcon />
                                     </IconButton>
                                     <IconButton
                                         aria-label="save"
@@ -269,6 +281,7 @@ export default function Post() {
             <ModalEditPost open={isModalOpen} handleClose={handleModalClose}>
                 <EditPost postId={postId} initialData={post} handleModalClose={handleModalClose} />
             </ModalEditPost>
+            <ListChat open={openModalList} handleClose={handleCloseChatList} postId={selectedPostId} />
         </Box>
     );
 }
