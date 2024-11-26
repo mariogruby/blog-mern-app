@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../../context/auth';
 import { usePostContext } from '../../../context/post';
 import { useParams } from 'react-router-dom';
 import { useCommentContext } from '../../../context/comment';
@@ -19,9 +20,12 @@ export const usePostByIdActions = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [expandedIds, setExpandedIds] = useState([]);
     const [savedPost, setSavedPost] = useState([]);
+    const { user } = useContext(AuthContext);
     const { postId } = useParams();
     const { updateComment } = useCommentContext();
     const { updatePost } = usePostContext();
+
+    const isAuthor = user && post && user._id === post.author;
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -147,7 +151,6 @@ export const usePostByIdActions = () => {
     }
 
 
-
     const loadMoreComments = () => {
         setVisibleComments(prevVisibleComments => prevVisibleComments + 5);
         setShowMessage(false);
@@ -200,6 +203,7 @@ export const usePostByIdActions = () => {
 
 
     return {
+        isAuthor,
         handleToggleLike,
         loadMoreComments,
         toggleExpand,

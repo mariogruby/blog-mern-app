@@ -36,6 +36,7 @@ import ListChat from '../allPosts/ListDm'
 
 export default function Post() {
     const {
+        isAuthor,
         handleToggleLike,
         loadMoreComments,
         toggleExpand,
@@ -124,7 +125,7 @@ export default function Post() {
                                     <Avatar alt={post.author.username} src={post.author.userImage} />
                                     <Box ml={2} display="flex" alignItems="center" flexGrow={1}>
                                         <Typography variant="h6" component="span" fontWeight="bold">{post.author.username}</Typography>
-                                        <IconButton aria-label="settings" onClick={handleMenu} sx={{ ml: 'auto' }}>
+                                        <IconButton disabled={!isAuthor} aria-label="settings" onClick={handleMenu} sx={{ ml: 'auto' }}>
                                             <MoreVertIcon />
                                         </IconButton>
                                         <DropdownMenu

@@ -130,6 +130,7 @@ export default function AllPosts() {
                                         <CardActions disableSpacing sx={{ mt: 1, ml: 0.5, p: 0 }}>
                                             <IconButton
                                                 aria-label="add to favorites"
+                                                disabled={!isLoggedIn}
                                                 onClick={() => handleToggleLike(post._id)}>
                                                 {likedPosts.includes(post._id) ? (
                                                     <FavoriteIcon sx={{ color: pink[500] }} />
@@ -145,12 +146,14 @@ export default function AllPosts() {
                                             </Link>
                                             <IconButton
                                                 aria-label="share"
+                                                disabled={!isLoggedIn}
                                                 onClick={() => handleOpenChatList(post._id)} // Pasa el postId al abrir el modal
                                             >
                                                 <SendOutlinedIcon />
                                             </IconButton>
                                             <IconButton
                                                 aria-label="save"
+                                                disabled={!isLoggedIn}
                                                 onClick={() => handleToggleSave(post._id)}
                                                 sx={{ ml: 'auto' }}>
                                                 {savedPosts.includes(post._id) ? (

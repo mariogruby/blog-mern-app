@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import AddPost from '../../components/post/addPost/AddPost'
 import {
     Box,
@@ -8,6 +8,7 @@ import {
     SpeedDialAction
 } from '@mui/material';
 import Navbar from '../navbar/Navbar';
+import { AuthContext } from '../../context/auth';
 import ModalAddPost from '../post/addPost/ModalAddPost';
 import Sidebar from '../sidebar/Sidebar';
 import AddIcon from '@mui/icons-material/Add';
@@ -15,6 +16,7 @@ import { useLocation } from 'react-router-dom';
 import { useMediaQuery, useTheme } from '@mui/material';
 
 export default function Layout({ children }) {
+    const { isLoggedIn } = useContext(AuthContext);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +41,7 @@ export default function Layout({ children }) {
             >
                 {children}
             </Box>
-            {location.pathname === "/" && (
+            {location.pathname === "/" && isLoggedIn &&(
                 <SpeedDial
                     ariaLabel="SpeedDial basic example"
                     sx={{
