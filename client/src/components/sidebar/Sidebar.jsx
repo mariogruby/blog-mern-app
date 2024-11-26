@@ -1,8 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../context/auth';
 import { useUserContext } from '../../context/user';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import MoreOptions from './utils/Menu';
+import AlertModal from '../alerts/NoAuth';
 import {
     Drawer,
     List,
@@ -41,7 +42,8 @@ import { useNotificationsActions } from './notifications/Actions';
 
 const drawerWidth = 240;
 
-const Sidebar = () => {
+export default function Sidebar() {
+    const navigate = useNavigate();
     const location = useLocation();
     const { isLoggedIn, logOutUser } = useContext(AuthContext);
     const { userInfo } = useUserContext();
@@ -51,6 +53,12 @@ const Sidebar = () => {
     const [openModal, setOpenModal] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [openNotifications, setOpenNotifications] = useState(false);
+    const [alertOpen, setAlertOpen] = useState(false);
+
+    //* Alert Modal
+    const handleAlertClose = () => {
+        setAlertOpen(false);
+    };
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -61,6 +69,7 @@ const Sidebar = () => {
             socket.disconnect();
         }
         logOutUser();
+        navigate('/login')
     }
 
     //* more Menu
@@ -97,7 +106,6 @@ const Sidebar = () => {
     //* calculate unread notifications
     const unreadNotificationsCount = calculateUnreadNotificationsCount(notifications);
 
-
     return (
         <Drawer
             variant="permanent"
@@ -124,7 +132,12 @@ const Sidebar = () => {
                     </ListItemIcon>
                     <ListItemText primary={isMobile ? "" : "Home"} />
                 </ListItemButton>
-                <ListItemButton key="dm" component={Link} to='/dm'>
+                <ListItemButton
+                    key="dm"
+                    onClick={() => {
+                        !isLoggedIn ? setAlertOpen(true) : (window.location.href = '/dm');
+                    }}
+                >
                     <ListItemIcon>
                         <Badge badgeContent={unreadMessagesCount} color="error">
                             {location.pathname === '/dm' ? (
@@ -136,7 +149,11 @@ const Sidebar = () => {
                     </ListItemIcon>
                     <ListItemText primary={isMobile ? "" : "Messages"} />
                 </ListItemButton>
-                <ListItemButton key="Notifications" component="div" onClick={handleOpenNotifications}>
+                <ListItemButton
+                    key="Notifications"
+                    component="div"
+                    onClick={(event) => !isLoggedIn ? setAlertOpen(true) : handleOpenNotifications(event)}
+                >
                     <ListItemIcon>
                         <Badge badgeContent={unreadNotificationsCount} color="error">
                             {location.pathname === '/notifications' ? (
@@ -148,13 +165,20 @@ const Sidebar = () => {
                     </ListItemIcon>
                     <ListItemText primary={isMobile ? "" : "Notifications"} />
                 </ListItemButton>
-                <ListItemButton key="Search" component="div" onClick={handleOpenModal}>
+                <ListItemButton
+                    key="Search"
+                    component="div"
+                    onClick={(event) => !isLoggedIn ? setAlertOpen(true) : handleOpenModal(event)}
+                >
                     <ListItemIcon>
                         <SearchIcon fontSize='large' />
                     </ListItemIcon>
                     <ListItemText primary={isMobile ? "" : "Search"} />
                 </ListItemButton>
-                <ListItemButton key="Saved" component={Link} to='/saved-posts'>
+                <ListItemButton 
+                key="Saved" 
+                onClick={() => !isLoggedIn ? setAlertOpen(true) : (window.location.href = '/saved-posts')}
+                >
                     <ListItemIcon>
                         {location.pathname === '/saved-posts' ? (
                             <TurnedInIcon fontSize="large" />
@@ -195,8 +219,7 @@ const Sidebar = () => {
             </List>
             <SearchModal open={openModal} onClose={handleCloseModal} />
             <NotificationsModal open={openNotifications} onClose={handleCloseNotifications} />
+            <AlertModal open={alertOpen} handleClose={handleAlertClose} />
         </Drawer>
     );
 };
-
-export default Sidebar;

@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { ToastContainer, Bounce } from 'react-toastify';
 import { Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { AuthContext } from './context/auth';
 import CssBaseline from '@mui/material/CssBaseline';
 import Post from './components/post/postById/Post';
 import AppLayout from './components/layouts/AppLyt';
@@ -25,8 +24,6 @@ function App() {
     },
   });
 
-  const { isLoggedIn, isLoading } = useContext(AuthContext);
-
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -48,15 +45,37 @@ function App() {
           <Route path='/' element={<HomePage />} />
           <Route path='/signup' element={<AuthLayout><Signup /></AuthLayout>} />
           <Route path='/login' element={<AuthLayout><Login /></AuthLayout>} />
-          <Route path='/post/:postId' element={<Post />} />
-          <Route path='/saved-posts' element={<SavedPage />} />
-          <Route path='/dm' element={<DmPage/>} />
-          <Route
+          <Route 
+            path='/post/:postId' 
+            element={
+              <ProtectedRoute 
+                redirectTo="/login" 
+                element={<Post />} 
+              />
+            } 
+          />
+          <Route 
+            path='/saved-posts' 
+            element={
+              <ProtectedRoute 
+                redirectTo="/login" 
+                element={<SavedPage />} 
+              />
+            } 
+          />
+          <Route 
+            path='/dm' 
+            element={
+              <ProtectedRoute 
+                redirectTo="/login" 
+                element={<DmPage />} 
+              />
+            } 
+          />
+          <Route 
             path='/:username' 
             element={
               <ProtectedRoute 
-                isLoggedIn={isLoggedIn} 
-                isLoading={isLoading}
                 redirectTo="/login" 
                 element={<ProfileLayout><ProfilePage /></ProfileLayout>} 
               />
