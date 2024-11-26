@@ -94,8 +94,8 @@ export const getMessages = async (req, res) => {
             path: 'messages',
             populate: {
                 path: 'post',
-                select: 'content image author',
-                populate: { path: 'author', select: 'name' },
+                select: '_id content image author',
+                populate: { path: 'author', select: 'username userImage' },
             },
         });
 
