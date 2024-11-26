@@ -37,7 +37,7 @@ export default function Layout({ children }) {
             <Sidebar />
             <Box
                 component="main"
-                sx={{ flexGrow: 1, bgcolor: 'background.default', ml: { xs: 0, sm: 30 }, mt: 9 }}
+                sx={{ flexGrow: 1, bgcolor: 'background.default', ml: { xs: 0, sm: 30 }, mt: 9, mb: 9}}
             >
                 {children}
             </Box>

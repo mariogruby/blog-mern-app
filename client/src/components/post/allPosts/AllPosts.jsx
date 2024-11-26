@@ -27,12 +27,10 @@ import {
     TurnedInNot as TurnedInNotIcon,
     TurnedIn as TurnedInIcon,
     SendOutlined as SendOutlinedIcon,
+    Error as ErrorIcon
 } from '@mui/icons-material';
 import AlertModal from '../../alerts/NoAuth';
 import ListChat from './ListDm'
-
-//* oldest todo:
-//TODO: pending successMessage implementation and clean code
 
 export default function AllPosts() {
     const {
@@ -79,11 +77,30 @@ export default function AllPosts() {
         setIsModalOpen(false);
     };
 
-    return (
-        <Box sx={{ flexGrow: 1 }}>
-            <Grid container spacing={2} columns={2}>
-                {isLoading ? (
-                    Array.from(new Array(6)).map((_, index) => (
+    if (errorMessage) {
+        return (
+            <>
+                {errorMessage && (
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        minHeight: '40vh',
+                        textAlign: 'center',
+                        fontSize: '18px',
+                    }}>
+                        <Typography color="error"><ErrorIcon fontSize='large' /> {errorMessage}</Typography>
+                    </Box>
+                )}
+            </>
+        );
+    }
+
+    if (isLoading) {
+        return (
+            <Box sx={{ flexGrow: 1 }}>
+                <Grid container spacing={2} columns={2}>
+                    {Array.from(new Array(6)).map((_, index) => (
                         <Grid item xs={12} sm={6} key={index}>
                             <Card sx={{ width: { xs: '100%', sm: '545px' }, ml: { xs: 0, sm: 1, md: 8, lg: '300px', xl: '350px' } }}>
                                 <CardHeader
@@ -99,133 +116,147 @@ export default function AllPosts() {
                                 </CardContent>
                             </Card>
                         </Grid>
-                    ))
-                ) : (
-                    posts.length > 0 ? (
-                        <>
-                            {posts.map((post) => (
-                                <Grid item xs={12} sm={6} key={post._id}>
-                                    <Card sx={{ width: { xs: '100%', sm: '545px' }, ml: { xs: 0, sm: 1, md: 8, lg: '300px', xl: '350px' } }}>
-                                        <CardHeader
-                                            avatar={<Avatar alt={post.author.username} src={post.author.userImage} />}
-                                            action={
-                                                <IconButton aria-label="settings">
-                                                    <MoreVertIcon />
-                                                </IconButton>
-                                            }
-                                            title={<Link to={`/${post.author.username}`} onClick={handleUsernameClick}>
-                                                <Typography variant="h7" component="span" fontWeight="bold">
-                                                    {post.author.username}
-                                                </Typography>
-                                            </Link>}
-                                        />
-                                        <Link to={`/post/${post._id}`}>
-                                            <CardMedia
-                                                component="img"
-                                                image={post.image}
-                                                alt='image'
-                                                style={{ maxWidth: '100%', height: '90%' }}
-                                            />
-                                        </Link>
-                                        <CardActions disableSpacing sx={{ mt: 1, ml: 0.5, p: 0 }}>
-                                            <IconButton
-                                                aria-label="add to favorites"
-                                                disabled={!isLoggedIn}
-                                                onClick={() => handleToggleLike(post._id)}>
-                                                {likedPosts.includes(post._id) ? (
-                                                    <FavoriteIcon sx={{ color: pink[500] }} />
-                                                ) : (
-                                                    <FavoriteBorderIcon />
-                                                )}
-                                            </IconButton>
-                                            <Link to={`/post/${post._id}`}>
-                                                <IconButton
-                                                    aria-label="add a comment">
-                                                    <ModeCommentOutlinedIcon />
-                                                </IconButton>
-                                            </Link>
-                                            <IconButton
-                                                aria-label="share"
-                                                disabled={!isLoggedIn}
-                                                onClick={() => handleOpenChatList(post._id)} // Pasa el postId al abrir el modal
-                                            >
-                                                <SendOutlinedIcon />
-                                            </IconButton>
-                                            <IconButton
-                                                aria-label="save"
-                                                disabled={!isLoggedIn}
-                                                onClick={() => handleToggleSave(post._id)}
-                                                sx={{ ml: 'auto' }}>
-                                                {savedPosts.includes(post._id) ? (
-                                                    <TurnedInIcon />
-                                                ) : (
-                                                    <TurnedInNotIcon />
-                                                )}
-                                            </IconButton>
-                                        </CardActions>
-                                        <Box sx={{ ml: 2 }}>
-                                            <Typography variant="body2" color="text.secondary" component="p" sx={{ fontWeight: 'bold' }}>
-                                                {`${post.likes} Likes`}
-                                            </Typography>
-                                        </Box>
-                                        <CardContent sx={{ pt: 1 }}>
-                                            <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                                component="p"
-                                                sx={{
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: isExpanded(post._id) ? 'unset' : 1,
-                                                    WebkitBoxOrient: 'vertical'
-                                                }}
-                                            >
-                                                <span onClick={() => toggleExpand(post._id)} style={{ display: 'inline' }}>
-                                                    <span style={{ fontWeight: 'bold', fontSize: 14 }}>{post.author.username}</span>{' '}
-                                                    {capitalizeFirstLetter(post.content)}
-                                                </span>
-                                            </Typography>
-                                            <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                                sx={{ fontSize: '0.75rem', mt: 1 }}
-                                            >
-                                                {formatDate(post.createdAt).toUpperCase()}
-                                            </Typography>
-                                            <Box direction="row" spacing={1} sx={{ mt: 1 }}>
-                                                {post.tags.map((tag, index) => (
-                                                    <Chip size="small" key={index} label={tag} sx={{ m: 0.3 }} />
-                                                ))}
-                                            </Box>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            ))}
-                            {page < totalPages && (
-                                <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                                    <Button
-                                        onClick={handleLoadMore}
-                                        variant="contained"
-                                        color="primary"
-                                        disabled={isLoadingMorePosts}
+                    ))}
+                </Grid>
+            </Box>
+        )
+    }
+
+    if (posts.length < 0) {
+        return (
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '40vh',
+                textAlign: 'center',
+                fontSize: '18px',
+            }}>
+                <Typography><ErrorIcon fontSize='large' /> No posts yet</Typography>
+            </Box>
+        )
+    }
+
+    return (
+        <Box sx={{ flexGrow: 1 }}>
+            <Grid container spacing={2} columns={2}>
+                {/* {posts.length > 0 ? ( */}
+                <>
+                    {posts.map((post) => (
+                        <Grid item xs={12} sm={6} key={post._id}>
+                            <Card sx={{ width: { xs: '100%', sm: '545px' }, ml: { xs: 0, sm: 1, md: 8, lg: '300px', xl: '350px' } }}>
+                                <CardHeader
+                                    avatar={<Avatar alt={post.author.username} src={post.author.userImage} />}
+                                    action={
+                                        <IconButton aria-label="settings">
+                                            <MoreVertIcon />
+                                        </IconButton>
+                                    }
+                                    title={<Link to={`/${post.author.username}`} onClick={handleUsernameClick}>
+                                        <Typography variant="h7" component="span" fontWeight="bold">
+                                            {post.author.username}
+                                        </Typography>
+                                    </Link>}
+                                />
+                                <Link to={`/post/${post._id}`}>
+                                    <CardMedia
+                                        component="img"
+                                        image={post.image}
+                                        alt='image'
+                                        style={{ maxWidth: '100%', height: '90%' }}
+                                    />
+                                </Link>
+                                <CardActions disableSpacing sx={{ mt: 1, ml: 0.5, p: 0 }}>
+                                    <IconButton
+                                        aria-label="add to favorites"
+                                        disabled={!isLoggedIn}
+                                        onClick={() => handleToggleLike(post._id)}>
+                                        {likedPosts.includes(post._id) ? (
+                                            <FavoriteIcon sx={{ color: pink[500] }} />
+                                        ) : (
+                                            <FavoriteBorderIcon />
+                                        )}
+                                    </IconButton>
+                                    <Link to={`/post/${post._id}`}>
+                                        <IconButton
+                                            aria-label="add a comment">
+                                            <ModeCommentOutlinedIcon />
+                                        </IconButton>
+                                    </Link>
+                                    <IconButton
+                                        aria-label="share"
+                                        disabled={!isLoggedIn}
+                                        onClick={() => handleOpenChatList(post._id)}
                                     >
-                                        {isLoadingMorePosts ? 'Loading...' : 'Load More'}
-                                    </Button>
-                                </Grid>
-                            )}
-                        </>
-                    ) : (
-                        <Typography variant="body2" color="text.secondary" component="p">
-                            No posts available.
-                        </Typography>
-                    )
-                )}
-                {errorMessage && (
-                    <Typography variant="body2" color="error" component="p">
-                        {errorMessage}
-                    </Typography>
-                )}
+                                        <SendOutlinedIcon />
+                                    </IconButton>
+                                    <IconButton
+                                        aria-label="save"
+                                        disabled={!isLoggedIn}
+                                        onClick={() => handleToggleSave(post._id)}
+                                        sx={{ ml: 'auto' }}>
+                                        {savedPosts.includes(post._id) ? (
+                                            <TurnedInIcon />
+                                        ) : (
+                                            <TurnedInNotIcon />
+                                        )}
+                                    </IconButton>
+                                </CardActions>
+                                <Box sx={{ ml: 2 }}>
+                                    <Typography variant="body2" color="text.secondary" component="p" sx={{ fontWeight: 'bold' }}>
+                                        {`${post.likes} Likes`}
+                                    </Typography>
+                                </Box>
+                                <CardContent sx={{ pt: 1 }}>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        component="p"
+                                        sx={{
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: isExpanded(post._id) ? 'unset' : 1,
+                                            WebkitBoxOrient: 'vertical'
+                                        }}
+                                    >
+                                        <span onClick={() => toggleExpand(post._id)} style={{ display: 'inline' }}>
+                                            <span style={{ fontWeight: 'bold', fontSize: 14 }}>{post.author.username}</span>{' '}
+                                            {capitalizeFirstLetter(post.content)}
+                                        </span>
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        sx={{ fontSize: '0.75rem', mt: 1 }}
+                                    >
+                                        {formatDate(post.createdAt).toUpperCase()}
+                                    </Typography>
+                                    <Box direction="row" spacing={1} sx={{ mt: 1 }}>
+                                        {post.tags.map((tag, index) => (
+                                            <Chip size="small" key={index} label={tag} sx={{ m: 0.3 }} />
+                                        ))}
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                    {page < totalPages && (
+                        <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                            <Button
+                                onClick={handleLoadMore}
+                                variant="contained"
+                                color="primary"
+                                disabled={isLoadingMorePosts}
+                            >
+                                {isLoadingMorePosts ? 'Loading...' : 'Load More'}
+                            </Button>
+                        </Grid>
+                    )}
+                </>
+                {/* ) : (
+                    null
+                )} */}
             </Grid>
             <AlertModal open={isModalOpen} handleClose={handleCloseModal} />
             <ListChat open={openModalList} handleClose={handleCloseChatList} postId={selectedPostId} />
