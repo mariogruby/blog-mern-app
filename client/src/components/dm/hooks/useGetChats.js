@@ -12,12 +12,10 @@ export default function useGetChats() {
     useEffect(() => {
         const getChats = async () => {
             if (!isLoggedIn) return; 
-
             setLoading(true);
             try {
                 const response = await userService.getUsers();
                 const { participants, allUsers } = response.data;
-
                 if (response.data.error) {
                     throw new Error(response.data.error);
                 }

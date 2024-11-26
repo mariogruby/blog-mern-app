@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { Box, Paper, Typography, Card, CardMedia, CardContent, Avatar } from '@mui/material'
 import { AuthContext } from '../../../context/auth'
 import { extractTime } from '../utils/extractTime'
@@ -30,24 +31,33 @@ export default function Message({ message }) {
                     >
                         <Typography>{message.message}</Typography>
                         {message.post && (
-                            <Card sx={{ marginTop: '8px', width: '100%' }}>
+                            <Card
+                                component={Link}
+                                to={`/post/${message.post._id}`}
+                                sx={{
+                                    marginTop: '8px',
+                                    width: '100%',
+                                    borderRadius: '16px'
+                                }}
+                            >
                                 {message.post.author && (
-                                    <Box display="flex" alignItems="center" marginTop="8px">
-                                        <Avatar alt={message.post.author.name} />
+                                    <Box display="flex" alignItems="center" marginTop="8px" marginLeft={2}>
+                                        <Avatar src={message.post.author.userImage} alt={message.post.author.username} />
                                         <Typography variant="subtitle2" marginLeft="8px">
-                                            {message.post.author.name}
+                                            {message.post.author.username}
                                         </Typography>
                                     </Box>
                                 )}
                                 <CardContent>
                                     {message.post.image && (
                                         <CardMedia
+                                            sx={{ borderRadius: '5px' }}
                                             component="img"
                                             image={message.post.image}
                                             alt={message.post.content}
                                         />
                                     )}
-                                    <Typography variant="body1">{message.post.content}</Typography>
+                                    <Typography color="text.secondary">{message.post.content}</Typography>
                                 </CardContent>
                             </Card>
                         )}

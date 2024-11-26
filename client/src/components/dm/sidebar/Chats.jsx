@@ -1,7 +1,10 @@
 import React from 'react';
 import {
     Box,
-    List
+    List,
+    Skeleton,
+    ListItemButton,
+    Divider,
 } from '@mui/material';
 import Chat from './Chat';
 import useGetChats from '../hooks/useGetChats';
@@ -15,19 +18,44 @@ export default function Chats({ onChatSelect }) {
 
     return (
         <Box flexGrow={1} height={600}>
-            <List sx={{ flexGrow: 1 }}>
-                {chats.map((chat, idx) => (
-                    <Chat
-                        key={chat._id}
-                        chat={chat}
-                        lastIdx={idx === chats.length - 1}
-                        onChatSelect={onChatSelect}
-                    />
-                ))}
-                {loading ? <p>LOADING..</p> : null}
-            </List>
+            {loading ? ( 
+                <List>
+                    {[...Array(5)].map((_, index) => (
+                        <React.Fragment key={index}>
+                            <ListItemButton>
+                                <Skeleton
+                                    variant="circular"
+                                    animation="wave"
+                                    width={45}
+                                    height={45}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    animation="wave"
+                                    width={100}
+                                    height={10}
+                                    sx={{ marginLeft: 2 }}
+                                />
+                            </ListItemButton>
+                            <Divider />
+                        </React.Fragment>
+                    ))}
+                </List>
+            ) : (
+                <List sx={{ flexGrow: 1 }}>
+                    {chats.map((chat, idx) => (
+                        <Chat
+                            key={chat._id}
+                            chat={chat}
+                            lastIdx={idx === chats.length - 1}
+                            onChatSelect={onChatSelect}
+                        />
+                    ))}
+                </List>
+            )}
         </Box>
     );
+    
 }
 
 

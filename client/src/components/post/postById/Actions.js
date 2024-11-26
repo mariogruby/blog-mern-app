@@ -25,7 +25,7 @@ export const usePostByIdActions = () => {
     const { updateComment } = useCommentContext();
     const { updatePost } = usePostContext();
 
-    const isAuthor = user && post && user._id === post.author;
+    const isAuthor = user && post && user.username === post.author.username;
 
     const fetchData = async () => {
         setIsLoading(true);
