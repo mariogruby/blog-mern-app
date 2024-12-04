@@ -7,13 +7,15 @@ import {
     TextField,
     Button,
     Autocomplete,
-    Chip
+    Chip,
+    useMediaQuery
 } from '@mui/material';
-// import { styled } from '@mui/material/styles';
-
-//TODO: fix minimal bugs in chips textArea
+import { useTheme } from '@mui/material/styles';
 
 export default function EditPost({ postId, initialData, handleModalClose }) {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
     const {
         content,
         tags,
@@ -26,19 +28,21 @@ export default function EditPost({ postId, initialData, handleModalClose }) {
         handleSubmit
     } = useEditPostActions(postId, initialData, handleModalClose);
 
-    // const VisuallyHiddenInput = styled('input')({
-    //     display: 'none',
-    // });
-
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="md">
             <Box
                 component="form"
                 onSubmit={handleSubmit}
                 noValidate
                 autoComplete="off"
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                    marginTop: isMobile ? 10 : 'auto'
+                }}
             >
-                <Grid container spacing={2}>
+                <Grid container spacing={2} flex={1}>
                     <Grid item xs={12}>
                         <TextField
                             rows={4}
@@ -46,7 +50,7 @@ export default function EditPost({ postId, initialData, handleModalClose }) {
                             name="content"
                             multiline
                             label="Edit text here..."
-                            variant="filled"
+                            variant="outlined"
                             fullWidth
                             value={content}
                         />
@@ -68,25 +72,42 @@ export default function EditPost({ postId, initialData, handleModalClose }) {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    variant="filled"
+                                    variant="outlined"
                                     label="Edit tags and press Enter or Space"
                                     onKeyDown={handleKeyDown}
                                 />
                             )}
                         />
                     </Grid>
-                    <Grid item xs={12}>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            disabled={isLoading}
-                        >
-                            {isLoading ? 'Saving...' : 'Save'}
-                        </Button>
-                    </Grid>
                 </Grid>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginTop: isMobile ? 'auto' : 2,
+                        position: isMobile ? 'fixed' : 'static',
+                        bottom: isMobile ? 0 : 'auto',
+                        left: 0,
+                        width: '100%',
+                        padding: isMobile ? 2 : 0,
+                        boxShadow: isMobile ? '0 -2px 10px rgba(0,0,0,0.1)' : 'none',
+                    }}
+                >
+                    <Button
+                        onClick={handleModalClose}
+                        variant="outlined"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? 'Saving...' : 'Save'}
+                    </Button>
+                </Box>
             </Box>
         </Container>
     );

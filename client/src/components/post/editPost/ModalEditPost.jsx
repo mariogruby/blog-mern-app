@@ -3,24 +3,46 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
+    IconButton,
+    useMediaQuery
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function ModalEditPost({ children, open, handleClose }) {
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
     return (
         <>
             <Dialog
+                fullScreen={fullScreen}
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+                aria-describedby="responsive-dialog-title"
+                maxWidth="md"
+                fullWidth
             >
                 <DialogTitle
                     id="alert-dialog-title"
                     align="center"
                     variant="h4"
-                    sx={{ m: 2 }}>
+                    sx={{ m: 2, position: 'relative' }}>
                     Edit Post
                 </DialogTitle>
+                <IconButton
+                        aria-label="close"
+                        onClick={handleClose}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
                 <DialogContent>
                     {children}
                 </DialogContent>

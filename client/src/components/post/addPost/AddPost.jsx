@@ -10,20 +10,26 @@ import {
     Chip,
     TextField,
     Autocomplete,
-    Container
+    Container,
+    useMediaQuery
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import EditorImage from './EditorImage';
-import BtnOutlined from '../../buttons/BtnOutlined';
 import { usePostContext } from '../../../context/post';
 import { useAddPostActions } from './Actions';
 
-const steps = ['Select an Image', 'Add text to your Post', 'Review'];
+
 
 //TODO: pending successMessage and errorMessage utilization
 
 function PostStepper({ handleModalClose }) {
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const steps = [isMobile ? 'Image' : 'Select an image', isMobile ? 'Content' : 'Add content and tags to your post', isMobile ? 'Review' : 'Review your post'];
+
     const { addPost } = usePostContext();
     const {
         tags,
@@ -65,13 +71,19 @@ function PostStepper({ handleModalClose }) {
                                 name="image-upload"
                                 accept="image/*"
                                 onChange={handleChange} />
-                            <BtnOutlined
-                                component="span"
-                                startIcon={<CloudUploadIcon />}
-                                fullWidth
+                            <Box
+                                display="flex"
+                                justifyContent="center"
                             >
-                                Upload Image
-                            </BtnOutlined>
+                                <Button
+                                    size="large"
+                                    variant="contained"
+                                    component="span"
+                                    startIcon={<CloudUploadIcon />}
+                                >
+                                    Upload image
+                                </Button>
+                            </Box>
                         </label>
                         {selectedImage && (
                             <Box mt={2}>
@@ -85,46 +97,44 @@ function PostStepper({ handleModalClose }) {
                 );
             case 1:
                 return (
-                    <Container component="main" maxWidth="xs">
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    label="Add text here..."
-                                    name="postText"
-                                    multiline
-                                    rows={4}
-                                    variant="filled"
-                                    fullWidth
-                                    value={postText}
-                                    onChange={handleChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Autocomplete
-                                    multiple
-                                    freeSolo
-                                    options={[]}
-                                    value={tags}
-                                    inputValue={inputValue}
-                                    onChange={handleTagsChange}
-                                    onInputChange={handleInputChange}
-                                    renderTags={(value, getTagProps) =>
-                                        value.map((option, index) => (
-                                            <Chip label={option} {...getTagProps({ index })} />
-                                        ))
-                                    }
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            variant="filled"
-                                            label="Type tags and press Enter or Space"
-                                            onKeyDown={handleKeyDown}
-                                        />
-                                    )}
-                                />
-                            </Grid>
+                    <Grid container spacing={2} flex={1}>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Add text here..."
+                                name="postText"
+                                multiline
+                                rows={4}
+                                variant="outlined"
+                                fullWidth
+                                value={postText}
+                                onChange={handleChange}
+                            />
                         </Grid>
-                    </Container>
+                        <Grid item xs={12}>
+                            <Autocomplete
+                                multiple
+                                freeSolo
+                                options={[]}
+                                value={tags}
+                                inputValue={inputValue}
+                                onChange={handleTagsChange}
+                                onInputChange={handleInputChange}
+                                renderTags={(value, getTagProps) =>
+                                    value.map((option, index) => (
+                                        <Chip label={option} {...getTagProps({ index })} />
+                                    ))
+                                }
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        variant="outlined"
+                                        label="Type tags and press Enter or Space"
+                                        onKeyDown={handleKeyDown}
+                                    />
+                                )}
+                            />
+                        </Grid>
+                    </Grid>
                 );
             case 2:
                 return (
@@ -151,8 +161,10 @@ function PostStepper({ handleModalClose }) {
     };
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <Stepper activeStep={activeStep}>
+        <Box
+            sx={{ width: '100%' }}
+        >
+            <Stepper activeStep={activeStep} >
                 {steps.map((label) => (
                     <Step key={label}>
                         <StepLabel>{label}</StepLabel>
@@ -162,24 +174,50 @@ function PostStepper({ handleModalClose }) {
             <Box>
                 <Typography sx={{ mt: 2, mb: 1 }}>{renderStepContent(activeStep)}</Typography>
                 {activeStep > 0 && activeStep < steps.length - 1 && (
-                    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        pt: 2,
+                        marginTop: isMobile ? 'auto' : 2,
+                        position: isMobile ? 'fixed' : 'static',
+                        bottom: isMobile ? 0 : 'auto',
+                        left: 0,
+                        width: '100%',
+                        padding: isMobile ? 2 : 0,
+                        boxShadow: isMobile ? '0 -2px 10px rgba(0,0,0,0.1)' : 'none',
+                    }}
+                    >
                         <Button
-                            color="inherit"
+                            variant="outlined"
                             onClick={handleBack}
                             sx={{ mr: 1 }}
                         >
                             Back
                         </Button>
                         <Box sx={{ flex: '1 1 auto' }} />
-                        <Button onClick={handleNext}>
+                        <Button
+                            variant="contained"
+                            onClick={handleNext}>
                             Next
                         </Button>
                     </Box>
                 )}
                 {activeStep === steps.length - 1 && (
-                    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        pt: 2,
+                        marginTop: isMobile ? 'auto' : 2,
+                        position: isMobile ? 'fixed' : 'static',
+                        bottom: isMobile ? 0 : 'auto',
+                        left: 0,
+                        width: '100%',
+                        padding: isMobile ? 2 : 0,
+                        boxShadow: isMobile ? '0 -2px 10px rgba(0,0,0,0.1)' : 'none',
+                    }}
+                    >
                         <Button
-                            color="inherit"
+                            variant="contained"
                             onClick={handleBack}
                             sx={{ mr: 1 }}
                         >
@@ -187,6 +225,7 @@ function PostStepper({ handleModalClose }) {
                         </Button>
                         <Box sx={{ flex: '1 1 auto' }} />
                         <Button
+                            variant="contained"
                             disabled={isLoading}
                             onClick={handleSubmit}
                         >
