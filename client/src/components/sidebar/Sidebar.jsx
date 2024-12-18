@@ -61,7 +61,7 @@ export default function Sidebar() {
     };
 
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     //* logout function
     function logOutHandler() {

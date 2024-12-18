@@ -1,9 +1,5 @@
-import React, { useState } from 'react'
-import {
-    Paper,
-    IconButton,
-    TextField
-} from '@mui/material'
+import React, { useState } from 'react';
+import { Paper, IconButton, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import useSendMessage from '../hooks/useSendMessage';
 
@@ -17,6 +13,7 @@ export default function MessageInput() {
         await sendMessage(message);
         setMessage("");
     };
+
     return (
         <form onSubmit={handleSubmit}>
             <Paper
@@ -25,7 +22,8 @@ export default function MessageInput() {
                     display: 'flex',
                     alignItems: 'center',
                     padding: '8px',
-                    // backgroundColor: '#e0e0e0'
+                    minHeight: '60px',
+                    width: '100%',
                 }}
             >
                 <TextField
@@ -34,14 +32,29 @@ export default function MessageInput() {
                     fullWidth
                     multiline
                     maxRows={4}
+                    minRows={2}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    sx={{ flexGrow: 1, borderRadius: '16px' }}
+                    sx={{
+                        flexGrow: 1,
+                        borderRadius: '16px',
+                        '& textarea': {
+                            resize: 'none',
+                        },
+                        '& fieldset': {
+                            borderRadius: '16px',
+                        },
+                    }}
                 />
-                <IconButton type="submit" color="primary" sx={{ marginLeft: '8px' }}>
+                <IconButton
+                    type="submit"
+                    color="primary"
+                    sx={{ marginLeft: '8px' }}
+                    disabled={!message.trim()}
+                >
                     {loading ? 'Sending...' : <SendIcon />}
                 </IconButton>
             </Paper>
         </form>
-    )
+    );
 }

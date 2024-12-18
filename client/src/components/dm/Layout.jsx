@@ -15,10 +15,10 @@ export default function ChatLayout() {
     const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md')); // detect if  isMobile
 
     return (
-        <Box sx={{ mt: { xs: '1px', sm: '1px', md: '15%', lg: '10%', xl: '2%', xxl: '20%' } }}>
+        <Box marginTop={{ xs: 0, sm: 0, md: 9, lg: 9 }}>
             <Card
                 sx={{
-                    maxHeight: 600,
+                    maxHeight: 'auto',
                     maxWidth: 1200,
                     margin: 'auto',
                     bgcolor: 'black',
@@ -42,11 +42,18 @@ export default function ChatLayout() {
                     {/* back button for isMobile */}
                     {isMobile && !showSidebar && (
                         <IconButton
-                            onClick={() => setShowSidebar(true)}
-                            sx={{ display: { xs: 'block', md: 'none' }, position: 'absolute', top: 10, left: 10 }}
-                        >
-                            <ArrowBackIcon sx={{ color: 'white' }} />
-                        </IconButton>
+                        onClick={() => setShowSidebar(true)}
+                        sx={{
+                            display: { xs: 'block', sm: 'block', md: 'none' },
+                            position: 'absolute',
+                            top: 10,
+                            left: 10,
+                            zIndex: 1
+                        }}
+                    >
+                        <ArrowBackIcon sx={{ color: 'white' }} />
+                    </IconButton>
+                    
                     )}
 
                     {/* show messages */}
@@ -68,120 +75,77 @@ export default function ChatLayout() {
 }
 
 //! INITIAL CODE SNIPPET
-// import React from 'react';
+// import React, { useState } from 'react';
 // import SidebarChat from './sidebar/SidebarChat';
-// import Conversations from './conversation/Chats';
-// import { Grid, Card, CardContent, Box } from '@mui/material';
+// import MessageContainer from '../dm/messages/MessageContainer';
+// import {
+//     Grid,
+//     Card,
+//     Box,
+//     IconButton,
+//     useMediaQuery
+// } from '@mui/material';
+// import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // export default function ChatLayout() {
+//     const [showSidebar, setShowSidebar] = useState(true);
+//     const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md')); // detect if  isMobile
+
 //     return (
-//         <Box sx={{ mt: { xs: '1px', sm: '1px', md: '15%', lg: '10%', xl: '2%', xxl: '20%' } }}>
-//             <Card sx={{ maxWidth: 1200, margin: 'auto', bgcolor: 'black', color: 'white' }}>
-//                     <Grid container>
-//                     <CardContent>
-//                         <Grid item xs={14} md={12} lg={9}>
-//                             <SidebarChat />
+//         <Box marginTop={{ xs: 0, sm: 5, md: 9, lg: 9 }}>
+//             <Card
+//                 sx={{
+//                     maxHeight: 'auto',
+//                     maxWidth: 1200,
+//                     margin: 'auto',
+//                     bgcolor: 'black',
+//                     color: 'white',
+//                 }}
+//             >
+//                 <Grid container spacing={2}>
+//                     {/* show chats list */}
+//                     {(!isMobile || showSidebar) && (
+//                         <Grid
+//                             item
+//                             xs={12}
+//                             md={4}
+//                             lg={3}
+//                             sx={{ display: { xs: showSidebar ? 'block' : 'none', md: 'block' } }}
+//                         >
+//                             <SidebarChat onChatSelect={() => isMobile && setShowSidebar(false)} />
 //                         </Grid>
-//                         <Grid item xs={12} md={8} lg={9}>
-//                             {/* <Conversations /> */}
+//                     )}
+
+//                     {/* back button for isMobile */}
+//                     {isMobile && !showSidebar && (
+//                         <IconButton
+//                             onClick={() => setShowSidebar(true)}
+//                             sx={{
+//                                 display: { xs: 'block', sm: 'block', md: 'none' }, 
+//                                 position: 'absolute',
+//                                 top: 10,
+//                                 left: 10,
+//                                 zIndex: 1
+//                             }}
+//                         >
+//                             <ArrowBackIcon sx={{ color: 'white' }} />
+//                         </IconButton>
+//                     )}
+
+//                     {/* show messages */}
+//                     {(!isMobile || !showSidebar) && (
+//                         <Grid
+//                             item
+//                             xs={12}
+//                             md={8}
+//                             lg={9}
+//                             sx={{ display: { xs: !showSidebar ? 'block' : 'none', md: 'block' } }}
+//                         >
+//                             <MessageContainer />
 //                         </Grid>
-//                         </CardContent>
-//                     </Grid>
+//                     )}
+//                 </Grid>
 //             </Card>
 //         </Box>
 //     );
-// }
-
-
-
-// import React, { useState, useEffect } from 'react';
-// import { InputBase, Avatar, Box, IconButton, List, ListItem, ListItemAvatar, ListItemText, AppBar, Toolbar } from '@mui/material';
-// import { Search as SearchIcon, Close as CloseIcon } from '@mui/icons-material';
-// import { Link } from 'react-router-dom';
-
-// export default function Component() {
-//   return (
-//     <Box display="flex" flexDirection="column" height="100vh">
-//       <AppBar position="sticky">
-//         <Toolbar>
-//           <Box display="flex" alignItems="center" width="100%">
-//             <IconButton edge="start">
-//               <SearchIcon />
-//             </IconButton>
-//             <InputBase
-//               placeholder="Search conversations..."
-//               sx={{ ml: 1, flex: 1 }}
-//             />
-//             <IconButton edge="end">
-//               <CloseIcon />
-//             </IconButton>
-//           </Box>
-//         </Toolbar>
-//       </AppBar>
-//       <Box flex={1} overflow="auto">
-//         <List>
-//           <Link to="#">
-//             <ListItem button component="a">
-//               <ListItemAvatar>
-//                 <Avatar src="/placeholder-user.jpg">AC</Avatar>
-//               </ListItemAvatar>
-//               <ListItemText
-//                 primary="Acme Inc"
-//                 secondary={
-//                   <React.Fragment>
-//                     <Box component="span" display="block" fontSize="small" color="textSecondary">
-//                       2:39 PM
-//                     </Box>
-//                     <Box component="span" display="block" color="textSecondary" noWrap>
-//                       Hey everyone, we just had a fantastic quarter! 🎉
-//                     </Box>
-//                   </React.Fragment>
-//                 }
-//               />
-//             </ListItem>
-//           </Link>
-//           <Link to="#" >
-//             <ListItem button component="a">
-//               <ListItemAvatar>
-//                 <Avatar src="/placeholder-user.jpg">JP</Avatar>
-//               </ListItemAvatar>
-//               <ListItemText
-//                 primary="Jared Palmer"
-//                 secondary={
-//                   <React.Fragment>
-//                     <Box component="span" display="block" fontSize="small" color="textSecondary">
-//                       1:45 PM
-//                     </Box>
-//                     <Box component="span" display="block" color="textSecondary" noWrap>
-//                       Awesome, can't wait to hear more!
-//                     </Box>
-//                   </React.Fragment>
-//                 }
-//               />
-//             </ListItem>
-//           </Link>
-//           <Link to="#">
-//             <ListItem button component="a">
-//               <ListItemAvatar>
-//                 <Avatar src="/placeholder-user.jpg">CN</Avatar>
-//               </ListItemAvatar>
-//               <ListItemText
-//                 primary="Shadcn"
-//                 secondary={
-//                   <React.Fragment>
-//                     <Box component="span" display="block" fontSize="small" color="textSecondary">
-//                       12:30 PM
-//                     </Box>
-//                     <Box component="span" display="block" color="textSecondary" noWrap>
-//                       Sounds good, let's schedule a meeting.
-//                     </Box>
-//                   </React.Fragment>
-//                 }
-//               />
-//             </ListItem>
-//           </Link>
-//         </List>
-//       </Box>
-//     </Box>
-//   );
 // }

@@ -109,7 +109,7 @@ export default function Post() {
                     </Grid>
                 </Card>
             ) : post ? (
-                <Card sx={{ maxWidth: 900, margin: 'auto', bgcolor: 'black', color: 'white' }}>
+                <Card sx={{ maxWidth: 900, margin: 'auto', mb: { xs: 7, sm: 7 }, bgcolor: 'black', color: 'white' }}>
                     <Grid container>
                         <Grid item xs={12} md={6}>
                             <CardMedia

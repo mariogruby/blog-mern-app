@@ -25,7 +25,7 @@ export default function MessageContainer({ chat }) {
         <>
             {!selectedChat ? <NoChatSelected /> : (
                 <React.Fragment>
-                    <Box display="flex" flexDirection="column" height={600}>
+                    <Box display="flex" flexDirection="column" height={{xs:'100vh', sm: '100vh', md: 600, lg: 600, xl: 600}}>
                         {/* header */}
                         <Paper
                             elevation={3}
@@ -38,7 +38,7 @@ export default function MessageContainer({ chat }) {
                                 // color: 'white'
                             }}
                         >
-                            <Box display="flex" alignItems="center" gap="8px">
+                            <Box display="flex" alignItems="center" gap="8px" marginLeft={{ xs: 5, sm: 5, md: 0, lg: 0 }}>
                                 <Avatar src={selectedChat.userImage} alt="User" sx={{ mr: 1 }} />
                                 <Box>
                                     <Typography variant="subtitle1">{selectedChat.username}</Typography>

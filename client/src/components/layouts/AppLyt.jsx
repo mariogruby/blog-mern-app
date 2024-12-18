@@ -1,26 +1,29 @@
 import React, { useState, useContext } from 'react';
-import AddPost from '../../components/post/addPost/AddPost'
+import AddPost from '../../components/post/addPost/AddPost';
 import {
     Box,
     CssBaseline,
     SpeedDial,
     SpeedDialIcon,
-    SpeedDialAction
+    SpeedDialAction,
+    useMediaQuery,
 } from '@mui/material';
-import Navbar from '../navbar/Navbar';
+// import Navbar from '../navbar/Navbar';
 import { AuthContext } from '../../context/auth';
 import ModalAddPost from '../post/addPost/ModalAddPost';
 import Sidebar from '../sidebar/Sidebar';
 import AddIcon from '@mui/icons-material/Add';
 import { useLocation } from 'react-router-dom';
-import { useMediaQuery, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
+import useChat from '../zustand/useChat';
 
 export default function Layout({ children }) {
     const { isLoggedIn } = useContext(AuthContext);
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [isModalOpen, setIsModalOpen] = useState(false);
     const location = useLocation();
+    const { selectedChat } = useChat();
 
     const handleModalOpen = () => {
         setIsModalOpen(true);
@@ -32,16 +35,27 @@ export default function Layout({ children }) {
 
     return (
         <Box sx={{ display: 'flex' }}>
-            {/* <Navbar /> */}
             <CssBaseline />
-            <Sidebar />
+            {!selectedChat || !isMobile ? (
+                <Sidebar />
+            ) : null}
             <Box
                 component="main"
-                sx={{ flexGrow: 1, bgcolor: 'background.default', ml: { xs: 0, sm: 30 }, mt: 9, mb: 9}}
+                sx={{
+                    flexGrow: 1,
+                    bgcolor: 'background.default',
+                    ml: {
+                        xs: 0,
+                        sm: 0,
+                        md: 30,
+                        lg: 30,
+                        xl: 30,
+                    },
+                }}
             >
                 {children}
             </Box>
-            {location.pathname === "/" && isLoggedIn &&(
+            {location.pathname === '/' && isLoggedIn && (
                 <SpeedDial
                     ariaLabel="SpeedDial basic example"
                     sx={{
