@@ -24,7 +24,7 @@ export const signup = (req, res, next) => {
         return;
     }
 
-    User.findOne({ email })
+    User.findOne({ username })
         .then((foundUser) => {
             if (foundUser) {
                 res.status(400).json({ message: "Account already exists" });

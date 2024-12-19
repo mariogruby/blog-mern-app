@@ -1,8 +1,11 @@
 import User from '../models/user.js'
+import bcrypt from "bcrypt";
 import Notification from '../models/notification.js'
 import Conversation from '../models/conversation.js';
 import cloudinaryConfig from '../config/cloudinary.js'
 import { io, userSocketMap } from '../socket/socket.js'
+
+const saltRounds = 10;
 
 export const getUser = async (req, res) => {
     try {
