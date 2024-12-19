@@ -1,52 +1,67 @@
-import React, { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
     Dialog,
-    DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
-    Button
-} from '@mui/material'
-// import Home from '../../components/post/AllPosts'
+    IconButton
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
-export default function AuthLayout({ children}) {
+export default function AuthLayout({ children }) {
     const [open, setOpen] = useState(true);
-
-    const handleClickOpen = () => {
-        console.log("open:", open)
-        setOpen(true);
-    };
 
     const handleClose = () => {
         setOpen(false);
     };
+
     const location = useLocation();
+    const navigate = useNavigate();
+
     const getTitle = () => {
         switch (location.pathname) {
             case '/signup':
                 return 'Create an account';
             case '/login':
-                return 'Login'
+                return 'Login';
+            case '/update-password':
+                return 'Update password';
             default:
                 return 'Default title';
         }
-    }
+    };
+
     return (
         <>
             <Dialog
                 open={open}
-                onClose={handleClose}
+                onClose={null}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
+                <IconButton
+                    aria-label="close"
+                    onClick={() => {
+                        if (handleClose) handleClose();
+                        navigate(-1);
+                    }}
+                    sx={{
+                        position: 'absolute',
+                        right: 16,
+                        top: 16,
+                        color: (theme) => theme.palette.grey[500]
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
                 <DialogTitle
-                    sx={{ mt: 5 }}
                     id="alert-dialog-title"
+                    sx={{ mt: 5 }}
                     justifyContent="center"
                     alignItems="center"
                     variant="h4"
-                    display="flex">
+                    display="flex"
+                >
                     {getTitle()}
                 </DialogTitle>
                 <DialogContent>
@@ -54,5 +69,5 @@ export default function AuthLayout({ children}) {
                 </DialogContent>
             </Dialog>
         </>
-    )
+    );
 }

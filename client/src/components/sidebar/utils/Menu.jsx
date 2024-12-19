@@ -1,10 +1,14 @@
 import React, { useContext } from 'react';
+import { Link } from 'react-router-dom'
 import { AuthContext } from '../../../context/auth';
 import {
     Menu,
     MenuItem
 } from '@mui/material';
-import { Logout as LogoutIcon } from '@mui/icons-material'
+import {
+    Logout as LogoutIcon,
+    Password as PasswordIcon
+} from '@mui/icons-material'
 
 export default function MoreOptions({ anchorEl, handleMenuClose, logOutHandler }) {
 
@@ -25,17 +29,23 @@ export default function MoreOptions({ anchorEl, handleMenuClose, logOutHandler }
                 {!isLoggedIn ? (
                     null
                 ) : (
-                    <MenuItem onClick={() => {
-                        handleMenuClose();
-                        logOutHandler();
-                    }}
-                    >
-                        <LogoutIcon
-                            fontsize='small'
-                            sx={{ marginRight: 2 }}
-                        />
-                        Logout
-                    </MenuItem>
+                    <>
+                        <MenuItem component={Link} to={'/update-password'}>
+                            <PasswordIcon
+                                fontSize='small'
+                                sx={{ marginRight: 2 }} />
+                            Edit Password
+                        </MenuItem>
+                        <MenuItem onClick={() => {
+                            handleMenuClose();
+                            logOutHandler();
+                        }}
+                        >
+                            <LogoutIcon
+                                fontsize='small'
+                                sx={{ marginRight: 2 }} />
+                            Logout
+                        </MenuItem></>
                 )}
             </Menu>
         </div>

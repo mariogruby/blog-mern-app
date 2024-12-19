@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import authService from "../../services/auth"
-import toast from 'react-hot-toast'
 import LoaderPrimary from '../loadings/LoaderPrimary'
 import BtnPrimary from '../buttons/BtnPrimary'
 import {
@@ -10,8 +9,13 @@ import {
     Container,
     Grid,
     Typography,
-    Link
+    Link,
+    IconButton,
+    InputAdornment
 } from '@mui/material'
+import { toast } from 'react-toastify';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
 
 //TODO: mensajes de errores especificos
 
@@ -19,10 +23,13 @@ export default function Signup() {
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showNewPassword, setShowNewPassword] = useState(false);
     const [username, setUsername] = useState("");
     const [errorMessage, setErrorMessage] = useState(undefined);
 
     const navigate = useNavigate();
+
+    const handleClickShowNewPassword = () => setShowNewPassword((prev) => !prev);
 
     const handleEmail = (e) => {
         setEmail(e.target.value);
@@ -62,6 +69,7 @@ export default function Signup() {
             .catch((error) => {
                 const errorDescription = error.response.data.message;
                 setErrorMessage(errorDescription);
+                toast.error(errorDescription)
                 setIsLoading(false);
             });
     };
@@ -78,6 +86,7 @@ export default function Signup() {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
+                                error={errorMessage}
                                 fullWidth
                                 required
                                 value={username}
@@ -86,11 +95,13 @@ export default function Signup() {
                                 name="username"
                                 label="Username"
                                 type="text"
-                                variant="standard"
+                                variant="outlined"
+                                helperText={errorMessage && (errorMessage.includes('Account')) ? errorMessage : null}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                error={errorMessage}
                                 fullWidth
                                 required
                                 value={email}
@@ -99,11 +110,28 @@ export default function Signup() {
                                 name="email"
                                 label="Email Address"
                                 type="email"
-                                variant="standard"
+                                variant="outlined"
+                                helperText={errorMessage && (errorMessage.includes('valid')) ? errorMessage : null}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                            type={showNewPassword ? 'text' : 'password'}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label={
+                                                showNewPassword ? 'Hide password' : 'Show password'
+                                            }
+                                            onClick={handleClickShowNewPassword}
+                                        >
+                                            {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                                error={errorMessage}
                                 fullWidth
                                 required
                                 value={password}
@@ -111,8 +139,8 @@ export default function Signup() {
                                 margin="dense"
                                 name="password"
                                 label="Password"
-                                type="password"
-                                variant="standard"
+                                variant="outlined"
+                                helperText={errorMessage && (errorMessage.includes('characters')) ? errorMessage : null}
                             />
                         </Grid>
                     </Grid>

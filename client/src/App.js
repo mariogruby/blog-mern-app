@@ -8,6 +8,7 @@ import AppLayout from './components/layouts/AppLyt';
 import AuthLayout from './components/auth/AuthLayout';
 import Signup from './components/auth/Signup';
 import Login from './components/auth/Login';
+import UpdatePassword from './components/auth/Update';
 import HomePage from './pages/home/Home';
 import SavedPage from './pages/saved/Saved';
 import ProfilePage from './pages/profile/Profile';
@@ -45,41 +46,54 @@ function App() {
           <Route path='/' element={<HomePage />} />
           <Route path='/signup' element={<AuthLayout><Signup /></AuthLayout>} />
           <Route path='/login' element={<AuthLayout><Login /></AuthLayout>} />
-          <Route 
-            path='/post/:postId' 
+          <Route
+            path='/update-password'
             element={
-              <ProtectedRoute 
-                redirectTo="/login" 
-                element={<Post />} 
+              <ProtectedRoute
+                redirectTo="/login"
+                element={
+                  <AuthLayout>
+                    <UpdatePassword />
+                  </AuthLayout>
+                }
               />
-            } 
+            }
           />
-          <Route 
-            path='/saved-posts' 
+          <Route
+            path='/post/:postId'
             element={
-              <ProtectedRoute 
-                redirectTo="/login" 
-                element={<SavedPage />} 
+              <ProtectedRoute
+                redirectTo="/login"
+                element={<Post />}
               />
-            } 
+            }
           />
-          <Route 
-            path='/dm' 
+          <Route
+            path='/saved-posts'
             element={
-              <ProtectedRoute 
-                redirectTo="/login" 
-                element={<DmPage />} 
+              <ProtectedRoute
+                redirectTo="/login"
+                element={<SavedPage />}
               />
-            } 
+            }
           />
-          <Route 
-            path='/:username' 
+          <Route
+            path='/dm'
             element={
-              <ProtectedRoute 
-                redirectTo="/login" 
-                element={<ProfileLayout><ProfilePage /></ProfileLayout>} 
+              <ProtectedRoute
+                redirectTo="/login"
+                element={<DmPage />}
               />
-            } 
+            }
+          />
+          <Route
+            path='/:username'
+            element={
+              <ProtectedRoute
+                redirectTo="/login"
+                element={<ProfileLayout><ProfilePage /></ProfileLayout>}
+              />
+            }
           />
         </Routes>
       </AppLayout>

@@ -10,8 +10,13 @@ import {
     Container,
     Grid,
     Typography,
-    Link
+    Link,
+    IconButton,
+    InputAdornment
 } from '@mui/material'
+import { toast } from 'react-toastify';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 //TODO: mensajes de errores especificos
 
@@ -20,9 +25,12 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState(undefined);
+    const [showNewPassword, setShowNewPassword] = useState(false);
     const { storeToken, authenticateUser } = useContext(AuthContext);
 
     const navigate = useNavigate();
+
+    const handleClickShowNewPassword = () => setShowNewPassword((prev) => !prev);
 
     const handleEmail = (e) => {
         setEmail(e.target.value);
@@ -56,6 +64,7 @@ export default function Login() {
                 const errorDescription = error.response.data.message;
                 setErrorMessage(errorDescription);
                 setIsLoading(false)
+                toast.error(errorDescription);
             });
     };
 
@@ -71,6 +80,7 @@ export default function Login() {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
+                                error={errorMessage}
                                 fullWidth
                                 required
                                 value={email}
@@ -79,11 +89,28 @@ export default function Login() {
                                 name="email"
                                 label="Email"
                                 type="text"
-                                variant="standard"
+                                variant="outlined"
+                                helperText={errorMessage && (errorMessage.includes('found') || errorMessage.includes('Provide')) ? errorMessage : null}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                type={showNewPassword ? 'text' : 'password'}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label={
+                                                    showNewPassword ? 'Hide password' : 'Show password'
+                                                }
+                                                onClick={handleClickShowNewPassword}
+                                            >
+                                                {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                error={errorMessage}
                                 fullWidth
                                 required
                                 value={password}
@@ -91,8 +118,8 @@ export default function Login() {
                                 margin="dense"
                                 name="password"
                                 label="Password"
-                                type="password"
-                                variant="standard"
+                                variant="outlined"
+                                helperText={errorMessage && (errorMessage.includes('Unable') || errorMessage.includes('Provide')) ? errorMessage : null}
                             />
                         </Grid>
                     </Grid>

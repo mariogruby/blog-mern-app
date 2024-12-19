@@ -29,6 +29,9 @@ class UserService {
     editUser = (formData) =>  {
         return this.user.put('/user/edit-user', formData);
     };
+    updatePassword = (requestBody) => {
+        return this.user.put('/user/update-password', requestBody)
+    };
     getUsers = () => {
         return this.user.get('/user/conversations');
     };
