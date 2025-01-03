@@ -246,11 +246,14 @@ export const getUsersForSidebar = async (req, res) => {
         const conversations = await Conversation.find({
             participants: { $in: [loggedInUserId] }
         })
-            .populate('participants', '-password')  // Popula los participantes pero excluye la contraseña
+            .populate('_id participants', '-password')
             .populate({
                 path: 'messages',
                 populate: { path: 'senderId', select: 'username' }
             });
+
+        // Agregar console.log para los _id de las conversaciones
+        // console.log("Conversation IDs:", conversations.map(c => c._id.toString()));
 
         if (!conversations) {
             return res.status(404).json({ success: false, message: "No conversations found" });
@@ -271,7 +274,6 @@ export const getUsersForSidebar = async (req, res) => {
 
         // Obtener todos los usuarios (excepto el usuario logueado) de la base de datos
         const allUsers = await User.find({ _id: { $ne: loggedInUserId } }).select('-password');
-
         res.status(200).json({
             success: true,
             participants,
@@ -280,6 +282,13 @@ export const getUsersForSidebar = async (req, res) => {
     } catch (error) {
         console.log("Error in getUsersForSidebar", error.message);
         res.status(500).json({ success: false, error: "Internal server error." });
+    }
+};
+
+export const deleteChat = async (req, res) => {
+    try {
+    } catch (error) {
+        
     }
 };
 

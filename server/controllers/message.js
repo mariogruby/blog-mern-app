@@ -78,8 +78,6 @@ export const sendMessage = async (req, res) => {
     }
 };
 
-
-
 export const getMessages = async (req, res) => {
     try {
         const { id: userToChatId } = req.params;
@@ -91,13 +89,14 @@ export const getMessages = async (req, res) => {
         const conversation = await Conversation.findOne({
             participants: { $all: [senderId, userToChatId] },
         }).populate({
-            path: 'messages',
+            path: '_id messages',
             populate: {
                 path: 'post',
                 select: '_id content image author',
                 populate: { path: 'author', select: 'username userImage' },
             },
         });
+        console.log("conversation id:", conversation._id)
 
         if (conversation) {
             // Restablece el contador de mensajes no leídos para el usuario actual
@@ -105,9 +104,45 @@ export const getMessages = async (req, res) => {
             await conversation.save();
         }
 
-        res.status(200).json({ success: true, messages: conversation?.messages || [] });
+        res.status(200).json({
+            success: true,
+            messages: conversation?.messages || [],
+            chatId: conversation?._id
+        });
     } catch (error) {
         console.log("Error in getMessages controller", error.message);
+        res.status(500).json({ success: false, error: "Internal server error" });
+    }
+};
+
+export const deleteChat = async (req, res) => {
+    try {
+        const { id: conversationId } = req.params; // ID de la conversación pasado como parámetro
+        const userId = req.payload._id; // ID del usuario autenticado
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(400).json({ success: false, message: "User not found" });
+
+        // Verificar que la conversación existe
+        const conversation = await Conversation.findById(conversationId);
+        if (!conversation) {
+            return res.status(404).json({ success: false, message: "Conversation not found" });
+        }
+
+        // Verificar que el usuario es participante de la conversación
+        if (!conversation.participants.includes(userId)) {
+            return res.status(403).json({ success: false, message: "Not authorized to delete this conversation" });
+        }
+
+        // Eliminar todos los mensajes asociados a la conversación
+        await Message.deleteMany({ _id: { $in: conversation.messages } });
+
+        // Eliminar la conversación
+        await conversation.deleteOne();
+
+        res.status(200).json({ success: true, message: "Chat deleted successfully" });
+    } catch (error) {
+        console.log("Error in deleteChat controller", error.message);
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 };
