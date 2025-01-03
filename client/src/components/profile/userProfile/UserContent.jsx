@@ -28,6 +28,7 @@ export default function UserCard() {
                 width: { xs: '100%', xl: '80%' },
                 position: 'relative',
                 overflowX: 'hidden',
+                marginBottom: { xs: '56px', xl: 0 },
             }}>
                 <ImageListItem key="Subheader" cols={2}>
                     <ListSubheader component="div">All Posts</ListSubheader>

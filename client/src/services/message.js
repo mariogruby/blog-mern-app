@@ -19,6 +19,9 @@ class MessageService {
     getMessages = (chatId) => {
         return this.msg.get(`/api/message/${chatId}`);
     };
+    deleteChat = (conversationId) => {
+        return this.msg.delete(`/api/message/chat/${conversationId}`);
+    };
 };
 
 const messageService = new MessageService();

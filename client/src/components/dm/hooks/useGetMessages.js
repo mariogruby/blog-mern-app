@@ -5,17 +5,18 @@ import messageService from '../../../services/message';
 
 export default function useGetMessages() {
     const [loading, setLoading] = useState(false);
-    const { messages, setMessages, selectedChat } = useChat();
+    const { messages, setMessages, selectedChat, chatId, setChatId } = useChat();
 
     useEffect(() => {
         const getMessages = async () => {
             setLoading(true);
             try {
                 const response = await messageService.getMessages(selectedChat._id);
-                const { success, messages, error } = response.data;
+                const { success, messages, chatId, error } = response.data;
                 // if(data.error)throw new Error(data.error);
                 if (!success) throw new Error(error || 'Failed to fetch messages');
-                console.log('message:', messages)
+                console.log('chatId:', chatId)
+                setChatId(chatId);
                 setMessages(messages);
             } catch (error) {
                 toast.error(error.message);
@@ -25,7 +26,7 @@ export default function useGetMessages() {
         };
 
         if (selectedChat?._id) getMessages();
-    }, [selectedChat?._id, setMessages]);
+    }, [selectedChat?._id, setMessages, setChatId]);
 
     return { messages, loading };
 }

@@ -109,7 +109,7 @@ export default function UserCard({ children }) {
 
     return (
         <Box>
-            <Box sx={{ margin: { xs: 1, xl: 5 }, marginLeft: { xs: 0, xl: 15 }, width: { xs: '100%', xl: '80%' }, position: 'relative', overflow: { xs: 'auto', sm: 'initial' } }}>
+            <Box sx={{ margin: { xs: 0, xl: 5 }, marginLeft: { xs: 0, xl: 15 }, width: { xs: '100%', xl: '80%' }, position: 'relative', overflow: { xs: 'auto', sm: 'initial' } }}>
                 <Card sx={{ display: 'flex', flexDirection: { xs: 'column', xl: 'row' }, alignItems: 'center', width: '100%', overflow: 'auto' }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60%', marginBottom: 2 }}>
                         <Avatar src={userData.userImage} alt={userData.username} sx={{ width: { xs: 60, xl: 100 }, height: { xs: 60, xl: 100 }, marginTop: { xs: 2, xl: 2 }, marginLeft: { xs: 0, xl: 0 }, marginBottom: { xs: 2, xl: 0 }, borderRadius: '50%' }} />
