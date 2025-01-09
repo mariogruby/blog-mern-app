@@ -96,7 +96,6 @@ export const getMessages = async (req, res) => {
                 populate: { path: 'author', select: 'username userImage' },
             },
         });
-        console.log("conversation id:", conversation._id)
 
         if (conversation) {
             // Restablece el contador de mensajes no leídos para el usuario actual
