@@ -7,7 +7,12 @@ import {
     IconButton,
     Paper,
     Typography,
-    Box
+    Box,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
 } from '@mui/material';
 import Messages from './Messages';
 import Menu from './Menu';
@@ -20,10 +25,9 @@ export default function MessageContainer({ chat }) {
     const { selectedChat, setSelectedChat, chatId, setChatId } = useChat();
     const { chats } = useGetChats();
 
-    console.log(chats);
-
-    const { deleteChat, isLoading, error } = useDeleteChat(); //TODO:implementar is Loading, error y notificacion de seguridad para borrar el chat
+    const { deleteChat, isLoading, error } = useDeleteChat();
     const [anchorEl, setAnchorEl] = useState(null);
+    const [isDialogOpen, setDialogOpen] = useState(false); // Estado para el modal
 
     //* more Menu
     const handleMenu = (event) => {
@@ -41,6 +45,20 @@ export default function MessageContainer({ chat }) {
             setChatId(null);
             handleMenuClose();
         }
+    };
+
+    //* Dialog handlers
+    const openDialog = () => {
+        setDialogOpen(true);
+    };
+
+    const closeDialog = () => {
+        setDialogOpen(false);
+    };
+
+    const confirmDeleteChat = () => {
+        handleDeleteChat();
+        closeDialog();
     };
 
     useEffect(() => {
@@ -76,7 +94,7 @@ export default function MessageContainer({ chat }) {
                                 <Menu
                                     anchorEl={anchorEl}
                                     handleMenuClose={handleMenuClose}
-                                    deleteChatHandler={handleDeleteChat}
+                                    deleteChatHandler={openDialog} // Cambia a abrir el diálogo
                                 />
                             </Box>
                         </Paper>
@@ -85,6 +103,24 @@ export default function MessageContainer({ chat }) {
                     </Box>
                 </React.Fragment>
             )}
+
+            {/* Modal de confirmación */}
+            <Dialog open={isDialogOpen} onClose={closeDialog}>
+                <DialogTitle>Confirm Delete Chat</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                    Are you sure you want to delete this chat? This action cannot be undone. The chat will be deleted for both users for security reasons.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeDialog} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmDeleteChat} color="error">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }

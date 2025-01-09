@@ -1,7 +1,4 @@
 import React, { useContext } from 'react';
-import useChat from '../../zustand/useChat'
-import useDeleteChat from '../hooks/useDeleteChat';
-import { Link } from 'react-router-dom'
 import { AuthContext } from '../../../context/auth';
 import {
     Menu,

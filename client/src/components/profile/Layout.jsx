@@ -58,18 +58,21 @@ export default function UserCard({ children }) {
     const handleChatClick = () => {
         const { username } = userData;
         let chat = chats.find((c) => c.username.toLowerCase() === username.toLowerCase());
-
+    
         if (!chat) {
             chat = allUsers.find((user) => user.username.toLowerCase() === username.toLowerCase());
         }
-
+    
         if (chat) {
             setSelectedChat(chat);
-            navigate('/dm');
+    
+            // Redirige con un parámetro para ocultar el sidebar
+            navigate('/dm?hideSidebar=true');
         } else {
             console.error("No se encontró el chat del usuario");
         }
     };
+    
 
     if (isLoading) {
         return (

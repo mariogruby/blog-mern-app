@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+
 import SidebarChat from './sidebar/SidebarChat';
 import MessageContainer from '../dm/messages/MessageContainer';
 import {
@@ -11,8 +13,12 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function ChatLayout() {
-    const [showSidebar, setShowSidebar] = useState(true);
-    const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md')); // detect if  isMobile
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const hideSidebar = queryParams.get('hideSidebar') === 'true';
+
+    const [showSidebar, setShowSidebar] = useState(!hideSidebar);
+    const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md')); // detect if isMobile
 
     return (
         <Box marginTop={{ xs: 0, sm: 0, md: 9, lg: 9 }}>
@@ -42,18 +48,17 @@ export default function ChatLayout() {
                     {/* back button for isMobile */}
                     {isMobile && !showSidebar && (
                         <IconButton
-                        onClick={() => setShowSidebar(true)}
-                        sx={{
-                            display: { xs: 'block', sm: 'block', md: 'none' },
-                            position: 'absolute',
-                            top: 10,
-                            left: 10,
-                            zIndex: 1
-                        }}
-                    >
-                        <ArrowBackIcon sx={{ color: 'white' }} />
-                    </IconButton>
-                    
+                            onClick={() => setShowSidebar(true)}
+                            sx={{
+                                display: { xs: 'block', sm: 'block', md: 'none' },
+                                position: 'absolute',
+                                top: 10,
+                                left: 10,
+                                zIndex: 1
+                            }}
+                        >
+                            <ArrowBackIcon sx={{ color: 'white' }} />
+                        </IconButton>
                     )}
 
                     {/* show messages */}

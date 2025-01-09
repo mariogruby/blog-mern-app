@@ -5,7 +5,7 @@ import messageService from '../../../services/message';
 
 export default function useGetMessages() {
     const [loading, setLoading] = useState(false);
-    const { messages, setMessages, selectedChat, chatId, setChatId } = useChat();
+    const { messages, setMessages, selectedChat, setChatId } = useChat();
 
     useEffect(() => {
         const getMessages = async () => {
