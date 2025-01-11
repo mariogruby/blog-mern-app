@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/auth';
 import { usePostContext } from '../../../context/post';
 import { useParams } from 'react-router-dom';
@@ -24,6 +25,7 @@ export const usePostByIdActions = () => {
     const { postId } = useParams();
     const { updateComment } = useCommentContext();
     const { updatePost } = usePostContext();
+    const navigate = useNavigate();
 
     const isAuthor = user && post && user.username === post.author.username;
 
@@ -140,16 +142,20 @@ export const usePostByIdActions = () => {
     };
 
     const handleDeletePost = async () => {
+        setIsLoading(true);
         try {
             const response = await postService.deletePost(postId);
             if (response.data.success) {
-                console.log('Successfully deleted', response.data)
+                toast.success('Post deleted successfully');
+                navigate('/')
             }
         } catch (error) {
+            toast.error('Error deleting post');
             console.error('Error delete post ', error)
+        } finally {
+            setIsLoading(false);
         }
     }
-
 
     const loadMoreComments = () => {
         setVisibleComments(prevVisibleComments => prevVisibleComments + 5);

@@ -55,7 +55,7 @@ export const useEditUserActions = (initialData, handleModalClose) => {
                 setIsLoading(false);
                 handleModalClose();
             } else {
-                toast.error('Error ocurred while saving user information')
+                toast.error('Error occurred while saving user information')
                 setIsLoading(false);
             }
         } catch (error) {

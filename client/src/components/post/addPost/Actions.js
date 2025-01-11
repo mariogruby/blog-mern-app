@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import postService from '../../../services/post';
 
 export const useAddPostActions = (addPost, handleModalClose) => {
@@ -67,17 +68,16 @@ export const useAddPostActions = (addPost, handleModalClose) => {
 
     try {
       const response = await postService.addPost(formData);
-      setSuccessMessage('Add Post Successfully');
+      toast.success('Add Post Successfully');
       setErrorMessage(null);
       setPostText('');
       setTags([]);
       setSelectedImage(null);
       addPost(response.data);
-      console.log('response add post:', response);
     } catch (error) {
       const errorDescription = error.response?.data?.message || "Error occurred";
-      setErrorMessage(errorDescription);
-      console.log(errorDescription);
+      toast.error(errorDescription);
+      console.error(errorDescription);
     } finally {
       setIsLoading(false);
       handleModalClose();
