@@ -25,14 +25,14 @@ export default function MoreOptions({ anchorEl, handleMenuClose, deleteChatHandl
                 {!isLoggedIn ? (
                     null
                 ) : (
-                    <>
+                    <div>
                         <MenuItem onClick={() => {deleteChatHandler()}}>
                             <DeleteIcon
                                 fontSize='small'
                                 sx={{ marginRight: 2 }} />
                             Delete Chat
                         </MenuItem>
-                    </>
+                    </div>
                 )}
             </Menu>
         </div>

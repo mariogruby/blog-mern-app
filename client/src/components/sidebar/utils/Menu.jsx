@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../../../context/auth';
 import {
     Menu,
@@ -8,7 +8,7 @@ import {
 import {
     Logout as LogoutIcon,
     Password as PasswordIcon
-} from '@mui/icons-material'
+} from '@mui/icons-material';
 
 export default function MoreOptions({ anchorEl, handleMenuClose, logOutHandler }) {
 
@@ -24,12 +24,8 @@ export default function MoreOptions({ anchorEl, handleMenuClose, logOutHandler }
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-                <MenuItem onClick={handleMenuClose}>My account</MenuItem> */}
-                {!isLoggedIn ? (
-                    null
-                ) : (
-                    <>
+                {isLoggedIn ? (
+                    <div>
                         <MenuItem component={Link} to={'/update-password'}>
                             <PasswordIcon
                                 fontSize='small'
@@ -39,14 +35,14 @@ export default function MoreOptions({ anchorEl, handleMenuClose, logOutHandler }
                         <MenuItem onClick={() => {
                             handleMenuClose();
                             logOutHandler();
-                        }}
-                        >
+                        }}>
                             <LogoutIcon
-                                fontsize='small'
+                                fontSize='small'
                                 sx={{ marginRight: 2 }} />
                             Logout
-                        </MenuItem></>
-                )}
+                        </MenuItem>
+                    </div>
+                ) : null}
             </Menu>
         </div>
     );

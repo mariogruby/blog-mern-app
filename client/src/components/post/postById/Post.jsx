@@ -34,6 +34,7 @@ import {
     TurnedInNot as TurnedInNotIcon,
     TurnedIn as TurnedInIcon,
     SendOutlined as SendOutlinedIcon,
+    Error as ErrorIcon
 } from '@mui/icons-material';
 import { useAllPostActions } from '../allPosts/Actions';
 import ListChat from '../allPosts/ListDm'
@@ -108,13 +109,9 @@ export default function Post() {
                                         </Box>
                                     </Box>
                                     <Box flexGrow={1} sx={{ borderBottom: '1px solid #3f3f46' }}>
-                                        <Skeleton variant="text" width="100%" animation="wave" />
-                                        <Skeleton variant="text" width="100%" animation="wave" />
-                                        <Skeleton variant="text" width="100%" animation="wave" />
-                                        <Skeleton variant="text" width="100%" animation="wave" />
-                                        <Skeleton variant="text" width="100%" animation="wave" />
-                                        <Skeleton variant="text" width="100%" animation="wave" />
-                                        <Skeleton variant="text" width="100%" animation="wave" />
+                                        {[...Array(7)].map((_, i) => (
+                                            <Skeleton key={i} variant="text" width="100%" animation="wave" />
+                                        ))}
                                     </Box>
                                 </CardContent>
                                 <CardContent sx={{ mt: 'auto', pt: '1px' }}>
@@ -144,7 +141,9 @@ export default function Post() {
                                     <Box display="flex" alignItems="center" sx={{ borderBottom: '1px solid #3f3f46', paddingBottom: 2 }}>
                                         <Avatar alt={post.author.username} src={post.author.userImage} />
                                         <Box ml={2} display="flex" alignItems="center" flexGrow={1}>
-                                            <Typography variant="h6" component="span" fontWeight="bold">{post.author.username}</Typography>
+                                            <Typography component="span" variant="h6" fontWeight="bold">
+                                                {post.author.username}
+                                            </Typography>
                                             <IconButton disabled={!isAuthor} aria-label="settings" onClick={handleMenu} sx={{ ml: 'auto' }}>
                                                 <MoreVertIcon />
                                             </IconButton>
@@ -152,9 +151,9 @@ export default function Post() {
                                                 anchorEl={anchorEl}
                                                 handleMenuClose={handleMenuClose}
                                                 handleEdit={handleEdit}
-                                                handleDeletePost={openDialog} />
+                                                handleDeletePost={openDialog}
+                                            />
                                         </Box>
-                                        {/*modal confirm delete */}
                                         <Dialog open={isDialogOpen} onClose={closeDialog}>
                                             <DialogTitle>Confirm Delete Post</DialogTitle>
                                             <DialogContent>
@@ -172,7 +171,7 @@ export default function Post() {
                                             </DialogActions>
                                         </Dialog>
                                     </Box>
-                                    <Box flexGrow={1} >
+                                    <Box flexGrow={1}>
                                         <List sx={{ flexGrow: 1, overflow: 'auto', maxHeight: 230 }}>
                                             <ListItem alignItems="flex-start" key={post._id}>
                                                 <ListItemAvatar>
@@ -180,49 +179,72 @@ export default function Post() {
                                                 </ListItemAvatar>
                                                 <ListItemText
                                                     primary={
-                                                        <React.Fragment>
-                                                            <Typography
-                                                                component="span"
-                                                                variant="body1"
-                                                                sx={{ fontWeight: 'bold' }}>
-                                                                {post.author.username}
+                                                        <Box display='flex' gap={1}>
+                                                            <Typography component="span" variant="body1" sx={{ fontWeight: 'bold' }}>
+                                                                {post.author.username} {' - '}
                                                             </Typography>
-                                                            {' - '}
                                                             <Typography
                                                                 component="span"
-                                                                variant="subtitle2"
+                                                                variant="caption"
+                                                                fontSize={'small'}
                                                                 color="text.secondary"
-                                                                sx={{ marginLeft: 1 }}>
+                                                            >
                                                                 {formatDate(post.createdAt)}
                                                             </Typography>
-                                                        </React.Fragment>
+                                                        </Box>
                                                     }
                                                     secondary={
-                                                        <React.Fragment>
-                                                            <Typography
-                                                                variant="body1"
+                                                        <>
+                                                            <Box
                                                                 sx={{
+                                                                    maxHeight: isExpanded(post._id) ? 'none' : '200px',
+                                                                    maxWidth: isExpanded(post._id) ? 'none' : {xs:'250px', sm: '600px'},
                                                                     overflow: 'hidden',
-                                                                    textOverflow: 'ellipsis',
-                                                                    display: '-webkit-box',
-                                                                    WebkitLineClamp: isExpanded(post._id) ? 'unset' : 3,
-                                                                    WebkitBoxOrient: 'vertical',
-                                                                }}>
-                                                                {post.content}
-                                                            </Typography>
-                                                            {post.content.length > 200 && !isExpanded(post._id) && (
-                                                                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                                                    <Button size="small" onClick={() => toggleExpand(post._id)} sx={{ mt: 1 }}>
-                                                                        Read more
-                                                                    </Button>
-                                                                </Box>
+                                                                    position: 'relative',
+                                                                    '@media (max-width: 600px)': {
+                                                                        maxHeight: isExpanded(post._id) ? 'none' : '150px',
+                                                                    },
+                                                                }}
+                                                            >
+                                                                <Typography
+                                                                    component="span"
+                                                                    variant="body1"
+                                                                    color="text.secondary"
+                                                                    sx={{
+                                                                        overflow: 'hidden',
+                                                                        textOverflow: 'ellipsis',
+                                                                        display: '-webkit-box',
+                                                                        WebkitLineClamp: isExpanded(post._id) ? 'unset' : 3,
+                                                                        WebkitBoxOrient: 'vertical',
+                                                                        wordBreak: 'break-word',
+                                                                        overflowWrap: 'break-word',
+                                                                        whiteSpace: isExpanded(post._id) ? 'normal' : 'nowrap',
+                                                                        maxHeight: isExpanded(post._id) ? 'none' : '150px',
+                                                                        '@media (max-width: 600px)': {
+                                                                            WebkitLineClamp: isExpanded(post._id) ? 'unset' : 2,
+                                                                        },
+                                                                    }}
+                                                                >
+                                                                    {post.content}
+                                                                </Typography>
+                                                            </Box>
+                                                            {post.content.length > 100 && !isExpanded(post._id) && (
+                                                                <Button
+                                                                    size="small"
+                                                                    onClick={() => toggleExpand(post._id)}
+                                                                    sx={{ mt: 1 }}
+                                                                >
+                                                                    {isExpanded(post._id) ? 'Read less' : 'Read more'}
+                                                                </Button>
                                                             )}
-                                                        </React.Fragment>
+                                                        </>
                                                     }
                                                 />
-                                            </ListItem>
+                                            </ListItem >
                                             {comments.length === 0 ? (
-                                                <Typography sx={{ textAlign: 'center', mt: 2 }}>There are no comments yet, be the first to comment</Typography>
+                                                <Typography component="span" sx={{ textAlign: 'center', mt: 2 }}>
+                                                    There are no comments yet, be the first to comment
+                                                </Typography>
                                             ) : (
                                                 comments.slice(0, visibleComments).map(comment => (
                                                     <ListItem alignItems="flex-start" key={comment._id}>
@@ -231,33 +253,22 @@ export default function Post() {
                                                         </ListItemAvatar>
                                                         <ListItemText
                                                             primary={
-                                                                <React.Fragment>
-                                                                    <Typography
-                                                                        component="span"
-                                                                        variant="body1"
-                                                                        sx={{ fontWeight: 'bold' }}>
-                                                                        {comment.author.username}
+                                                                <Box display='flex' gap={1}>
+                                                                    <Typography component="span" variant="body1" sx={{ fontWeight: 'bold' }}>
+                                                                        {comment.author.username} {' - '}
                                                                     </Typography>
-                                                                    {' - '}
                                                                     <Typography
                                                                         component="span"
-                                                                        variant="subtitle2"
-                                                                        color="text.secondary"
-                                                                        sx={{ marginLeft: 1 }}>
+                                                                        variant="caption"
+                                                                        color="text.secondary">
                                                                         {formatDate(comment.createdAt)}
                                                                     </Typography>
-                                                                </React.Fragment>
+                                                                </Box>
                                                             }
                                                             secondary={
-                                                                <React.Fragment>
-                                                                    <Typography
-                                                                        sx={{ display: 'inline' }}
-                                                                        component="span"
-                                                                        variant="body2"
-                                                                        color="text.primary">
-                                                                        {comment.content}
-                                                                    </Typography>
-                                                                </React.Fragment>
+                                                                <Typography component="span" variant="body2" color="text.primary">
+                                                                    {comment.content}
+                                                                </Typography>
                                                             }
                                                         />
                                                     </ListItem>
@@ -273,9 +284,7 @@ export default function Post() {
                                 </CardContent>
                                 <CardContent sx={{ mt: 'auto', paddingTop: 0 }}>
                                     <Box display="flex" alignItems="center" pb={0} pt={2} sx={{ borderTop: '1px solid #3f3f46' }}>
-                                        <IconButton aria-label="add to favorites"
-                                            onClick={() => handleToggleLike(post._id)}
-                                        >
+                                        <IconButton aria-label="add to favorites" onClick={() => handleToggleLike(post._id)}>
                                             {likedPost.includes(post._id) ? (
                                                 <FavoriteIcon sx={{ color: pink[500] }} />
                                             ) : (
@@ -285,25 +294,18 @@ export default function Post() {
                                         <Typography variant="body2" color="text.secondary" component="p">
                                             {post.likes}
                                         </Typography>
-                                        <IconButton
-                                            aria-label="add a comment">
+                                        <IconButton aria-label="add a comment">
                                             <ModeCommentOutlinedIcon />
                                         </IconButton>
-                                        <IconButton
-                                            aria-label="share"
-                                            onClick={() => handleOpenChatList(post._id)}
-                                        >
+                                        <IconButton aria-label="share" onClick={() => handleOpenChatList(post._id)}>
                                             <SendOutlinedIcon />
                                         </IconButton>
                                         <IconButton
                                             aria-label="save"
                                             onClick={() => handleToggleSave(post._id)}
-                                            sx={{ ml: 'auto' }}>
-                                            {savedPost.includes(post._id) ? (
-                                                <TurnedInIcon />
-                                            ) : (
-                                                <TurnedInNotIcon />
-                                            )}
+                                            sx={{ ml: 'auto' }}
+                                        >
+                                            {savedPost.includes(post._id) ? <TurnedInIcon /> : <TurnedInNotIcon />}
                                         </IconButton>
                                     </Box>
                                     <Box mt={2}>
@@ -314,7 +316,20 @@ export default function Post() {
                         </Grid>
                     </Card>
                 ) : (
-                    <p>Post not found</p>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            minHeight: '40vh',
+                            textAlign: 'center',
+                            fontSize: '18px',
+                        }}
+                    >
+                        <Typography component="span">
+                            <ErrorIcon fontSize="large" /> Post not found.
+                        </Typography>
+                    </Box>
                 )}
                 <ModalEditPost open={isModalOpen} handleClose={handleModalClose}>
                     <EditPost postId={postId} initialData={post} handleModalClose={handleModalClose} />

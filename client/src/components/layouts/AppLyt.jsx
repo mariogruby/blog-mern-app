@@ -8,7 +8,6 @@ import {
     SpeedDialAction,
     useMediaQuery,
 } from '@mui/material';
-// import Navbar from '../navbar/Navbar';
 import { AuthContext } from '../../context/auth';
 import ModalAddPost from '../post/addPost/ModalAddPost';
 import Sidebar from '../sidebar/Sidebar';
@@ -51,6 +50,7 @@ export default function Layout({ children }) {
                         lg: 30,
                         xl: 30,
                     },
+                    mb: location.pathname === '/dm' ? undefined : { xs: 7 },
                 }}
             >
                 {children}

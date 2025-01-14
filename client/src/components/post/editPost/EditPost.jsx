@@ -65,9 +65,10 @@ export default function EditPost({ postId, initialData, handleModalClose }) {
                             onChange={handleTagsChange}
                             onInputChange={handleInputChange}
                             renderTags={(value, getTagProps) =>
-                                value.map((option, index) => (
-                                    <Chip label={option} {...getTagProps({ index })} />
-                                ))
+                                value.map((option, index) => {
+                                    const { key, ...tagProps } = getTagProps({ index });
+                                    return <Chip key={key} label={option} {...tagProps} />;
+                                })
                             }
                             renderInput={(params) => (
                                 <TextField

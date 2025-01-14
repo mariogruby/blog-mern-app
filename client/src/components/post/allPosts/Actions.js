@@ -4,8 +4,10 @@ import { toast } from 'react-toastify'
 import { usePostContext } from '../../../context/post';
 import postService from '../../../services/post';
 import userService from '../../../services/user';
+import useChat from '../../zustand/useChat';
 
 export const useAllPostActions = () => {
+    const { setSelectedChat } = useChat();
     const { isLoggedIn } = useContext(AuthContext);
     const { updatePost } = usePostContext();
     const [posts, setPosts] = useState([]);
@@ -162,6 +164,7 @@ export const useAllPostActions = () => {
     const handleCloseChatList = () => {
         setSelectedPostId(null);
         setOpenModalList(false);
+        setSelectedChat(null);
     };
 
     useEffect(() => {

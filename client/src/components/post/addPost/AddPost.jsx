@@ -120,9 +120,10 @@ function PostStepper({ handleModalClose }) {
                                 onChange={handleTagsChange}
                                 onInputChange={handleInputChange}
                                 renderTags={(value, getTagProps) =>
-                                    value.map((option, index) => (
-                                        <Chip label={option} {...getTagProps({ index })} />
-                                    ))
+                                    value.map((option, index) => {
+                                        const { key, ...tagProps } = getTagProps({ index });
+                                        return <Chip key={key} label={option} {...tagProps} />;
+                                    })
                                 }
                                 renderInput={(params) => (
                                     <TextField
@@ -172,7 +173,9 @@ function PostStepper({ handleModalClose }) {
                 ))}
             </Stepper>
             <Box>
-                <Typography sx={{ mt: 2, mb: 1 }}>{renderStepContent(activeStep)}</Typography>
+                <Typography component="div" sx={{ mt: 2, mb: 1 }}>
+                    {renderStepContent(activeStep)}
+                </Typography>
                 {activeStep > 0 && activeStep < steps.length - 1 && (
                     <Box sx={{
                         display: 'flex',

@@ -53,7 +53,7 @@ export default function Chat({ chat, lastIdx, onChatSelect }) {
     <>
       <Link to="#" onClick={() => { setSelectedChat(chat); onChatSelect(); }}>
         <ListItemButton
-          component="a"
+          component="div"
           sx={{
             backgroundColor: isSelected ? 'rgba(0, 0, 0, 1)' : 'transparent',
             '&:hover': {

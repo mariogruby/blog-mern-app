@@ -15,7 +15,7 @@ export default function useGetMessages() {
                 const { success, messages, chatId, error } = response.data;
                 // if(data.error)throw new Error(data.error);
                 if (!success) throw new Error(error || 'Failed to fetch messages');
-                console.log('chatId:', chatId)
+                // console.log('chatId:', chatId)
                 setChatId(chatId);
                 setMessages(messages);
             } catch (error) {

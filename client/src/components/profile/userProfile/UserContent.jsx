@@ -55,7 +55,7 @@ export default function UserCard() {
                     ))
                 ) : (
                     userData && userData.userPost.map((post) => (
-                        <Link to={`/post/${post._id}`}>
+                        <Link to={`/post/${post._id}`} key={post._id}>
                             <ImageListItem key={post._id}>
                                 <img
                                     srcSet={`${post.image}?w=248&fit=crop&auto=format&dpr=2 2x`}

@@ -16,7 +16,6 @@ import {
     Avatar,
     Skeleton
 } from '@mui/material';
-import SearchModal from '../sidebar/search/SearchModal';
 
 export default function UserCard({ children }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,7 +53,6 @@ export default function UserCard({ children }) {
         setOpenModalFollowings(false);
     };
 
-
     const handleChatClick = () => {
         const { username } = userData;
         let chat = chats.find((c) => c.username.toLowerCase() === username.toLowerCase());
@@ -65,8 +63,6 @@ export default function UserCard({ children }) {
     
         if (chat) {
             setSelectedChat(chat);
-    
-            // Redirige con un parámetro para ocultar el sidebar
             navigate('/dm?hideSidebar=true');
         } else {
             console.error("No se encontró el chat del usuario");
@@ -76,7 +72,7 @@ export default function UserCard({ children }) {
 
     if (isLoading) {
         return (
-            <Box sx={{ margin: { xs: 1, xl: 5 }, marginLeft: { xs: 0, xl: 15 }, width: { xs: '100%', xl: '80%' }, position: 'relative', overflow: { xs: 'auto', sm: 'initial' } }}>
+            <Box sx={{ margin: { xs: 0, xl: 5 }, marginLeft: { xs: 0, xl: 15 }, width: { xs: '100%', xl: '80%' }, position: 'relative', overflow: { xs: 'auto', sm: 'initial' } }}>
                 <Card sx={{ display: 'flex', flexDirection: { xs: 'column', xl: 'row' }, alignItems: 'center', width: '100%', overflow: 'auto' }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60%', marginBottom: 2 }}>
                         <Skeleton variant="circular" width={100} height={100} sx={{ marginTop: 2, marginBottom: 2 }} />

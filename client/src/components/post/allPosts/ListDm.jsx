@@ -100,7 +100,7 @@ export default function ChatsListModal({ open, handleClose, postId }) {
                                     />
                                 </ListItem>
                             ))}
-                            {chatsLoading && <p>Loading...</p>}
+                            {chatsLoading && <div>Loading...</div>}
                         </List>
                     </Box>
 

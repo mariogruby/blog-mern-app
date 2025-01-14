@@ -162,13 +162,15 @@ export const usePostByIdActions = () => {
         setShowMessage(false);
     };
 
-    const toggleExpand = async () => {
-        if (expandedIds.includes(postId)) {
-            setExpandedIds(expandedIds.filter(id => id !== postId));
+    const toggleExpand = (id) => {
+        if (expandedIds.includes(id)) {
+            setExpandedIds(expandedIds.filter(expandedId => expandedId !== id));
         } else {
-            setExpandedIds([...expandedIds, postId]);
+            setExpandedIds([...expandedIds, id]);
         }
     };
+
+    const isExpanded = (id) => expandedIds.includes(id);
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -187,9 +189,9 @@ export const usePostByIdActions = () => {
         setIsModalOpen(false);
     };
 
-    const isExpanded = () => {
-        return expandedIds.includes(postId);
-    };
+    // const isExpanded = () => {
+    //     return expandedIds.includes(postId);
+    // };
 
     useEffect(() => {
         fetchData();

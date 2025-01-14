@@ -59,8 +59,10 @@ export default function SearchModal({ open, onClose }) {
             <List>
                 {search && filteredUsers.length > 0 ? (
                     filteredUsers.map((user) => (
-                        <div key={user.id}>
-                            <ListItemButton onClick={() => handleSearchUser(user, setSearch, navigate, onClose)}>
+                        <div key={user._id}>
+                            <ListItemButton 
+                                onClick={() => handleSearchUser(user, setSearch, navigate, onClose)}
+                            >
                                 <Avatar src={user.userImage} alt={user.username} sx={{ mr: 2 }} />
                                 <ListItemText primary={user.username} />
                             </ListItemButton>
@@ -68,7 +70,7 @@ export default function SearchModal({ open, onClose }) {
                         </div>
                     ))
                 ) : (
-                    search && <ListItemText primary="Not result found for this user" />
+                    search && <ListItemText primary="No result found for this user" />
                 )}
             </List>
         </Dialog>
