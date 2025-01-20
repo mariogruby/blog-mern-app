@@ -10,13 +10,11 @@ export const sendMessage = async (req, res) => {
         const { id: receiverId } = req.params;
         const senderId = req.payload._id;
 
-        // Verificar que el usuario existe
         const user = await User.findById(senderId);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        // Verificar si el post existe si se envía un postId
         let post = null;
         if (postId) {
             post = await Post.findById(postId);
@@ -25,13 +23,12 @@ export const sendMessage = async (req, res) => {
             }
         }
 
-        // Verificar que el mensaje no esté vacío
         const trimmedMessage = message?.trim();
         if (!trimmedMessage && !postId) {
             return res.status(400).json({ success: false, message: 'Message cannot be empty' });
         }
 
-        // Verificar la conversación
+        // verify conversation exist
         let conversation = await Conversation.findOne({
             participants: { $all: [senderId, receiverId] },
         });
@@ -51,24 +48,24 @@ export const sendMessage = async (req, res) => {
 
         conversation.messages.push(newMessage._id);
 
-        // Actualizar el contador de mensajes no leídos para el receptor
+        // Updates the unread message counter for the recipient
         conversation.unreadMessages.set(receiverId, (conversation.unreadMessages.get(receiverId) || 0) + 1);
 
         await Promise.all([conversation.save(), newMessage.save()]);
 
-        // Emitir el evento de nuevo mensaje por Socket.io
+        // Emitting the new message event via Socket.io
         const receiverSocketId = getReceiverSocketId(receiverId);
         if (receiverSocketId) {
             io.to(receiverSocketId).emit("newMessage", newMessage);
 
-            // Emitir notificación de mensajes no leídos al receptor
+            // Send unread message notification to recipient
             io.to(receiverSocketId).emit("unreadMessagesUpdate", {
                 senderId,
                 unreadMessagesCount: conversation.unreadMessages.get(receiverId),
             });
         }
 
-        // También emitir el nuevo mensaje al remitente (si es necesario)
+        // Also forward the new message to the sender (if necessary)
         io.to(req.socket.id).emit("newMessage", newMessage);
 
         res.status(201).json({ success: true, message: "Message sent successfully", newMessage });
@@ -98,7 +95,7 @@ export const getMessages = async (req, res) => {
         });
 
         if (conversation) {
-            // Restablece el contador de mensajes no leídos para el usuario actual
+            // Resets the unread message counter for the current user
             conversation.unreadMessages.set(senderId, 0);
             await conversation.save();
         }
@@ -116,27 +113,23 @@ export const getMessages = async (req, res) => {
 
 export const deleteChat = async (req, res) => {
     try {
-        const { id: conversationId } = req.params; // ID de la conversación pasado como parámetro
-        const userId = req.payload._id; // ID del usuario autenticado
+        const { id: conversationId } = req.params;
+        const userId = req.payload._id;
 
         const user = await User.findById(userId);
         if (!user) return res.status(400).json({ success: false, message: "User not found" });
 
-        // Verificar que la conversación existe
         const conversation = await Conversation.findById(conversationId);
         if (!conversation) {
             return res.status(404).json({ success: false, message: "Conversation not found" });
         }
 
-        // Verificar que el usuario es participante de la conversación
         if (!conversation.participants.includes(userId)) {
             return res.status(403).json({ success: false, message: "Not authorized to delete this conversation" });
         }
 
-        // Eliminar todos los mensajes asociados a la conversación
         await Message.deleteMany({ _id: { $in: conversation.messages } });
 
-        // Eliminar la conversación
         await conversation.deleteOne();
 
         res.status(200).json({ success: true, message: "Chat deleted successfully" });

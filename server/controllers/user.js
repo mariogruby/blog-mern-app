@@ -1,9 +1,12 @@
 import User from '../models/user.js'
+import Post from '../models/post.js'
 import bcrypt from "bcrypt";
 import Notification from '../models/notification.js'
+import Comment from '../models/comments.js';
 import Conversation from '../models/conversation.js';
 import cloudinaryConfig from '../config/cloudinary.js'
 import { io, userSocketMap } from '../socket/socket.js'
+import { response } from 'express';
 
 const saltRounds = 10;
 
@@ -41,13 +44,12 @@ export const followUser = async (req, res) => {
         const userId = req.payload._id.toString();
         const followUsername = req.params.username;
 
-        // Buscar al usuario actual
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        // Buscar al usuario a seguir/dejar de seguir
+        //  Search user to follow/unfollow
         const followUser = await User.findOne({ username: followUsername });
         if (!followUser) {
             return res.status(404).json({ success: false, message: "User to follow/unfollow not found" });
@@ -57,32 +59,32 @@ export const followUser = async (req, res) => {
         const isFollowing = user.following.users.includes(followUserId);
 
         if (isFollowing) {
-            // Dejar de seguir al usuario
+            // unfollow user 
             user.following.users = user.following.users.filter(followingUser => followingUser.toString() !== followUserId);
             user.following.count -= 1;
 
             followUser.followers.users = followUser.followers.users.filter(follower => follower.toString() !== userId);
             followUser.followers.count -= 1;
         } else {
-            // Seguir al usuario
+            // follow user
             user.following.users.push(followUserId);
             user.following.count += 1;
 
             followUser.followers.users.push(userId);
             followUser.followers.count += 1;
             const notification = new Notification({
-                type: 'follower', // tipo de notificacion
-                user: userId, // usuario de quien proviene el follow
+                type: 'follower', // notification type
+                user: userId, // user follow provide
             });
             await notification.save();
 
-            const userOwner = await User.findById(followUserId); // usuario al que se le va cargar la notificacion
+            const userOwner = await User.findById(followUserId); // user to push the notification
             userOwner.notifications.push(notification._id);
             await userOwner.save();
 
             const userOwnerId = userOwner._id.toString();
             const socketId = userSocketMap[userOwnerId];
-            if(socketId){
+            if (socketId) {
                 io.to(socketId).emit("newNotification", {
                     type: 'follower',
                     user: userId,
@@ -93,7 +95,6 @@ export const followUser = async (req, res) => {
             }
         }
 
-        // Guardar los cambios
         await user.save();
         await followUser.save();
 
@@ -222,27 +223,10 @@ export const updatePassword = async (req, res) => {
     }
 };
 
-// export const searchUsers = async (req, res) => {
-//     try {
-//         const userId = req.payload._id;
-//         const user = await User.findById(userId);
-//         if (!user) {
-//             return res.status(404).json({ success: false, message: "User not found." });
-//         }
-//         const allUsers = await User.find({_id: {$ne: user}}).select('-password')
-
-//         res.status(200).json({ success: true, allUsers})
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({success: false, message:"error in searchUsers controller"})
-//     }
-// };
-
 export const getUsersForSidebar = async (req, res) => {
     try {
         const loggedInUserId = req.payload._id;
 
-        // Obtén las conversaciones en las que participa el usuario logueado
         const conversations = await Conversation.find({
             participants: { $in: [loggedInUserId] }
         })
@@ -252,43 +236,43 @@ export const getUsersForSidebar = async (req, res) => {
                 populate: { path: 'senderId', select: 'username' }
             });
 
-        // Agregar console.log para los _id de las conversaciones
-        // console.log("Conversation IDs:", conversations.map(c => c._id.toString()));
-
         if (!conversations) {
             return res.status(404).json({ success: false, message: "No conversations found" });
         }
 
-        // Filtra los participantes que no son el usuario logueado y añade el conteo de mensajes no leídos
+        // Filters out participants who are not the logged in user and adds unread message count
         const participants = conversations.map(conversation => {
             const otherParticipant = conversation.participants.find(participant => participant._id.toString() !== loggedInUserId);
 
-            // Verificar cuántos mensajes no leídos hay para el usuario logueado
-            const unreadMessagesCount = conversation.unreadMessages.get(loggedInUserId) || 0;
+            // Check how many unread messages there are for the logged in user
+            const unreadMessagesCount = conversation.unreadMessages?.get(loggedInUserId) || 0;
+
+            // If the other participant no longer exists, return an object indicating this.
+            if (!otherParticipant) {
+                return {
+                    _id: null,
+                    username: "Account Deleted",
+                    isDeleted: true,
+                    unreadMessagesCount
+                };
+            }
 
             return {
-                ...otherParticipant.toObject(),  // Convertir el participante a un objeto para modificarlo
-                unreadMessagesCount  // Añadimos el conteo de mensajes no leídos
+                ...otherParticipant.toObject(),
+                unreadMessagesCount
             };
         });
 
-        // Obtener todos los usuarios (excepto el usuario logueado) de la base de datos
+        // Get all users (except the logged in user) from the database
         const allUsers = await User.find({ _id: { $ne: loggedInUserId } }).select('-password');
         res.status(200).json({
             success: true,
             participants,
-            allUsers  // Devolvemos también todos los usuarios 
+            allUsers
         });
     } catch (error) {
         console.log("Error in getUsersForSidebar", error.message);
         res.status(500).json({ success: false, error: "Internal server error." });
-    }
-};
-
-export const deleteChat = async (req, res) => {
-    try {
-    } catch (error) {
-        
     }
 };
 
@@ -337,7 +321,7 @@ export const markNotificationsAsRead = async (req, res) => {
             return res.status(200).json({ success: true, message: "All notifications are already read" });
         }
 
-        // Marcar como leídas
+        // Mark as read
         await Notification.updateMany(
             { _id: { $in: unreadNotifications.map(n => n._id) } },
             { read: true }
@@ -347,5 +331,34 @@ export const markNotificationsAsRead = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: "Error marking notifications as read" });
+    }
+};
+
+export const deleteUser = async (req, res) => {
+    try {
+        const userId = req.payload._id;
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+        await Post.deleteMany({ author: userId });
+
+        await Notification.deleteMany({ userId });
+
+        await Comment.deleteMany({ author: userId });
+
+        await Conversation.deleteMany({
+            $or: [
+                { participants: userId },
+                { sender: userId },
+            ],
+        });
+
+        await User.findByIdAndDelete(userId);
+
+        return res.status(200).json({ success: true, message: "User deleted successfully" });
+    } catch (err) {
+        console.error(err, 'error in deleteUser controller');
+        res.status(500).json({ success: false, message: err.message });
     }
 };

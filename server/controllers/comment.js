@@ -69,9 +69,9 @@ export const getCommentPost = async (req, res) => {
             path: 'comments',
             populate: {
                 path: 'author',
-                select: 'username userImage' // Selecciona solo los campos necesarios del autor
+                select: 'username userImage'
             },
-            select: 'content author createdAt' // Selecciona solo el contenido del comentario y el autor
+            select: 'content author createdAt'
         });
 
         if (!post) {

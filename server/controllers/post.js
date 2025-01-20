@@ -2,12 +2,11 @@ import Post from '../models/post.js'
 import User from '../models/user.js'
 import Notification from '../models/notification.js'
 import cloudinaryConfig from '../config/cloudinary.js'
-import { io, userSocketMap } from '../socket/socket.js'; // Asegúrate de que la ruta sea correcta
+import { io, userSocketMap } from '../socket/socket.js';
 
 export const addPost = async (req, res) => {
     try {
         const { content, tags } = req.body;
-        console.log('Tags recibidos:', tags);
 
         const userId = req.payload._id;
         const user = await User.findById(userId);
@@ -30,7 +29,7 @@ export const addPost = async (req, res) => {
             return res.status(404).json({ success: false, message: "Upload image error" });
         }
 
-        // Parsear los tags recibidos como string de JSON
+        // Parse received tags as JSON string
         const tagsArray = tags ? JSON.parse(tags) : [];
         console.log('Tags como array:', tagsArray);
 
@@ -81,56 +80,53 @@ export const getPosts = async (req, res) => {
 
 export const likePost = async (req, res) => {
     try {
-        const userId = req.payload._id; // ID del usuario que da like
-        const postId = req.params.postId; // ID del post que recibe el like
+        const userId = req.payload._id;
+        const postId = req.params.postId;
 
-        // Busca el usuario por su ID
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        // Busca el post por su ID
         const post = await Post.findById(postId);
         if (!post) {
             return res.status(404).json({ success: false, message: "Post not found" });
         }
 
-        // Verifica si el usuario ya ha dado like a este post
+        // Check if the user has already liked this post
         const likedPostIndex = user.likedPost.findIndex(like => like.Post.toString() === postId);
 
         if (likedPostIndex !== -1) {
-            // Si ya le había dado like, entonces removemos el like
+            // If the user have given a like, then we remove the like.
             if (user.likedPost[likedPostIndex].liked) {
                 user.likedPost.splice(likedPostIndex, 1);
                 post.likes -= 1;
-                post.likedBy.pull(userId); // Remover usuario del campo likedBy
+                post.likedBy.pull(userId); // Remove user from LikedBy field
             } else {
-                // Este caso no debería ocurrir, pero lo manejamos por si acaso
+                // This case should not happen, but we handle it just in case
                 user.likedPost[likedPostIndex].liked = true;
                 post.likes += 1;
-                post.likedBy.push(userId); // Agregar usuario al campo likedBy
+                post.likedBy.push(userId); // Add user to likedBy field
             }
         } else {
-            // Si el usuario no ha interactuado con el post antes, agregamos un nuevo registro de like
+            // If the user has not interacted with the post before, we add a new like record
             user.likedPost.push({ Post: postId, liked: true });
             post.likes += 1;
-            post.likedBy.push(userId); // Agregar usuario al campo likedBy
+            post.likedBy.push(userId); // Add user to likedBy field
 
-            // Crear una nueva notificación
             const notification = new Notification({
                 type: 'like',
                 post: postId,
                 user: userId,
             });
-            await notification.save(); // Guardar la notificación
+            await notification.save();
 
-            // Agregar la notificación al usuario que posee el post
-            const postOwner = await User.findById(post.author); // Obtener el dueño del post
-            postOwner.notifications.push(notification._id); // Agregar la notificación al usuario
-            await postOwner.save(); // Guardar los cambios en el usuario
+            //Add notification to the user who owns the post
+            const postOwner = await User.findById(post.author);
+            postOwner.notifications.push(notification._id);
+            await postOwner.save();
 
-            // Emitir notificación a través de sockets
+            // Issue notification via sockets
             const postOwnerId = postOwner._id.toString();
             const socketId = userSocketMap[postOwnerId];
             if (socketId) {
@@ -145,7 +141,6 @@ export const likePost = async (req, res) => {
             }
         }
 
-        // Guardamos los cambios
         await user.save();
         await post.save();
 
@@ -196,7 +191,7 @@ export const editPost = async (req, res) => {
             return res.status(404).json({ success: false, message: "Post not found" });
         }
 
-        // Verificar que el usuario que intenta editar el post es el autor
+        // Verify if the user try the edit post, is the author
         if (post.author.toString() !== userId) {
             return res.status(403).json({ success: false, message: "Unauthorized action" });
         }
@@ -228,14 +223,14 @@ export const deletePost = async (req, res) => {
             return res.status(404).json({ success: false, message: "Post not found" });
         }
 
-        // Verificar que el usuario que intenta eliminar el post es el autor
+        // verify if the user try delete the post is the author
         if (post.author.toString() !== userId) {
             return res.status(403).json({ success: false, message: "Unauthorized action" });
         }
 
         await post.deleteOne();
 
-        // Eliminar el post de la lista de posts del usuario
+        // delete post for the user post list
         user.userPost.pull(postId);
         await user.save();
 
@@ -264,13 +259,12 @@ export const savePost = async (req, res) => {
         const savedPostIndex = user.userSavedPost.findIndex(savedPost => savedPost.toString() === postId);
 
         if (savedPostIndex !== -1) {
-            // Eliminar el post guardado
+            // Delete saved post
             user.userSavedPost.splice(savedPostIndex, 1);
             await user.save();
             return res.status(200).json({ success: true, message: "Post removed from saved posts" });
         }
-        // Agregar el post a los guardados
-        // console.log("savedPostIndex:", savedPostIndex)
+        // Add post to saved posts
         user.userSavedPost.push(postId);
         await user.save();
 
