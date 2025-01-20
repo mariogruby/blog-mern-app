@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import Notification from '../models/notification.js'
 import Comment from '../models/comments.js';
 import Conversation from '../models/conversation.js';
+import Message from '../models/message.js';
 import cloudinaryConfig from '../config/cloudinary.js'
 import { io, userSocketMap } from '../socket/socket.js'
 import { response } from 'express';
@@ -337,28 +338,54 @@ export const markNotificationsAsRead = async (req, res) => {
 export const deleteUser = async (req, res) => {
     try {
         const userId = req.payload._id;
-
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
+        // unfollow users
+        const followingUsers = user.following.users; // USer following list 
+        for (const followedUserId of followingUsers) {
+            const followedUser = await User.findById(followedUserId);
+            if (followedUser) {
+                // delete user for the user list
+                followedUser.followers.users = followedUser.followers.users.filter(followerId => followerId.toString() !== userId.toString());
+                followedUser.followers.count -= 1;
+                await followedUser.save();
+            }
+        }
+
+        // delete user for the lists of others users
+        const followerUsers = user.followers.users; // user followers list
+        for (const followerUserId of followerUsers) {
+            const followerUser = await User.findById(followerUserId);
+            if (followerUser) {
+                // delete user for the followed list (following)
+                followerUser.following.users = followerUser.following.users.filter(followingId => followingId.toString() !== userId.toString());
+                followerUser.following.count -= 1;
+                await followerUser.save();
+            }
+        }
+
         await Post.deleteMany({ author: userId });
-
-        await Notification.deleteMany({ userId });
-
+        await Notification.deleteMany({ user: userId });
         await Comment.deleteMany({ author: userId });
-
+        await Message.deleteMany({ 
+            $or: [
+                { senderId: userId },
+                { receiverId: userId }
+            ]
+        });
         await Conversation.deleteMany({
             $or: [
                 { participants: userId },
-                { sender: userId },
-            ],
+                { sender: userId }
+            ]
         });
 
         await User.findByIdAndDelete(userId);
 
-        return res.status(200).json({ success: true, message: "User deleted successfully" });
+        return res.status(200).json({ success: true, message: "User deleted successfully and unfollowed all users" });
     } catch (err) {
-        console.error(err, 'error in deleteUser controller');
+        console.error(err, 'Error in deleteUser controller');
         res.status(500).json({ success: false, message: err.message });
     }
 };
