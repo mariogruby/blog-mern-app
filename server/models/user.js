@@ -32,6 +32,9 @@ const userSchema = new Schema({
         type: String,
         default: "https://res.cloudinary.com/dayo1mpv0/image/upload/v1683686792/default/profile.jpg",
     },
+    imagePublicId: {
+        type: String,
+    },
     userPost: [{
         type: Schema.Types.ObjectId,
         ref: "Post",

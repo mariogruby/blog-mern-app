@@ -13,6 +13,10 @@ const postSchema = new Schema({
         type: String,
         required: true,
     },
+    publicId: {
+        type: String,
+        required: true
+    },
     tags: {
         type: [String]
     },
@@ -33,7 +37,7 @@ const postSchema = new Schema({
         default: Date.now,
     },
 },
-{ timestamps: true }
+    { timestamps: true }
 );
 
 postSchema.pre('deleteOne', { document: true, query: false }, removePostFromUsers);

@@ -152,7 +152,7 @@ export const getSavedPosts = async (req, res) => {
 export const editUser = async (req, res) => {
     try {
         const userId = req.payload._id;
-        const { name, lastName, username } = req.body;
+        const { name, lastName, username, removeImage } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
@@ -160,6 +160,14 @@ export const editUser = async (req, res) => {
         }
 
         let imageResult;
+
+        if (removeImage && user.imagePublicId) {
+            await cloudinaryConfig.uploader.destroy(user.imagePublicId);
+
+            user.userImage = 'https://res.cloudinary.com/dayo1mpv0/image/upload/v1683686792/default/profile.jpg';
+            user.imagePublicId = null;
+        }
+        
 
         if (req.files && req.files.image) {
             const imageBuffer = req.files.image.data;
@@ -180,6 +188,7 @@ export const editUser = async (req, res) => {
         user.username = username || user.username;
         if (imageResult) {
             user.userImage = imageResult.secure_url;
+            user.imagePublicId = imageResult.public_id;
         }
 
         await user.save();
@@ -190,6 +199,7 @@ export const editUser = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error." });
     }
 };
+
 
 export const updatePassword = async (req, res) => {
     try {

@@ -35,6 +35,7 @@ export const addPost = async (req, res) => {
 
         const createPost = new Post({
             image: imageResult.secure_url,
+            publicId: imageResult.public_id,
             content,
             tags: tagsArray,
             author: user._id
@@ -226,6 +227,10 @@ export const deletePost = async (req, res) => {
         // verify if the user try delete the post is the author
         if (post.author.toString() !== userId) {
             return res.status(403).json({ success: false, message: "Unauthorized action" });
+        }
+
+        if (post.publicId) {
+            await cloudinaryConfig.uploader.destroy(post.publicId);
         }
 
         await post.deleteOne();
