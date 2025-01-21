@@ -8,11 +8,15 @@ import {
     TextField,
     Button,
     Avatar,
+    Badge,
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogActions
+    DialogActions,
 } from '@mui/material';
+import { useTheme } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/material/styles';
 import EditorImage from './ImageEditor';
 
@@ -30,6 +34,7 @@ export default function EditUser({ initialData, handleModalClose }) {
     const { userData } = useUserProfileActions();
     const [isEditorOpen, setEditorOpen] = useState(false);
     const [imageToEdit, setImageToEdit] = useState(null);
+    const theme = useTheme();
 
     const handleAvatarClick = () => {
         document.getElementById('image-upload-input').click();
@@ -62,20 +67,56 @@ export default function EditUser({ initialData, handleModalClose }) {
             >
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Box display="flex" justifyContent="center">
-                            <Avatar
-                                src={selectedImage ? URL.createObjectURL(selectedImage) : (userData && userData.userImage)}
-                                alt={userData?.username}
-                                sx={{
-                                    width: { xs: 100, xl: 120 },
-                                    height: { xs: 100, xl: 120 },
-                                    marginTop: 2,
-                                    marginBottom: 2,
-                                    borderRadius: '50%',
-                                    cursor: 'pointer'
+                        <Box display="flex" justifyContent="center" position="relative">
+                            <Badge
+                                overlap="circular"
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'right',
                                 }}
-                                onClick={handleAvatarClick}
-                            />
+                                badgeContent={
+                                    <Box
+                                        sx={{
+                                            backgroundColor: '#3165f5',
+                                            borderRadius: '50%',
+                                            width: 32,
+                                            height: 32,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            boxShadow: `0 0 0 2px ${theme.palette.background.paper}`
+                                        }}
+                                    >
+                                        <AddIcon
+                                            color="white"
+                                            fontSize="small"
+                                            onClick={handleAvatarClick}
+                                            sx={{
+                                                cursor: 'pointer',
+                                            }}
+                                        />
+                                    </Box>
+                                }
+                            >
+                                <Avatar
+                                    src={
+                                        selectedImage
+                                            ? URL.createObjectURL(selectedImage)
+                                            : userData?.userImage
+                                    }
+                                    alt={userData?.username || 'User avatar'}
+                                    sx={{
+                                        width: { xs: 100, xl: 120 },
+                                        height: { xs: 100, xl: 120 },
+                                        marginTop: 2,
+                                        marginBottom: 2,
+                                        borderRadius: '50%',
+                                        cursor: 'pointer',
+                                        boxShadow: `0 0 0 2px ${theme.palette.background.paper}`
+                                    }}
+                                    onClick={handleAvatarClick}
+                                />
+                            </Badge>
                             <VisuallyHiddenInput
                                 id="image-upload-input"
                                 type="file"
@@ -84,6 +125,25 @@ export default function EditUser({ initialData, handleModalClose }) {
                                 disabled={isLoading}
                             />
                         </Box>
+                        <Grid item xs={12}>
+                            <Button
+                                startIcon={<DeleteIcon />}
+                                variant="outlined"
+                                color="error"
+                                fullWidth
+                                onClick={() => handleSubmit(null, true)}
+                                disabled={isLoading}
+                                sx={{
+                                    display: userData?.userImage === 'https://res.cloudinary.com/dayo1mpv0/image/upload/v1683686792/default/profile.jpg'
+                                        ? 'none'
+                                        : 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                {isLoading ? '...' : 'Remove Profile Picture'}
+                            </Button>
+                        </Grid>
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
@@ -120,7 +180,6 @@ export default function EditUser({ initialData, handleModalClose }) {
                     </Grid>
                 </Grid>
             </Box>
-
             <Dialog open={isEditorOpen} onClose={() => setEditorOpen(false)} maxWidth="md" fullWidth>
                 <DialogTitle>Edit Image</DialogTitle>
                 <DialogContent>
