@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react'
-import { Link as RouterLink, useNavigate } from 'react-router-dom'
-import { AuthContext } from '../../context/auth'
-import BtnPrimary from '../buttons/BtnPrimary'
-import authService from '../../services/auth'
-import LoaderPrimary from '../loadings/LoaderPrimary'
+import React, { useState, useContext } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/auth';
+import BtnPrimary from '../buttons/BtnPrimary';
+import authService from '../../services/auth';
+import LoaderPrimary from '../loadings/LoaderPrimary';
 import {
     Box,
     TextField,
@@ -13,14 +13,14 @@ import {
     Link,
     IconButton,
     InputAdornment
-} from '@mui/material'
+} from '@mui/material';
 import { toast } from 'react-toastify';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 export default function Login() {
     const [isLoading, setIsLoading] = useState(false);
-    const [email, setEmail] = useState("");
+    const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState(undefined);
     const [showNewPassword, setShowNewPassword] = useState(false);
@@ -30,8 +30,8 @@ export default function Login() {
 
     const handleClickShowNewPassword = () => setShowNewPassword((prev) => !prev);
 
-    const handleEmail = (e) => {
-        setEmail(e.target.value);
+    const handleIdentifier = (e) => {
+        setIdentifier(e.target.value);
         if (errorMessage && (errorMessage.includes('found') || errorMessage.includes('Provide'))) {
             setErrorMessage(undefined);
             setIsLoading(false);
@@ -48,20 +48,19 @@ export default function Login() {
 
     const handleLoginSubmit = (e) => {
         e.preventDefault();
-        const requestBody = { email, password };
-        setIsLoading(true)
+        const requestBody = { identifier, password };
+        setIsLoading(true);
 
         authService.login(requestBody)
             .then((response) => {
-                // setIsLoading(true);
                 storeToken(response.data.authToken);
                 authenticateUser();
                 navigate("/");
             })
             .catch((error) => {
-                const errorDescription = error.response.data.message;
+                const errorDescription = error.response?.data?.message || "Something went wrong.";
                 setErrorMessage(errorDescription);
-                setIsLoading(false)
+                setIsLoading(false);
                 toast.error(errorDescription);
             });
     };
@@ -78,17 +77,21 @@ export default function Login() {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
-                                error={errorMessage}
+                                error={!!errorMessage}
                                 fullWidth
                                 required
-                                value={email}
-                                onChange={handleEmail}
+                                value={identifier}
+                                onChange={handleIdentifier}
                                 margin="dense"
-                                name="email"
-                                label="Email"
+                                name="identifier"
+                                label="Email or Username"
                                 type="text"
                                 variant="outlined"
-                                helperText={errorMessage && (errorMessage.includes('found') || errorMessage.includes('Provide')) ? errorMessage : null}
+                                helperText={
+                                    errorMessage && (errorMessage.includes('found') || errorMessage.includes('Provide'))
+                                        ? errorMessage
+                                        : null
+                                }
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -108,7 +111,7 @@ export default function Login() {
                                         </InputAdornment>
                                     ),
                                 }}
-                                error={errorMessage}
+                                error={!!errorMessage}
                                 fullWidth
                                 required
                                 value={password}
@@ -117,7 +120,11 @@ export default function Login() {
                                 name="password"
                                 label="Password"
                                 variant="outlined"
-                                helperText={errorMessage && (errorMessage.includes('Unable') || errorMessage.includes('Provide')) ? errorMessage : null}
+                                helperText={
+                                    errorMessage && (errorMessage.includes('Unable') || errorMessage.includes('Provide'))
+                                        ? errorMessage
+                                        : null
+                                }
                             />
                         </Grid>
                     </Grid>
@@ -126,16 +133,17 @@ export default function Login() {
                         display="flex"
                         justifyContent="center"
                         alignItems="center">
-                        {isLoading ?
+                        {isLoading ? (
                             <BtnPrimary disabled><LoaderPrimary /></BtnPrimary>
-                            :
-                            <BtnPrimary type="submit">Login</BtnPrimary>}
+                        ) : (
+                            <BtnPrimary type="submit">Login</BtnPrimary>
+                        )}
                     </Box>
                     <Box
                         display="flex"
                         justifyContent="center">
                         <Typography variant="body1" color="textPrimary">
-                            Don´t have an account?{' '}
+                            Don’t have an account?{' '}
                             <Link component={RouterLink} to="/signup" color="primary" underline="hover">
                                 Sign up
                             </Link>
@@ -144,5 +152,5 @@ export default function Login() {
                 </Box>
             </Container>
         </>
-    )
+    );
 }

@@ -47,7 +47,7 @@ export const useAllPostActions = () => {
             }
         } catch (error) {
             toast.error("Error getting post", error)
-            setErrorMessage("Error getting posts");
+            setErrorMessage("Error getting posts, server is not responding, please try again");
             console.error('Error getting Posts', error);
         }
         setTimeout(() => {

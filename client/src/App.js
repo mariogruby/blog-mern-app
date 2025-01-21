@@ -16,6 +16,7 @@ import ProfileLayout from './components/profile/Layout';
 import DmPage from './pages/dm/Dm';
 import './App.css';
 import ProtectedRoute from './components/protectedRoutes/index';
+import PublicRoute from './components/protectedRoutes/PublicRoute';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
@@ -44,8 +45,24 @@ function App() {
         />
         <Routes>
           <Route path='/' element={<HomePage />} />
-          <Route path='/signup' element={<AuthLayout><Signup /></AuthLayout>} />
-          <Route path='/login' element={<AuthLayout><Login /></AuthLayout>} />
+          <Route
+            path='/signup'
+            element={
+              <PublicRoute
+                redirectTo="/"
+                element={<AuthLayout><Signup /></AuthLayout>}
+              />
+            }
+          />
+          <Route
+            path='/login'
+            element={
+              <PublicRoute
+                redirectTo="/"
+                element={<AuthLayout><Login /></AuthLayout>}
+              />
+            }
+          />
           <Route
             path='/update-password'
             element={

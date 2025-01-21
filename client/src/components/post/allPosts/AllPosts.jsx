@@ -102,7 +102,7 @@ export default function AllPosts() {
                 <Grid container spacing={2} columns={2}>
                     {Array.from(new Array(6)).map((_, index) => (
                         <Grid item xs={12} sm={6} key={index}>
-                            <Card sx={{ width: { xs: '100%', sm: '545px' }, ml: { xs: 0, sm: 1, md: 8, lg: '300px', xl: '350px' } }}>
+                            <Card sx={{ width: { xs: '100%', sm: '545px' }, ml: { xs: 0, sm: 15, md: 8, lg: '300px', xl: '350px' } }}>
                                 <CardHeader
                                     avatar={<Skeleton animation="wave" variant="circular" width={40} height={40} />}
                                     action={null}
@@ -144,7 +144,7 @@ export default function AllPosts() {
                 <>
                     {posts.map((post) => (
                         <Grid item xs={12} sm={6} key={post._id}>
-                            <Card sx={{ width: { xs: '100%', sm: '545px' }, ml: { xs: 0, sm: 1, md: 8, lg: '300px', xl: '350px' } }}>
+                            <Card sx={{ width: { xs: '100%', sm: '545px' }, ml: { xs: 0, sm: 15, md: 8, lg: '300px', xl: '350px' } }}>
                                 <CardHeader
                                     avatar={<Avatar alt={post.author.username} src={post.author.userImage} />}
                                     action={

@@ -50,7 +50,7 @@ export default function Layout({ children }) {
                         lg: 30,
                         xl: 30,
                     },
-                    mb: location.pathname === '/dm' ? undefined : { xs: 7 },
+                    mb: location.pathname === '/dm' ? undefined : { xs: 10 },
                 }}
             >
                 {children}
