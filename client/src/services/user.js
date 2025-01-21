@@ -41,6 +41,9 @@ class UserService {
     markNotificationsAsRead = () => {
         return this.user.put('/user/notifications/mark-as-read');
     };
+    deleteAccount = () => {
+    return this.user.delete('/user/delete-account')
+    };
 };
 
 const userService = new UserService();

@@ -71,18 +71,31 @@ export default function Notifications({ onClose }) {
                 {notificationsList.map((notification) => (
                     <React.Fragment key={notification._id}>
                         <ListItemButton sx={{ minHeight: 70 }}>
-                            <Avatar
-                                component={Link}
-                                to={`/${notification.user.username}`}
-                                src={notification.user.userImage}
-                                alt="user image"
-                                sx={{ marginRight: 2, width: 48, height: 48 }}
-                                onClick={onClose}
-                            />
+                            {notification.user ? (
+                                <Avatar
+                                    component={Link}
+                                    to={`/${notification.user.username}`}
+                                    src={notification.user.userImage}
+                                    alt="user image"
+                                    sx={{ marginRight: 2, width: 48, height: 48 }}
+                                    onClick={onClose}
+                                />
+                            ) : (
+                                <Avatar
+                                    sx={{ marginRight: 2, width: 48, height: 48, bgcolor: 'gray' }}
+                                    alt="Deleted User"
+                                >
+                                    ?
+                                </Avatar>
+                            )}
                             <ListItemText
-                                primary={`${notification.user.username} ${getNotificationMessage(notification.type)}`}
+                                primary={
+                                    notification.user
+                                        ? `${notification.user.username} ${getNotificationMessage(notification.type)}`
+                                        : 'Account deleted'
+                                }
                             />
-                            {(notification.type === 'like' || notification.type === 'comment') && (
+                            {(notification.type === 'like' || notification.type === 'comment') && notification.post && (
                                 <Avatar
                                     component={Link}
                                     to={`/post/${notification.post._id}`}
@@ -99,6 +112,7 @@ export default function Notifications({ onClose }) {
                 ))}
             </List>
         );
+        
     };
 
     const getNotificationMessage = (type) => {

@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import userService from '../../services/user';
+import { toast } from 'react-toastify';
 
 export const useSocketUpdatesMessages = (socket, setChats) => {
     useEffect(() => {
@@ -7,7 +9,7 @@ export const useSocketUpdatesMessages = (socket, setChats) => {
                 setChats(prevChats =>
                     prevChats.map(chat =>
                         chat._id === senderId
-                            ? { ...chat, unreadMessagesCount } 
+                            ? { ...chat, unreadMessagesCount }
                             : chat
                     )
                 );
@@ -49,4 +51,18 @@ export const useSocketUpdatesNotifications = (socket, setNotifications) => {
 
 export const calculateUnreadNotificationsCount = (notifications) => {
     return notifications.filter(notification => !notification.read).length;
+};
+
+export const deleteAccount = async () => {
+    try {
+        const response = await userService.deleteAccount();
+        if (response.data.success) {
+            toast.success('Account deleted successfully')
+        } else {
+            toast.error('Account not deleted');
+        }
+    } catch (error) {
+        console.error(error.message);
+        throw new Error(error)
+    }
 };

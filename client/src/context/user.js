@@ -10,13 +10,11 @@ export const UserProvider = ({ children }) => {
     const [updateUserInfo, setUpdateUserInfo] = useState(0);
 
     const username = user ? user.username : null;
-    // console.log('username: ',  username)
 
     const fetchData = async () => {
         if(!username) return;
         try {
         const response = await userService.getUser(username);
-        // console.log('response:', response.data.userData)
         setUserInfo(response.data.userData)
         } catch (error) {
             console.error(error)

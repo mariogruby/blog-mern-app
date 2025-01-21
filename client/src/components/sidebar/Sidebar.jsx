@@ -14,6 +14,12 @@ import {
     useMediaQuery,
     useTheme,
     Avatar,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+    Typography
 } from '@mui/material';
 import {
     Home as HomeIcon,
@@ -37,6 +43,7 @@ import {
     calculateUnreadMessagesCount,
     useSocketUpdatesNotifications,
     calculateUnreadNotificationsCount,
+    deleteAccount
 } from './Actions';
 import { useNotificationsActions } from './notifications/Actions';
 
@@ -54,6 +61,7 @@ export default function Sidebar() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [openNotifications, setOpenNotifications] = useState(false);
     const [alertOpen, setAlertOpen] = useState(false);
+    const [isDialogOpen, setDialogOpen] = useState(false);
 
     //* Alert Modal
     const handleAlertClose = () => {
@@ -71,6 +79,27 @@ export default function Sidebar() {
         logOutUser();
         navigate('/login')
     }
+
+    //* delete account handler
+    const handleDeleteAccount = async () => {
+        await deleteAccount();
+        handleMenuClose();
+        logOutUser();
+        navigate('/login');
+    }
+
+    //* confirm delete account 
+    const confirmDeleteAccount = () => {
+        handleDeleteAccount();
+        closeDialog();
+    };
+    const openDialog = () => {
+        setDialogOpen(true);
+    };
+
+    const closeDialog = () => {
+        setDialogOpen(false);
+    };
 
     //* more Menu
     const handleMenu = (event) => {
@@ -175,9 +204,9 @@ export default function Sidebar() {
                     </ListItemIcon>
                     <ListItemText primary={isMobile ? "" : "Search"} />
                 </ListItemButton>
-                <ListItemButton 
-                key="Saved" 
-                onClick={() => !isLoggedIn ? setAlertOpen(true) : (window.location.href = '/saved-posts')}
+                <ListItemButton
+                    key="Saved"
+                    onClick={() => !isLoggedIn ? setAlertOpen(true) : (window.location.href = '/saved-posts')}
                 >
                     <ListItemIcon>
                         {location.pathname === '/saved-posts' ? (
@@ -198,7 +227,25 @@ export default function Sidebar() {
                     anchorEl={anchorEl}
                     handleMenuClose={handleMenuClose}
                     logOutHandler={logOutHandler}
+                    deleteAccountHandler={openDialog}
                 />
+                {/* confirmation Modal */}
+            <Dialog open={isDialogOpen} onClose={closeDialog}>
+                <DialogTitle>Confirm Delete Account</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                    Are you sure you want to delete Account? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeDialog} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmDeleteAccount} color="error">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
                 {isLoggedIn ? (
                     <ListItemButton key="Profile" component={Link} to={userInfo ? `/${userInfo.username}` : '#'}>
                         <Avatar

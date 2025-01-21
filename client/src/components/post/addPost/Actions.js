@@ -89,6 +89,7 @@ export const useAddPostActions = (addPost, handleModalClose) => {
     inputValue,
     isLoading,
     successMessage,
+    setSuccessMessage,
     errorMessage,
     handleChange,
     handleTagsChange,

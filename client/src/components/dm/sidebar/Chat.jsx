@@ -8,7 +8,6 @@ import {
   ListItemAvatar,
   ListItemText,
   Divider,
-  Box,
   Badge
 } from '@mui/material';
 import { useSocketContext } from '../../../context/SocketContext';

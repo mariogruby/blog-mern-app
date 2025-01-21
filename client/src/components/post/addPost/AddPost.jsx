@@ -10,7 +10,6 @@ import {
     Chip,
     TextField,
     Autocomplete,
-    Container,
     useMediaQuery
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -20,12 +19,7 @@ import EditorImage from './EditorImage';
 import { usePostContext } from '../../../context/post';
 import { useAddPostActions } from './Actions';
 
-
-
-//TODO: pending successMessage and errorMessage utilization
-
 function PostStepper({ handleModalClose }) {
-
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const steps = [isMobile ? 'Image' : 'Select an image', isMobile ? 'Content' : 'Add content and tags to your post', isMobile ? 'Review' : 'Review your post'];

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-
 import SidebarChat from './sidebar/SidebarChat';
 import MessageContainer from '../dm/messages/MessageContainer';
 import {

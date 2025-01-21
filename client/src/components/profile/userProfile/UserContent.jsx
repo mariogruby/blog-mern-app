@@ -55,65 +55,79 @@ export default function UserCard() {
                     ))
                 ) : (
                     userData && userData.userPost.map((post) => (
-                        <Link to={`/post/${post._id}`} key={post._id}>
-                            <ImageListItem key={post._id}>
-                                <img
-                                    srcSet={`${post.image}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                                    src={`${post.image}?w=248&fit=crop&auto=format`}
-                                    alt="post saved"
-                                    loading="lazy"
-                                />
-                                <ImageListItemBar
-                                    sx={{ height: 'auto', width: 'auto' }}
-                                    title={
-                                        <Box
+                        <ImageListItem
+                            component={Link}
+                            to={`/post/${post._id}`}
+                            key={post._id}
+                            sx={{
+                                width: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <img
+                                srcSet={`${post.image}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                                src={`${post.image}?w=248&fit=crop&auto=format`}
+                                alt="post"
+                                loading="lazy"
+                                style={{
+                                    width: '100%',
+                                    maxWidth: '600px',
+                                    height: 'auto',
+                                    objectFit: 'cover',
+                                }}
+                            />
+                            <ImageListItemBar
+                                sx={{ height: 'auto', width: 'auto' }}
+                                title={
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            width: '100%'
+                                        }}
+                                    >
+                                        <IconButton
+                                            sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                                            aria-label=''
+                                        >
+                                            <FavoriteIcon />
+                                        </IconButton>
+                                        <Typography
+                                            variant="body2"
+                                            color="text.secondary"
+                                            component="p"
                                             sx={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                width: '100%'
+                                                fontWeight: 'bold',
+                                                margin: '0 8px'
                                             }}
                                         >
-                                            <IconButton
-                                                sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                                                aria-label=''
-                                            >
-                                                <FavoriteIcon />
-                                            </IconButton>
-                                            <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                                component="p"
-                                                sx={{
-                                                    fontWeight: 'bold',
-                                                    margin: '0 8px'
-                                                }}
-                                            >
-                                                {post.likes}
-                                            </Typography>
-                                            <IconButton
-                                                sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                                                aria-label=''
-                                            >
-                                                <ChatBubbleIcon />
-                                            </IconButton>
-                                            <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                                component="p"
-                                                sx={{
-                                                    fontWeight: 'bold',
-                                                    margin: '0 8px',
-                                                    marginRight: 1
-                                                }}
-                                            >
-                                                {post.comments.length}
-                                            </Typography>
-                                        </Box>
-                                    }
-                                />
-                            </ImageListItem>
-                        </Link>
+                                            {post.likes}
+                                        </Typography>
+                                        <IconButton
+                                            sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                                            aria-label=''
+                                        >
+                                            <ChatBubbleIcon />
+                                        </IconButton>
+                                        <Typography
+                                            variant="body2"
+                                            color="text.secondary"
+                                            component="p"
+                                            sx={{
+                                                fontWeight: 'bold',
+                                                margin: '0 8px',
+                                                marginRight: 1
+                                            }}
+                                        >
+                                            {post.comments.length}
+                                        </Typography>
+                                    </Box>
+                                }
+                            />
+                        </ImageListItem>
                     ))
                 )}
             </ImageList>

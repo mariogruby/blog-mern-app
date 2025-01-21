@@ -14,7 +14,7 @@ import {
     CardContent,
     Typography,
     Avatar,
-    Skeleton
+    Skeleton,
 } from '@mui/material';
 
 export default function UserCard({ children }) {
@@ -65,7 +65,7 @@ export default function UserCard({ children }) {
             setSelectedChat(chat);
             navigate('/dm?hideSidebar=true');
         } else {
-            console.error("No se encontró el chat del usuario");
+            console.error("No chat found");
         }
     };
     

@@ -9,7 +9,6 @@ import {
 } from '@mui/icons-material'
 
 export default function MoreOptions({ anchorEl, handleMenuClose, deleteChatHandler }) {
-
     const { isLoggedIn } = useContext(AuthContext);
     return (
         <div>

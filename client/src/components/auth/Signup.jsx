@@ -17,8 +17,6 @@ import { toast } from 'react-toastify';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 
-//TODO: mensajes de errores especificos
-
 export default function Signup() {
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState("");

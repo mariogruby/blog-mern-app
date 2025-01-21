@@ -26,7 +26,7 @@ export const useAddCommentAction = () => {
             setContent("");
             setErrorMessage(undefined);
             addComment(response.data.comment)
-            console.log('response add comment:', response);
+            // console.log('response add comment:', response);
         } catch (error) {
             const errorDescription = error.response.data.message;
             setErrorMessage(errorDescription);

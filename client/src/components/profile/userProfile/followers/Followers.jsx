@@ -16,7 +16,6 @@ import {
     Error as ErrorIcon
 } from '@mui/icons-material'
 
-
 export default function Followers({ onClose }) {
     const navigate = useNavigate();
     const { userData, isLoading, followersSuccessMessage, error } = useUserProfileActions();

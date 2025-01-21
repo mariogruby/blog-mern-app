@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import useChat from '../../zustand/useChat';
-import useGetChats from '../hooks/useGetChats';
 import {
     Container,
     Avatar,
@@ -23,11 +22,10 @@ import useDeleteChat from '../hooks/useDeleteChat';
 
 export default function MessageContainer({ chat }) {
     const { selectedChat, setSelectedChat, chatId, setChatId } = useChat();
-    const { chats } = useGetChats();
 
-    const { deleteChat, isLoading, error } = useDeleteChat();
+    const { deleteChat, isLoading } = useDeleteChat();
     const [anchorEl, setAnchorEl] = useState(null);
-    const [isDialogOpen, setDialogOpen] = useState(false); // Estado para el modal
+    const [isDialogOpen, setDialogOpen] = useState(false);
 
     //* more Menu
     const handleMenu = (event) => {
@@ -94,7 +92,7 @@ export default function MessageContainer({ chat }) {
                                 <Menu
                                     anchorEl={anchorEl}
                                     handleMenuClose={handleMenuClose}
-                                    deleteChatHandler={openDialog} // Cambia a abrir el diálogo
+                                    deleteChatHandler={openDialog}
                                 />
                             </Box>
                         </Paper>
@@ -104,7 +102,7 @@ export default function MessageContainer({ chat }) {
                 </React.Fragment>
             )}
 
-            {/* Modal de confirmación */}
+            {/* confirmation modal */}
             <Dialog open={isDialogOpen} onClose={closeDialog}>
                 <DialogTitle>Confirm Delete Chat</DialogTitle>
                 <DialogContent>
@@ -112,7 +110,7 @@ export default function MessageContainer({ chat }) {
                     Are you sure you want to delete this chat? This action cannot be undone. The chat will be deleted for both users for security reasons.
                     </Typography>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions disabled={isLoading}>
                     <Button onClick={closeDialog} color="primary">
                         Cancel
                     </Button>

@@ -7,10 +7,11 @@ import {
 } from '@mui/material';
 import {
     Logout as LogoutIcon,
-    Password as PasswordIcon
+    Password as PasswordIcon,
+    Delete as DeleteIcon
 } from '@mui/icons-material';
 
-export default function MoreOptions({ anchorEl, handleMenuClose, logOutHandler }) {
+export default function MoreOptions({ anchorEl, handleMenuClose, logOutHandler, deleteAccountHandler }) {
 
     const { isLoggedIn } = useContext(AuthContext);
     return (
@@ -40,6 +41,12 @@ export default function MoreOptions({ anchorEl, handleMenuClose, logOutHandler }
                                 fontSize='small'
                                 sx={{ marginRight: 2 }} />
                             Logout
+                        </MenuItem>
+                        <MenuItem onClick={() => { deleteAccountHandler() }}>
+                            <DeleteIcon
+                                fontSize='small'
+                                sx={{ marginRight: 2 }} />
+                            Delete Account
                         </MenuItem>
                     </div>
                 ) : null}

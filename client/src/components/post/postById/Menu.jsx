@@ -4,7 +4,6 @@ import { Menu, MenuItem } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
-
 export default function DropdownMenu({ anchorEl, handleMenuClose, handleEdit, handleDeletePost }) {
     return (
         <div>

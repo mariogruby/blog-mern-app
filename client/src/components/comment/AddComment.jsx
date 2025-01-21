@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAddCommentAction } from './Actions';
 import {
-    Box,
     Grid,
     TextField,
     Button,
@@ -44,4 +43,3 @@ export default function AddComment() {
         </form>
     );
 }
-

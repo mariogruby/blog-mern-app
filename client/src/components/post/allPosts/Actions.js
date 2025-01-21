@@ -42,7 +42,7 @@ export const useAllPostActions = () => {
                 setPage(response.data.currentPage);
                 setSuccessMessage("Posts fetched successfully");
             } else {
-                toast.error("Failed to fecth posts");
+                toast.error("Failed to fetch posts");
                 setErrorMessage("Failed to fetch posts");
             }
         } catch (error) {
