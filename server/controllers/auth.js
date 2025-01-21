@@ -44,14 +44,18 @@ export const signup = (req, res, next) => {
 
 
 export const login = (req, res, next) => {
-    const { email, password } = req.body;
+    const { identifier, password } = req.body;
 
-    if (email === "" || password === "") {
-        res.status(400).json({ message: "Provide email and password" })
+    if (!identifier || !password) {
+        res.status(400).json({ message: "Provide email/username and password" });
         return;
     }
 
-    User.findOne({ email })
+    const searchCriteria = {
+        $or: [{ email: identifier }, { username: identifier }]
+    };
+
+    User.findOne(searchCriteria)
         .then((foundUser) => {
             if (!foundUser) {
                 res.status(401).json({ message: "Account not found." });
