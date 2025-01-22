@@ -11,7 +11,12 @@ export const signup = (req, res, next) => {
         return
     }
 
-    username = username.toLowerCase();
+    username = username.trim().toLowerCase();
+
+    if (/\s/.test(username)) {
+        res.status(400).json({ message: "Username cannot contain spaces" });
+        return;
+    }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     if (!emailRegex.test(email)) {
@@ -54,7 +59,14 @@ export const login = (req, res, next) => {
         return;
     }
 
-    const normalizedIdentifier = identifier.includes("@") ? identifier : identifier.toLowerCase();
+    const normalizedIdentifier = identifier.includes("@")
+        ? identifier.trim()
+        : identifier.trim().toLowerCase();
+
+        if (!normalizedIdentifier.includes("@") && /\s/.test(normalizedIdentifier)) {
+            res.status(400).json({ message: "Username cannot contain spaces" });
+            return;
+        }
 
     const searchCriteria = {
         $or: [{ email: normalizedIdentifier }, { username: normalizedIdentifier }]
