@@ -84,7 +84,7 @@ export default function Signup() {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
-                                error={errorMessage}
+                                error={!!errorMessage}
                                 fullWidth
                                 required
                                 value={username}
@@ -99,7 +99,7 @@ export default function Signup() {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
-                                error={errorMessage}
+                                error={!!errorMessage}
                                 fullWidth
                                 required
                                 value={email}
@@ -129,7 +129,7 @@ export default function Signup() {
                                     </InputAdornment>
                                 ),
                             }}
-                                error={errorMessage}
+                                error={!!errorMessage}
                                 fullWidth
                                 required
                                 value={password}
