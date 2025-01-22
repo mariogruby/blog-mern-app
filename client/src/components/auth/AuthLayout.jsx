@@ -43,7 +43,7 @@ export default function AuthLayout({ children }) {
                     aria-label="close"
                     onClick={() => {
                         if (handleClose) handleClose();
-                        navigate(-1);
+                        navigate('/');
                     }}
                     sx={{
                         position: 'absolute',
