@@ -5,11 +5,14 @@ import jwt from 'jsonwebtoken';
 const saltRounds = 10;
 
 export const signup = (req, res, next) => {
-    const { email, password, username } = req.body;
+    let { email, password, username } = req.body;
     if (email === "" || password === "" || username === "") {
         res.status(401).json({ message: 'Provide email, password and username' });
         return
     }
+
+    username = username.toLowerCase();
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     if (!emailRegex.test(email)) {
         res.status(400).json({ message: "Provide a valid email address" });
