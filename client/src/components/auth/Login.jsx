@@ -88,7 +88,8 @@ export default function Login() {
                                 type="text"
                                 variant="outlined"
                                 helperText={
-                                    errorMessage && (errorMessage.includes('found') || errorMessage.includes('Provide'))
+                                    errorMessage &&
+                                        (errorMessage.includes('found') || errorMessage.includes('Provide') || errorMessage.includes('spaces'))
                                         ? errorMessage
                                         : null
                                 }

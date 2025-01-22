@@ -94,7 +94,12 @@ export default function Signup() {
                                 label="Username"
                                 type="text"
                                 variant="outlined"
-                                helperText={errorMessage && (errorMessage.includes('Account')) ? errorMessage : null}
+                                helperText={
+                                    errorMessage &&
+                                        (errorMessage.includes('Account') || errorMessage.includes('spaces'))
+                                        ? errorMessage
+                                        : null
+                                }
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -114,21 +119,21 @@ export default function Signup() {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
-                            type={showNewPassword ? 'text' : 'password'}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label={
-                                                showNewPassword ? 'Hide password' : 'Show password'
-                                            }
-                                            onClick={handleClickShowNewPassword}
-                                        >
-                                            {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
+                                type={showNewPassword ? 'text' : 'password'}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label={
+                                                    showNewPassword ? 'Hide password' : 'Show password'
+                                                }
+                                                onClick={handleClickShowNewPassword}
+                                            >
+                                                {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
                                 error={!!errorMessage}
                                 fullWidth
                                 required
