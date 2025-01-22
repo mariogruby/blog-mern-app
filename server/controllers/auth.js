@@ -54,8 +54,10 @@ export const login = (req, res, next) => {
         return;
     }
 
+    const normalizedIdentifier = identifier.includes("@") ? identifier : identifier.toLowerCase();
+
     const searchCriteria = {
-        $or: [{ email: identifier }, { username: identifier }]
+        $or: [{ email: normalizedIdentifier }, { username: normalizedIdentifier }]
     };
 
     User.findOne(searchCriteria)
@@ -80,6 +82,7 @@ export const login = (req, res, next) => {
         })
         .catch((err) => next(err));
 };
+
 
 export const logout = (req, res, next) => {
     req.session.destroy((err) => {
