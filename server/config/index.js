@@ -6,7 +6,7 @@ import cors from 'cors';
 
 dotenv.config();
 
-const FRONTEND_URL ="https://blog-mern-app-omega.vercel.app"
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
 const configureApp = (app) => {
     app.set("trust proxy", 1);
