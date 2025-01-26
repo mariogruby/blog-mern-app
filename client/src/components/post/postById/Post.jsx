@@ -228,7 +228,7 @@ export default function Post() {
                                                                     {post.content}
                                                                 </Typography>
                                                             </Box>
-                                                            {post.content.length > 100 && !isExpanded(post._id) && (
+                                                            {post.content.length > 20 && !isExpanded(post._id) && (
                                                                 <Button
                                                                     size="small"
                                                                     onClick={() => toggleExpand(post._id)}
