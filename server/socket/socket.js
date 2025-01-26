@@ -8,10 +8,14 @@ dotenv.config();
 const app = express();
 
 const server = http.createServer(app);
+const origin = process.env.NODE_ENV === 'production'
+    ? ['https://blog-mern-app-omega.vercel.app'] 
+    : ['http://localhost:3000'];
+
 const io = new Server(server, {
     cors: {
-        origin: ['http://localhost:3000', 'https://blog-mern-app-omega.vercel.app'],
-        methods: ['GET', 'POST']
+        origin: origin,
+        methods: ['GET', 'POST', 'PUT', 'DELETE']
     }
 });
 
@@ -29,7 +33,7 @@ io.on('connection', (socket) => {
 
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-    socket.on("disconnect", () => { 
+    socket.on("disconnect", () => {
         console.log("user disconnected", socket.id);
         delete userSocketMap[userId];
         io.emit("getOnlineUsers", Object.keys(userSocketMap));

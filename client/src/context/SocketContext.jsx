@@ -15,12 +15,15 @@ export const SocketContextProvider = ({ children }) => {
 
     useEffect(() => {
         if (user) {
-            const socket = io(process.env.REACT_APP_SERVER_URL, {
+            const origin = process.env.REACT_APP_ENV === 'production'
+                ? process.env.REACT_APP_SERVER_URL
+                : 'http://localhost:5005'
+            const socket = io(origin, {
                 query: {
                     userId: user._id,
                 },
-                reconnection: true, 
-                reconnectionAttempts: 5, 
+                reconnection: true,
+                reconnectionAttempts: 5,
                 reconnectionDelay: 1000,
             });
 
@@ -35,11 +38,11 @@ export const SocketContextProvider = ({ children }) => {
             });
 
             return () => {
-                socket.disconnect(); 
+                socket.disconnect();
             };
         } else {
             if (socket) {
-                socket.disconnect(); 
+                socket.disconnect();
                 setSocket(null);
             }
         }
