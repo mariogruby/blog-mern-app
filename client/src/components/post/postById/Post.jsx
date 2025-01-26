@@ -198,7 +198,7 @@ export default function Post() {
                                                             <Box
                                                                 sx={{
                                                                     maxHeight: isExpanded(post._id) ? 'none' : '200px',
-                                                                    maxWidth: isExpanded(post._id) ? '250px' : {xs:'250px', sm: '600px'},
+                                                                    maxWidth: isExpanded(post._id) ? 'none' : {xs:'250px', sm: '600px'},
                                                                     overflow: 'hidden',
                                                                     position: 'relative',
                                                                     '@media (max-width: 600px)': {
@@ -228,7 +228,7 @@ export default function Post() {
                                                                     {post.content}
                                                                 </Typography>
                                                             </Box>
-                                                            {post.content.length > 100 && !isExpanded(post._id) && (
+                                                            {post.content.length > 20 && !isExpanded(post._id) && (
                                                                 <Button
                                                                     size="small"
                                                                     onClick={() => toggleExpand(post._id)}
