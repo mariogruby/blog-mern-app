@@ -9,7 +9,7 @@ const app = express();
 
 const server = http.createServer(app);
 const origin = process.env.NODE_ENV === 'production'
-    ? ['https://blog-mern-app-omega.vercel.app'] 
+    ? ['https://omega-social-network.vercel.app'] 
     : ['http://localhost:3000'];
 
 const io = new Server(server, {
