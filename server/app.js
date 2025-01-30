@@ -15,7 +15,9 @@ dotenv.config();
 // const app = express();
 
 configureApp(app);
-
+app.get('/', (req, res) => {
+    res.status(200).send('Server is alive!');
+});
 app.use("/auth", authRoutes)
 app.use("/posts", postRoutes)
 app.use("/user", userRoutes)

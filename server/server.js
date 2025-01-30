@@ -1,6 +1,7 @@
 import app from './app.js';
 import dotenv from 'dotenv';
 import { server } from './socket/socket.js';
+import { keepAlive } from './controllers/keepAlive.js';
 
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
 dotenv.config({ path: envFile });
@@ -10,6 +11,7 @@ const PORT = process.env.PORT || 5005;
 server.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode`);
     console.log(`Listening on http://localhost:${PORT}`);
+    keepAlive();
 });
 
 
