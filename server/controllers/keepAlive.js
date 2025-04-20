@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-const PING_INTERVAL = 5 * 60 * 1000;
+const PING_INTERVAL = 10 * 60 * 1000;
 const URL = process.env.SERVER_URL
 
 export const keepAlive = () => {
