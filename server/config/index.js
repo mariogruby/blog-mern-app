@@ -9,7 +9,7 @@ dotenv.config();
 const FRONTEND_URL = process.env.CORS_ORIGIN || "http://localhost:3000";
 
 const configureApp = (app) => {
-    app.set("trust proxy", 1);
+    app.set("trust proxy", 1); 
 
     app.use(
         cors({
