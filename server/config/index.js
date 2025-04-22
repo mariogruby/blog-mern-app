@@ -13,7 +13,7 @@ const configureApp = (app) => {
 
     app.use(
         cors({
-            origin: ["https://omega-social-network.vercel.app"],
+            origin: [FRONTEND_URL],
         })
     );
 
